@@ -1,10 +1,20 @@
 {
     "name": "aitutor",
     "version": "1.0.0",
-    "description": "",
+    "description": "Sber web project",
     "main": "index.js",
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "private": true
-  }
+    "private": true,
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/web-algoholics/aitutor.git"
+    },
+    "author": "web-algoholics",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/web-algoholics/aitutor/issues"
+    },
+    "homepage": "https://github.com/web-algoholics/aitutor#readme"
+}
