@@ -58,7 +58,615 @@ const INITIAL_DATA = {
       duration: "30 часов",
       modules: 10,
       enrolled: false,
-      category: "Backend"
+      category: "Backend",
+      lessons: [
+        {
+          id: 1,
+          title: "Введение в базы данных",
+          description: "Что такое база данных, зачем она нужна и основные концепции",
+          duration: "25 минут",
+          content: `# Введение в базы данных
+
+## Что такое база данных?
+
+**База данных (БД)** — это организованная коллекция структурированной информации или данных, которая обычно хранится в электронном виде в компьютерной системе.
+
+## Зачем нужны базы данных?
+
+1. **Хранение больших объемов данных** — эффективное хранение миллионов записей
+2. **Быстрый поиск** — возможность быстро находить нужную информацию
+3. **Структурированность** — данные организованы в таблицы, что упрощает работу
+4. **Безопасность** — контроль доступа и защита данных
+5. **Целостность данных** — правила, которые гарантируют корректность информации
+
+## Типы баз данных
+
+### Реляционные (SQL)
+- Данные хранятся в таблицах
+- Связи между таблицами через ключи
+- Примеры: MySQL, PostgreSQL, SQLite
+
+### Нереляционные (NoSQL)
+- Документоориентированные (MongoDB)
+- Графовые (Neo4j)
+- Ключ-значение (Redis)
+
+## Основные понятия
+
+- **Таблица (Table)** — структура для хранения данных
+- **Строка (Row)** — одна запись в таблице
+- **Столбец (Column)** — поле данных в таблице
+- **Первичный ключ (Primary Key)** — уникальный идентификатор записи
+- **Внешний ключ (Foreign Key)** — связь с другой таблицей
+
+## SQL — язык запросов
+
+**SQL (Structured Query Language)** — стандартный язык для работы с реляционными базами данных.
+
+Основные операции:
+- **SELECT** — выборка данных
+- **INSERT** — вставка данных
+- **UPDATE** — обновление данных
+- **DELETE** — удаление данных`,
+          completed: false
+        },
+        {
+          id: 2,
+          title: "Установка и настройка SQL",
+          description: "Установка MySQL и первые шаги",
+          duration: "30 минут",
+          content: `# Установка и настройка SQL
+
+## Выбор системы управления БД
+
+### Популярные варианты для обучения:
+
+1. **MySQL** — самый популярный, бесплатный
+2. **PostgreSQL** — более продвинутый, бесплатный
+3. **SQLite** — легковесный, встроенный в Python
+4. **SQL Server** — от Microsoft
+
+## Установка MySQL
+
+### Windows:
+1. Скачайте MySQL с официального сайта
+2. Запустите установщик
+3. Выберите "Developer Default"
+4. Установите root пароль
+
+### Альтернатива: Онлайн редакторы
+- **SQLite Online** — https://sqliteonline.com
+- **DB Fiddle** — https://www.db-fiddle.com
+- **Replit** — встроенный SQLite
+
+## Первое подключение
+
+После установки откройте командную строку или MySQL Workbench.
+
+\`\`\`sql
+-- Проверка версии
+SELECT VERSION();
+
+-- Просмотр всех баз данных
+SHOW DATABASES;
+
+-- Создание новой базы данных
+CREATE DATABASE my_first_db;
+
+-- Использование базы данных
+USE my_first_db;
+\`\`\`
+
+## Работа с таблицами
+
+\`\`\`sql
+-- Создание таблицы
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50),
+    email VARCHAR(100)
+);
+
+-- Просмотр структуры таблицы
+DESCRIBE users;
+
+-- Просмотр всех таблиц
+SHOW TABLES;
+\`\`\`
+
+## Полезные команды
+
+\`\`\`sql
+-- Просмотр структуры базы данных
+SHOW DATABASES;
+
+-- Выбор базы данных
+USE database_name;
+
+-- Выход
+EXIT;
+\`\`\`
+
+## Практика
+
+Попробуйте создать свою первую базу данных и таблицу!`,
+          completed: false
+        },
+        {
+          id: 3,
+          title: "Создание таблиц (CREATE TABLE)",
+          description: "Изучаем команду CREATE TABLE и типы данных",
+          duration: "35 минут",
+          content: `# Создание таблиц (CREATE TABLE)
+
+## Синтаксис CREATE TABLE
+
+\`\`\`sql
+CREATE TABLE table_name (
+    column1 datatype constraints,
+    column2 datatype constraints,
+    ...
+);
+\`\`\`
+
+## Типы данных в MySQL
+
+### Числовые типы:
+- **INT** — целые числа (-2,147,483,648 до 2,147,483,647)
+- **BIGINT** — большие целые числа
+- **DECIMAL(10,2)** — точные десятичные числа
+- **FLOAT** — числа с плавающей точкой
+- **DOUBLE** — двойной точности
+
+### Строковые типы:
+- **VARCHAR(n)** — строка переменной длины (до n символов)
+- **CHAR(n)** — строка фиксированной длины
+- **TEXT** — большой текст (до 65,535 символов)
+- **LONGTEXT** — очень большой текст
+
+### Дата и время:
+- **DATE** — дата (YYYY-MM-DD)
+- **TIME** — время (HH:MM:SS)
+- **DATETIME** — дата и время
+- **TIMESTAMP** — автоматическая отметка времени
+
+### Логические:
+- **BOOLEAN** или **BOOL** — TRUE/FALSE
+
+## Ограничения (Constraints)
+
+### PRIMARY KEY
+Уникальный идентификатор записи:
+
+\`\`\`sql
+CREATE TABLE users (
+    id INT PRIMARY KEY,
+    name VARCHAR(50)
+);
+\`\`\`
+
+### AUTO_INCREMENT
+Автоматическое увеличение:
+
+\`\`\`sql
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50)
+);
+\`\`\`
+
+### NOT NULL
+Поле не может быть пустым:
+
+\`\`\`sql
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL
+);
+\`\`\`
+
+### UNIQUE
+Уникальное значение:
+
+\`\`\`sql
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(100) UNIQUE NOT NULL
+);
+\`\`\`
+
+### DEFAULT
+Значение по умолчанию:
+
+\`\`\`sql
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL,
+    status VARCHAR(20) DEFAULT 'active',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+\`\`\`
+
+## Пример создания таблицы
+
+\`\`\`sql
+CREATE TABLE products (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL,
+    stock INT DEFAULT 0,
+    category VARCHAR(50),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+\`\`\`
+
+## Удаление таблицы
+
+\`\`\`sql
+-- Удалить таблицу
+DROP TABLE table_name;
+
+-- Удалить таблицу если существует
+DROP TABLE IF EXISTS table_name;
+\`\`\`
+
+## Изменение таблицы
+
+\`\`\`sql
+-- Добавить столбец
+ALTER TABLE users ADD COLUMN age INT;
+
+-- Удалить столбец
+ALTER TABLE users DROP COLUMN age;
+
+-- Изменить тип столбца
+ALTER TABLE users MODIFY COLUMN name VARCHAR(100);
+\`\`\`
+
+## Практическое задание
+
+Создайте таблицу \`students\` со следующими полями:
+- id (первичный ключ, автоинкремент)
+- first_name (обязательное поле)
+- last_name (обязательное поле)
+- email (уникальное)
+- age (число)
+- created_at (дата создания, по умолчанию текущее время)`,
+          completed: false
+        },
+        {
+          id: 4,
+          title: "Вставка данных (INSERT)",
+          description: "Научимся добавлять данные в таблицы",
+          duration: "25 минут",
+          content: `# Вставка данных (INSERT)
+
+## Синтаксис INSERT
+
+### Вставка всех столбцов:
+\`\`\`sql
+INSERT INTO table_name
+VALUES (value1, value2, value3, ...);
+\`\`\`
+
+### Вставка указанных столбцов:
+\`\`\`sql
+INSERT INTO table_name (column1, column2, column3)
+VALUES (value1, value2, value3);
+\`\`\`
+
+## Примеры
+
+### Создадим таблицу:
+\`\`\`sql
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    age INT
+);
+\`\`\`
+
+### Вставка одной записи:
+\`\`\`sql
+INSERT INTO users (name, email, age)
+VALUES ('Иван Иванов', 'ivan@example.com', 25);
+\`\`\`
+
+### Вставка нескольких записей:
+\`\`\`sql
+INSERT INTO users (name, email, age)
+VALUES 
+    ('Мария Петрова', 'maria@example.com', 30),
+    ('Алексей Сидоров', 'alex@example.com', 28),
+    ('Ольга Козлова', 'olga@example.com', 32);
+\`\`\`
+
+### Вставка с AUTO_INCREMENT:
+При использовании AUTO_INCREMENT можно не указывать id:
+
+\`\`\`sql
+INSERT INTO users (name, email, age)
+VALUES ('Петр Новый', 'petr@example.com', 24);
+-- id будет назначен автоматически
+\`\`\`
+
+### Вставка с DEFAULT значениями:
+\`\`\`sql
+CREATE TABLE orders (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    total DECIMAL(10, 2) NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Если не указать status, будет использовано значение по умолчанию
+INSERT INTO orders (user_id, total)
+VALUES (1, 1500.00);
+\`\`\`
+
+## Проверка вставленных данных
+
+\`\`\`sql
+-- Просмотр всех записей
+SELECT * FROM users;
+
+-- Просмотр конкретных столбцов
+SELECT name, email FROM users;
+\`\`\`
+
+## Типы данных и значения
+
+### Строки:
+Используйте одинарные или двойные кавычки:
+\`\`\`sql
+INSERT INTO users (name) VALUES ('Иван');
+INSERT INTO users (name) VALUES ("Иван");
+\`\`\`
+
+### Числа:
+Без кавычек:
+\`\`\`sql
+INSERT INTO users (age) VALUES (25);
+\`\`\`
+
+### Даты:
+Формат 'YYYY-MM-DD':
+\`\`\`sql
+INSERT INTO users (birth_date) VALUES ('1998-05-15');
+\`\`\`
+
+### NULL значения:
+\`\`\`sql
+INSERT INTO users (name, email, age)
+VALUES ('Тест', 'test@example.com', NULL);
+\`\`\`
+
+## Типичные ошибки
+
+1. **Несоответствие количества значений:**
+\`\`\`sql
+-- ❌ Ошибка: количество значений не совпадает
+INSERT INTO users (name, email) VALUES ('Иван');
+\`\`\`
+
+2. **Нарушение NOT NULL:**
+\`\`\`sql
+-- ❌ Ошибка: name обязателен
+INSERT INTO users (email) VALUES ('test@example.com');
+\`\`\`
+
+3. **Нарушение UNIQUE:**
+\`\`\`sql
+-- ❌ Ошибка: email должен быть уникальным
+INSERT INTO users (name, email) VALUES ('Иван 1', 'test@example.com');
+INSERT INTO users (name, email) VALUES ('Иван 2', 'test@example.com');
+\`\`\`
+
+## Практическое задание
+
+1. Создайте таблицу \`products\` с полями: id, name, price, stock
+2. Добавьте 5 различных товаров
+3. Проверьте, что данные успешно вставлены`,
+          completed: false
+        },
+        {
+          id: 5,
+          title: "Выборка данных (SELECT)",
+          description: "Основы SELECT запросов",
+          duration: "40 минут",
+          content: `# Выборка данных (SELECT)
+
+## Базовый синтаксис SELECT
+
+\`\`\`sql
+SELECT column1, column2, ...
+FROM table_name;
+\`\`\`
+
+## Основные примеры
+
+### Выбрать все столбцы:
+\`\`\`sql
+SELECT * FROM users;
+\`\`\`
+
+### Выбрать конкретные столбцы:
+\`\`\`sql
+SELECT name, email FROM users;
+\`\`\`
+
+### Выбрать один столбец:
+\`\`\`sql
+SELECT name FROM users;
+\`\`\`
+
+## WHERE — условие выборки
+
+### Базовое условие:
+\`\`\`sql
+SELECT * FROM users WHERE age > 25;
+\`\`\`
+
+### Операторы сравнения:
+- **=** — равно
+- **!=** или **<>** — не равно
+- **>** — больше
+- **<** — меньше
+- **>=** — больше или равно
+- **<=** — меньше или равно
+
+### Примеры:
+\`\`\`sql
+-- Пользователи старше 25
+SELECT * FROM users WHERE age > 25;
+
+-- Пользователи с конкретным именем
+SELECT * FROM users WHERE name = 'Иван Иванов';
+
+-- Пользователи не старше 30
+SELECT * FROM users WHERE age <= 30;
+\`\`\`
+
+## Логические операторы
+
+### AND — оба условия должны быть true:
+\`\`\`sql
+SELECT * FROM users 
+WHERE age > 25 AND age < 40;
+\`\`\`
+
+### OR — хотя бы одно условие должно быть true:
+\`\`\`sql
+SELECT * FROM users 
+WHERE age < 20 OR age > 60;
+\`\`\`
+
+### NOT — инверсия условия:
+\`\`\`sql
+SELECT * FROM users 
+WHERE NOT age = 25;
+
+-- Или проще:
+SELECT * FROM users WHERE age != 25;
+\`\`\`
+
+### Комбинирование:
+\`\`\`sql
+SELECT * FROM users 
+WHERE (age > 25 AND age < 40) OR email LIKE '%@gmail.com';
+\`\`\`
+
+## LIKE — поиск по шаблону
+
+### Поиск строк:
+\`\`\`sql
+-- Имена начинающиеся с "И"
+SELECT * FROM users WHERE name LIKE 'И%';
+
+-- Имена содержащие "Иван"
+SELECT * FROM users WHERE name LIKE '%Иван%';
+
+-- Email заканчивающиеся на "@gmail.com"
+SELECT * FROM users WHERE email LIKE '%@gmail.com';
+\`\`\`
+
+### Символы:
+- **%** — любое количество символов
+- **_** — ровно один символ
+
+\`\`\`sql
+-- Имя из 4 символов, начинается с "И"
+SELECT * FROM users WHERE name LIKE 'И___';
+\`\`\`
+
+## IN — выборка из списка
+
+\`\`\`sql
+-- Пользователи с возрастом 25, 30 или 35
+SELECT * FROM users WHERE age IN (25, 30, 35);
+
+-- Пользователи с определенными email
+SELECT * FROM users 
+WHERE email IN ('ivan@example.com', 'maria@example.com');
+\`\`\`
+
+## BETWEEN — диапазон значений
+
+\`\`\`sql
+-- Пользователи в возрасте от 25 до 35
+SELECT * FROM users WHERE age BETWEEN 25 AND 35;
+
+-- То же самое:
+SELECT * FROM users WHERE age >= 25 AND age <= 35;
+\`\`\`
+
+## NULL значения
+
+### Проверка на NULL:
+\`\`\`sql
+-- Найти записи где age = NULL
+SELECT * FROM users WHERE age IS NULL;
+
+-- Найти записи где age не NULL
+SELECT * FROM users WHERE age IS NOT NULL;
+\`\`\`
+
+## ORDER BY — сортировка
+
+### Сортировка по возрастанию:
+\`\`\`sql
+SELECT * FROM users ORDER BY age;
+-- или
+SELECT * FROM users ORDER BY age ASC;
+\`\`\`
+
+### Сортировка по убыванию:
+\`\`\`sql
+SELECT * FROM users ORDER BY age DESC;
+\`\`\`
+
+### Сортировка по нескольким столбцам:
+\`\`\`sql
+SELECT * FROM users ORDER BY age DESC, name ASC;
+\`\`\`
+
+## LIMIT — ограничение количества
+
+\`\`\`sql
+-- Первые 5 записей
+SELECT * FROM users LIMIT 5;
+
+-- Пропустить 10, взять следующие 5
+SELECT * FROM users LIMIT 10, 5;
+-- или
+SELECT * FROM users LIMIT 5 OFFSET 10;
+\`\`\`
+
+## DISTINCT — уникальные значения
+
+\`\`\`sql
+-- Все уникальные возрасты
+SELECT DISTINCT age FROM users;
+
+-- Уникальные комбинации
+SELECT DISTINCT name, email FROM users;
+\`\`\`
+
+## Практическое задание
+
+Используя таблицу users, выполните:
+1. Выбрать всех пользователей старше 30
+2. Выбрать имена и email пользователей, чьи имена начинаются с "И"
+3. Выбрать 3 самых молодых пользователя
+4. Найти пользователей, у которых не указан возраст`,
+          completed: false
+        }
+      ]
     },
     {
       id: 6,
@@ -361,6 +969,8 @@ const AppProvider = ({ children }) => {
   const [courses, setCourses] = useState(initialState.courses);
   const [roadmaps] = useState(INITIAL_DATA.roadmaps);
   const [chatMessages, setChatMessages] = useState([]);
+  const [currentCourseId, setCurrentCourseId] = useState(null);
+  const [currentLessonId, setCurrentLessonId] = useState(null);
 
   // Save to localStorage when user or courses change
   useEffect(() => {
@@ -388,6 +998,45 @@ const AppProvider = ({ children }) => {
                 totalCoursesCompleted: prevUser.totalCoursesCompleted + 1
               };
               return newUser;
+            });
+          }
+          
+          return newCourse;
+        }
+        return course;
+      });
+      return updated;
+    });
+  };
+
+  const completeLesson = (courseId, lessonId) => {
+    setCourses(prev => {
+      const updated = prev.map(course => {
+        if (course.id === courseId && course.lessons) {
+          const updatedLessons = course.lessons.map(lesson => 
+            lesson.id === lessonId ? { ...lesson, completed: true } : lesson
+          );
+          
+          // Calculate progress based on completed lessons
+          const completedCount = updatedLessons.filter(l => l.completed).length;
+          const totalLessons = updatedLessons.length;
+          const newProgress = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+          
+          const newCourse = {
+            ...course,
+            lessons: updatedLessons,
+            progress: newProgress
+          };
+          
+          // If course completed
+          if (newProgress === 100 && !course.completed) {
+            newCourse.completed = true;
+            setUser(prevUser => {
+              if (!prevUser) return prevUser;
+              return {
+                ...prevUser,
+                totalCoursesCompleted: prevUser.totalCoursesCompleted + 1
+              };
             });
           }
           
@@ -507,8 +1156,13 @@ const AppProvider = ({ children }) => {
       clearChat,
       updateCourseProgress,
       enrollCourse,
+      completeLesson,
       registerUser,
-      logout
+      logout,
+      currentCourseId,
+      setCurrentCourseId,
+      currentLessonId,
+      setCurrentLessonId
     }}>
       {children}
     </AppContext.Provider>
@@ -887,7 +1541,7 @@ const StreakPage = () => {
 
 // Dashboard Page
 const Dashboard = () => {
-  const { user, courses, setCurrentPage } = useApp();
+  const { user, courses, setCurrentPage, setCurrentCourseId } = useApp();
 
   const activeCourses = courses.filter(c => c.enrolled && c.progress > 0 && c.progress < 100);
   const enrolledCourses = courses.filter(c => c.enrolled);
@@ -989,7 +1643,15 @@ const Dashboard = () => {
               <h2 style={{ marginBottom: '16px', fontSize: '20px', fontWeight: '600' }}>📚 Активные курсы</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {activeCourses.map(course => (
-                  <div key={course.id} className="card" style={{ cursor: 'pointer' }} onClick={() => setCurrentPage('courses')}>
+                  <div 
+                    key={course.id} 
+                    className="card" 
+                    style={{ cursor: 'pointer' }} 
+                    onClick={() => {
+                      setCurrentCourseId(course.id);
+                      setCurrentPage('course-detail');
+                    }}
+                  >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                       <h3 style={{ fontSize: '16px', fontWeight: '600' }}>{course.title}</h3>
                       <span className={`badge badge-${course.level}`}>{course.level}</span>
@@ -1088,9 +1750,310 @@ const Roadmaps = () => {
   );
 };
 
+// Course Detail Page
+const CourseDetail = () => {
+  const { courses, currentCourseId, setCurrentPage, setCurrentLessonId, completeLesson } = useApp();
+  const course = courses.find(c => c.id === currentCourseId);
+
+  if (!course) {
+    return (
+      <div>
+        <button className="btn btn-secondary" onClick={() => setCurrentPage('courses')} style={{ marginBottom: '24px' }}>
+          ← Вернуться к курсам
+        </button>
+        <div className="card" style={{ padding: '48px', textAlign: 'center' }}>
+          <h2>Курс не найден</h2>
+          <p style={{ color: 'var(--color-text-secondary)', marginTop: '12px' }}>
+            Пожалуйста, выберите курс из списка.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const handleLessonClick = (lessonId) => {
+    setCurrentLessonId(lessonId);
+    setCurrentPage('lesson');
+  };
+
+  const completedLessons = course.lessons ? course.lessons.filter(l => l.completed).length : 0;
+  const totalLessons = course.lessons ? course.lessons.length : 0;
+
+  return (
+    <div>
+      <button className="btn btn-secondary" onClick={() => setCurrentPage('courses')} style={{ marginBottom: '24px' }}>
+        ← Вернуться к курсам
+      </button>
+
+      <div className="section-header">
+        <h1 className="section-title">{course.title}</h1>
+        <p className="section-subtitle">{course.description}</p>
+      </div>
+
+      <div className="card" style={{ marginBottom: '24px' }}>
+        <div style={{ display: 'flex', gap: '24px', marginBottom: '16px', flexWrap: 'wrap' }}>
+          <span className={`badge badge-${course.level}`}>{course.level}</span>
+          <span style={{ color: 'var(--color-text-secondary)' }}>📖 {totalLessons} уроков</span>
+          <span style={{ color: 'var(--color-text-secondary)' }}>⏱️ {course.duration}</span>
+        </div>
+        
+        <div className="progress-bar-container" style={{ marginBottom: '8px' }}>
+          <div className="progress-bar-fill" style={{ width: `${course.progress}%` }} />
+        </div>
+        <div style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>
+          Прогресс: {course.progress}% ({completedLessons}/{totalLessons} уроков)
+        </div>
+      </div>
+
+      {course.lessons && course.lessons.length > 0 ? (
+        <div>
+          <h2 style={{ marginBottom: '16px', fontSize: '20px', fontWeight: '600' }}>Уроки курса</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {course.lessons.map((lesson, index) => (
+              <div
+                key={lesson.id}
+                className="card"
+                style={{
+                  cursor: 'pointer',
+                  padding: '16px',
+                  border: lesson.completed ? '2px solid var(--color-success)' : undefined,
+                  opacity: index > 0 && course.lessons[index - 1] && !course.lessons[index - 1].completed ? 0.6 : 1
+                }}
+                onClick={() => {
+                  // Only allow clicking if it's the first lesson or previous is completed
+                  if (index === 0 || (course.lessons[index - 1] && course.lessons[index - 1].completed)) {
+                    handleLessonClick(lesson.id);
+                  }
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                      <span style={{ fontSize: '20px' }}>
+                        {lesson.completed ? '✅' : index === 0 || (course.lessons[index - 1] && course.lessons[index - 1].completed) ? '📖' : '🔒'}
+                      </span>
+                      <h3 style={{ fontSize: '16px', fontWeight: '600', margin: 0 }}>
+                        Урок {index + 1}: {lesson.title}
+                      </h3>
+                    </div>
+                    <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)', marginLeft: '32px', marginBottom: '8px' }}>
+                      {lesson.description}
+                    </p>
+                    <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)', marginLeft: '32px' }}>
+                      ⏱️ {lesson.duration}
+                    </div>
+                  </div>
+                  {lesson.completed && (
+                    <span style={{ 
+                      fontSize: '12px', 
+                      color: 'var(--color-success)', 
+                      fontWeight: '600',
+                      padding: '4px 12px',
+                      background: 'rgba(var(--color-success-rgb), 0.1)',
+                      borderRadius: 'var(--radius-full)'
+                    }}>
+                      Завершено
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="card" style={{ padding: '48px', textAlign: 'center' }}>
+          <p style={{ color: 'var(--color-text-secondary)' }}>
+            Уроки для этого курса пока не добавлены.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Lesson View Page
+const LessonView = () => {
+  const { courses, currentCourseId, currentLessonId, setCurrentPage, setCurrentLessonId, completeLesson } = useApp();
+  const course = courses.find(c => c.id === currentCourseId);
+  const lesson = course?.lessons?.find(l => l.id === currentLessonId);
+
+  if (!course || !lesson) {
+    return (
+      <div>
+        <button className="btn btn-secondary" onClick={() => {
+          setCurrentPage('course-detail');
+          setCurrentLessonId(null);
+        }} style={{ marginBottom: '24px' }}>
+          ← Вернуться к курсу
+        </button>
+        <div className="card" style={{ padding: '48px', textAlign: 'center' }}>
+          <h2>Урок не найден</h2>
+        </div>
+      </div>
+    );
+  }
+
+  const lessonIndex = course.lessons.findIndex(l => l.id === lesson.id);
+  const prevLesson = lessonIndex > 0 ? course.lessons[lessonIndex - 1] : null;
+  const nextLesson = lessonIndex < course.lessons.length - 1 ? course.lessons[lessonIndex + 1] : null;
+
+  const handleComplete = () => {
+    completeLesson(currentCourseId, currentLessonId);
+  };
+
+  const handleNext = () => {
+    if (nextLesson) {
+      setCurrentLessonId(nextLesson.id);
+    } else {
+      setCurrentPage('course-detail');
+      setCurrentLessonId(null);
+    }
+  };
+
+  const handlePrev = () => {
+    if (prevLesson) {
+      setCurrentLessonId(prevLesson.id);
+    } else {
+      setCurrentPage('course-detail');
+      setCurrentLessonId(null);
+    }
+  };
+
+  // Simple markdown-like rendering
+  const renderContent = (content) => {
+    const lines = content.split('\n');
+    const elements = [];
+    let currentCode = '';
+    let inCodeBlock = false;
+    let codeLanguage = '';
+
+    lines.forEach((line, index) => {
+      if (line.startsWith('```')) {
+        if (inCodeBlock) {
+          // End code block
+          elements.push(
+            <pre key={`code-${index}`} style={{
+              background: 'var(--color-secondary)',
+              padding: '16px',
+              borderRadius: 'var(--radius-base)',
+              overflow: 'auto',
+              border: '1px solid var(--color-border)',
+              margin: '16px 0'
+            }}>
+              <code style={{ fontFamily: 'var(--font-family-mono)', fontSize: '14px', whiteSpace: 'pre' }}>
+                {currentCode.trim()}
+              </code>
+            </pre>
+          );
+          currentCode = '';
+          inCodeBlock = false;
+        } else {
+          // Start code block
+          codeLanguage = line.substring(3).trim();
+          inCodeBlock = true;
+        }
+        return;
+      }
+
+      if (inCodeBlock) {
+        currentCode += line + '\n';
+        return;
+      }
+
+      if (line.startsWith('# ')) {
+        elements.push(<h1 key={index} style={{ fontSize: '24px', fontWeight: '600', margin: '24px 0 16px 0' }}>{line.substring(2)}</h1>);
+      } else if (line.startsWith('## ')) {
+        elements.push(<h2 key={index} style={{ fontSize: '20px', fontWeight: '600', margin: '20px 0 12px 0' }}>{line.substring(3)}</h2>);
+      } else if (line.startsWith('### ')) {
+        elements.push(<h3 key={index} style={{ fontSize: '18px', fontWeight: '600', margin: '16px 0 8px 0' }}>{line.substring(4)}</h3>);
+      } else if (line.startsWith('- ') || line.startsWith('* ')) {
+        elements.push(<li key={index} style={{ marginLeft: '20px', marginBottom: '4px', lineHeight: '1.6' }}>{line.substring(2)}</li>);
+      } else if (line.trim() === '') {
+        elements.push(<div key={index} style={{ height: '12px' }} />);
+      } else if (line.includes('**') && line.match(/\*\*/g)?.length >= 2) {
+        const parts = line.split('**');
+        const formatted = parts.map((part, i) => i % 2 === 1 ? <strong key={i}>{part}</strong> : part);
+        elements.push(<p key={index} style={{ marginBottom: '12px', lineHeight: '1.6' }}>{formatted}</p>);
+      } else {
+        elements.push(<p key={index} style={{ marginBottom: '12px', lineHeight: '1.6' }}>{line}</p>);
+      }
+    });
+
+    return elements;
+  };
+
+  return (
+    <div>
+      <button className="btn btn-secondary" onClick={() => {
+        setCurrentPage('course-detail');
+        setCurrentLessonId(null);
+      }} style={{ marginBottom: '24px' }}>
+        ← Вернуться к курсу
+      </button>
+
+      <div className="section-header">
+        <h1 className="section-title">{lesson.title}</h1>
+        <p className="section-subtitle">{lesson.description}</p>
+        <div style={{ display: 'flex', gap: '12px', marginTop: '8px', alignItems: 'center' }}>
+          <span style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>⏱️ {lesson.duration}</span>
+          {lesson.completed && (
+            <span style={{ 
+              fontSize: '12px', 
+              color: 'var(--color-success)', 
+              fontWeight: '600',
+              padding: '4px 12px',
+              background: 'rgba(var(--color-success-rgb), 0.1)',
+              borderRadius: 'var(--radius-full)'
+            }}>
+              ✅ Завершено
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="card" style={{ padding: '32px', marginBottom: '24px', lineHeight: '1.8' }}>
+        <div style={{ 
+          fontSize: '16px',
+          color: 'var(--color-text)',
+          whiteSpace: 'pre-wrap'
+        }}>
+          {renderContent(lesson.content)}
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
+        <button 
+          className="btn btn-secondary" 
+          onClick={handlePrev}
+          disabled={!prevLesson}
+        >
+          ← Предыдущий урок
+        </button>
+        
+        <div style={{ display: 'flex', gap: '12px' }}>
+          {!lesson.completed && (
+            <button 
+              className="btn btn-primary" 
+              onClick={handleComplete}
+            >
+              ✅ Отметить как завершенный
+            </button>
+          )}
+          <button 
+            className="btn btn-primary" 
+            onClick={handleNext}
+          >
+            {nextLesson ? 'Следующий урок →' : 'Завершить курс'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Courses Page
 const Courses = () => {
-  const { courses, enrollCourse } = useApp();
+  const { courses, enrollCourse, setCurrentCourseId, setCurrentPage } = useApp();
   const [levelFilter, setLevelFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
@@ -1174,7 +2137,8 @@ const Courses = () => {
                 if (!course.enrolled) {
                   enrollCourse(course.id);
                 }
-                // TODO: Navigate to course content page
+                setCurrentCourseId(course.id);
+                setCurrentPage('course-detail');
               }}
             >
               {course.enrolled ? (course.progress > 0 ? 'Продолжить' : 'Начать курс') : 'Начать курс'}
@@ -1490,6 +2454,8 @@ const App = () => {
       case 'dashboard': return <Dashboard />;
       case 'roadmaps': return <Roadmaps />;
       case 'courses': return <Courses />;
+      case 'course-detail': return <CourseDetail />;
+      case 'lesson': return <LessonView />;
       case 'progress': return <Progress />;
       case 'streak': return <StreakPage />;
       case 'ai-tutor': return <AITutor />;
