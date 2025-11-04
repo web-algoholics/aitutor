@@ -1,0 +1,1 @@
+This is initial setup of AI tutor project.
