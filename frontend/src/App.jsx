@@ -1,15 +1,21 @@
-import React from 'react';
 import { ConfigProvider } from 'antd';
-import 'antd/dist/reset.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import VerifyPage from './pages/VerifyPage';
+import React from 'react';
 
 function App() {
   return (
-    <ConfigProvider>
-      <div className="min-h-screen bg-gray-300">
-        <h1 className="text-3xl font-bold text-center text-indigo-600 p-8">
-          Welcome to AI Tutor
-        </h1>
-      </div>
+    <ConfigProvider theme={{ token: { colorPrimary: '#4f46e5' } }}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/verify" element={<VerifyPage />} />
+          <Route path="/*" element={<LoginPage />} />
+        </Routes>
+      </BrowserRouter>
     </ConfigProvider>
   );
 }

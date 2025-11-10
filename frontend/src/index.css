@@ -1,1 +1,22 @@
-@import "tailwindcss";
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
+
+a,
+.ant-typography a,
+.ant-btn-link {
+  color: #0f172a !important;
+  text-decoration: none !important;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+a:hover,
+.ant-typography a:hover,
+.ant-btn-link:hover {
+  color: #1e293b !important;
+  text-decoration: underline !important;
+}
