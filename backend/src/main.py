@@ -35,7 +35,7 @@ app.mount(settings.PROFILE_ICON_URL_PATH, StaticFiles(directory=settings.UPLOAD_
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],    # Change on production
+    allow_origins=[settings.FRONTEND_URL],    # Change on production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
