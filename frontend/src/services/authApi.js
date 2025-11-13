@@ -15,11 +15,20 @@ export const authApi = createApi({
       }),
     }),
     login: builder.mutation({
-      query: (credentials) => ({
-        url: '/auth/cookie/login',
-        method: 'POST',
-        body: credentials,
-      }),
+      query: ({ email, password }) => {
+        const body = new URLSearchParams();
+        body.append('username', email);     // ← email → username
+        body.append('password', password);
+
+        return {
+          url: '/auth/cookie/login',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded', // ← KEY!
+          },
+          body: body.toString(), // ← "username=john%40example.com&password=..."
+        };
+      },
     }),
     getCurrentUser: builder.query({
       query: () => '/users/me',

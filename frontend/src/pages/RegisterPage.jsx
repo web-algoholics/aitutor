@@ -9,43 +9,67 @@ export default function RegisterPage() {
   const [register, { isLoading, isSuccess, error }] = useRegisterMutation();
   const navigate = useNavigate();
 
+  // ADD FORM INSTANCE
+  const [form] = Form.useForm();
+
+  // HOOK-BASED MESSAGE
   const [messageApi, contextHolder] = message.useMessage();
 
+  // HANDLE 422 + FIELD ERRORS
+  useEffect(() => {
+    if (error?.status === 422 && error?.data?.detail) {
+      const fieldErrors = error.data.detail.map(err => {
+        const fieldName = err.loc[err.loc.length - 1]; // "username", "email", "password"
+        return {
+          name: fieldName,
+          errors: [err.msg],
+        };
+      });
+      form.setFields(fieldErrors);
+    } else if (error) {
+      const msg = typeof error?.data?.detail === 'string'
+        ? error.data.detail
+        : 'Registration failed';
+      messageApi.error(msg);
+    }
+  }, [error, form, messageApi]);
+
+  // SUCCESS REDIRECT
   useEffect(() => {
     if (isSuccess) {
-      messageApi.success('Check your email to verify.');
+      messageApi.success('Check your email to verify your account.');
       navigate('/login');
     }
   }, [isSuccess, navigate, messageApi]);
 
-  useEffect(() => {
-    if (error) {
-      messageApi.error(error?.data?.detail || 'Registration failed');
-    }
-  }, [error, messageApi]);
-
   const onFinish = async (values) => {
     try {
       await register({
+        username: values.username,
         email: values.email,
         password: values.password,
-        username: values.username,
       }).unwrap();
-    } catch (err) {
-      message.error(err?.data?.detail || 'Registration failed. Please try again.');
+    } catch {
+      // 422 handled in useEffect
     }
   };
 
   return (
     <AuthLayout title="Create Account">
-      <Form layout="vertical" onFinish={onFinish} autoComplete="off">
+      {contextHolder}
+      <Form
+        form={form}  // ← ADD THIS
+        layout="vertical"
+        onFinish={onFinish}
+        autoComplete="off"
+      >
         {/* Username */}
         <Form.Item
           label="Username"
           name="username"
           rules={[{ required: true, message: 'Please enter a username' }]}
         >
-          <Input prefix={<UserOutlined />} placeholder="e.g. john_doe" />
+          <Input prefix={<UserOutlined />} placeholder="john_doe" />
         </Form.Item>
 
         {/* Email */}
@@ -54,7 +78,7 @@ export default function RegisterPage() {
           name="email"
           rules={[
             { required: true, message: 'Please enter your email' },
-            { type: 'email', message: 'Please enter a valid email' },
+            { type: 'email', message: 'Invalid email format' },
           ]}
         >
           <Input prefix={<MailOutlined />} placeholder="you@example.com" />
@@ -69,10 +93,7 @@ export default function RegisterPage() {
             { min: 8, message: 'Password must be at least 8 characters' },
           ]}
         >
-          <Input.Password
-            prefix={<LockOutlined />}
-            placeholder="At least 8 characters"
-          />
+          <Input.Password prefix={<LockOutlined />} placeholder="At least 8 characters" />
         </Form.Item>
 
         {/* Confirm Password */}
@@ -92,10 +113,7 @@ export default function RegisterPage() {
             }),
           ]}
         >
-          <Input.Password
-            prefix={<LockOutlined />}
-            placeholder="Repeat your password"
-          />
+          <Input.Password prefix={<LockOutlined />} placeholder="Repeat password" />
         </Form.Item>
 
         {/* Terms */}
@@ -105,21 +123,19 @@ export default function RegisterPage() {
           rules={[
             {
               validator: (_, value) =>
-                value
-                  ? Promise.resolve()
-                  : Promise.reject(new Error('You must accept the terms')),
+                value ? Promise.resolve() : Promise.reject(new Error('You must accept the terms')),
             },
           ]}
         >
           <Checkbox>
             I accept the{' '}
-            <a href="/terms" target="_blank" rel="noopener noreferrer">
+            <Link to="/terms" target="_blank" rel="noopener noreferrer">
               Terms of Service
-            </a>{' '}
+            </Link>{' '}
             and{' '}
-            <a href="/privacy" target="_blank" rel="noopener noreferrer">
+            <Link to="/privacy" target="_blank" rel="noopener noreferrer">
               Privacy Policy
-            </a>
+            </Link>
           </Checkbox>
         </Form.Item>
 
@@ -130,12 +146,9 @@ export default function RegisterPage() {
           </Button>
         </Form.Item>
 
-        {/* Login link */}
-        <div className="text-center mt-4">
-          Already have an account?{' '}
-          <Link to="/login" className="text-indigo-500 font-medium hover:underline">
-            Sign in
-          </Link>
+        {/* Login Link */}
+        <div className="text-center text-sm">
+          Already have an account? <Link to="/login">Sign in</Link>
         </div>
       </Form>
     </AuthLayout>

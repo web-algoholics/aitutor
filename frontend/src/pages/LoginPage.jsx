@@ -1,3 +1,4 @@
+// src/pages/LoginPage.jsx
 import React, { useEffect } from 'react';
 import { Form, Input, Button, Checkbox, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
@@ -9,24 +10,31 @@ export default function LoginPage() {
   const [login, { isLoading, isSuccess, error }] = useLoginMutation();
   const { data: user, isFetching } = useGetCurrentUserQuery(undefined, { skip: !isSuccess });
   const navigate = useNavigate();
-
-  // HOOK-BASED MESSAGE
+  const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
 
-  // Show error
+  // HANDLE 422 + FIELD ERRORS
   useEffect(() => {
-    if (error) {
-      const msg = error?.data?.detail || 'Invalid email or password';
-      messageApi.error(msg);
+    if (error?.status === 422 && error?.data?.detail) {
+      const fieldErrors = error.data.detail.map(err => {
+        const fieldName = err.loc[err.loc.length - 1]; // "username" or "password"
+        return {
+          name: fieldName === 'username' ? 'email' : fieldName, // ← Map back to form field
+          errors: [err.msg],
+        };
+      });
+      form.setFields(fieldErrors);
+    } else if (error) {
+      messageApi.error('Invalid username or password');
     }
-  }, [error, messageApi]);
+  }, [error, form, messageApi]);
 
-  // Redirect after success
+  // SUCCESS REDIRECT
   useEffect(() => {
     if (isSuccess && !isFetching && user) {
       if (!user.is_verified) {
         messageApi.info('Please verify your email.');
-        navigate('/verify');
+        navigate('/dashboard');;
       } else {
         navigate('/dashboard');
       }
@@ -34,19 +42,25 @@ export default function LoginPage() {
   }, [isSuccess, isFetching, user, navigate, messageApi]);
 
   const onFinish = async (values) => {
-    await login({ email: values.email, password: values.password }).unwrap();
+    try {
+      await login({
+        email: values.email,       // ← From form
+        password: values.password,
+      }).unwrap();
+    } catch {
+      // 422 handled in useEffect
+    }
   };
 
   return (
     <AuthLayout title="Sign In">
-      {contextHolder} {/* Renders toast container */}
-      <Form layout="vertical" onFinish={onFinish} autoComplete="off">
+      {contextHolder}
+      <Form form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
         <Form.Item
-          label="Email"
+          label="Email or Username"
           name="email"
           rules={[
-            { required: true, message: 'Please enter your email' },
-            { type: 'email', message: 'Invalid email' },
+            { required: true, message: 'Please enter your email or username' },
           ]}
         >
           <Input prefix={<UserOutlined />} placeholder="you@example.com" />
