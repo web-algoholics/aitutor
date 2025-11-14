@@ -1,7 +1,6 @@
-// src/pages/ProfilePage.jsx
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Avatar, message, Card, Row, Col, Space, Typography, Upload, Modal } from 'antd';
-import { EditOutlined, MailOutlined, GiftOutlined, CheckCircleOutlined, ExclamationCircleOutlined, UploadOutlined, CameraOutlined } from '@ant-design/icons';
+import { EditOutlined, MailOutlined, GiftOutlined, CheckCircleOutlined, ExclamationCircleOutlined, CameraOutlined } from '@ant-design/icons';
 import { useGetProfileQuery, useUpdateProfileMutation, useRequestVerifyTokenMutation, useUploadAvatarMutation, useGetAvatarQuery } from '../services/profileApi';
 import AuthLayout from '../components/AuthLayout';
 import { useNavigate } from 'react-router-dom';
@@ -10,42 +9,59 @@ const { Title, Text } = Typography;
 
 export default function ProfilePage() {
   const navigate = useNavigate();
+
+  // --- RTK Query ---
   const { data: profile, isLoading, refetch } = useGetProfileQuery();
   const { data: avatarData } = useGetAvatarQuery(undefined, { skip: !profile?.profile_icon_filename });
-  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
+  const [updateProfile, { isSuccess, isError, error: updateError, isLoading: isUpdating }] = useUpdateProfileMutation();
   const [requestVerifyToken] = useRequestVerifyTokenMutation();
   const [uploadAvatar, { isLoading: isUploading }] = useUploadAvatarMutation();
 
+  // --- State ---
   const [editMode, setEditMode] = useState(false);
   const [pwdModal, setPwdModal] = useState(false);
   const [form] = Form.useForm();
   const [pwdForm] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
 
+  // --- Avatar ---
   const avatarUrl = avatarData?.image || `https://via.placeholder.com/80?text=${profile?.first_name?.[0] || 'U'}`;
+
+  // --- Save Original Values When Entering Edit Mode ---
+  const [originalValues, setOriginalValues] = useState({});
 
   useEffect(() => {
     if (profile) {
-      form.setFieldsValue({
-        username: profile.username,
-        email: profile.email,
-        first_name: profile.first_name || '',
-        last_name: profile.last_name || '',
-        phone: profile.phone || '',
-        location: profile.location || '',
-        bio: profile.bio || '',
-      });
+      const values = {
+        username: profile.username || '',
+        email: profile.email || '',
+      };
+      form.setFieldsValue(values);
+      if (!editMode) {
+        setOriginalValues(values); // Save as original
+      }
     }
-  }, [profile, form]);
+  }, [profile, form, editMode]);
 
+  // --- Show Success/Error Messages ---
+  useEffect(() => {
+    if (isSuccess) {
+      messageApi.success('Profile updated successfully');
+      setEditMode(false);
+      refetch();
+    }
+    if (isError) {
+      const msg = updateError?.data?.detail?.[0]?.msg || 'Failed to update profile';
+      messageApi.error(msg);
+    }
+  }, [isSuccess, isError, updateError, messageApi, refetch]);
+
+  // --- Handlers ---
   const onFinish = async (values) => {
     try {
       await updateProfile(values).unwrap();
-      messageApi.success('Profile updated');
-      setEditMode(false);
-      refetch();
-    } catch (err) {
-      messageApi.error(err?.data?.detail?.[0]?.msg || 'Update failed');
+    } catch {
+      // Handled in useEffect
     }
   };
 
@@ -55,9 +71,7 @@ export default function ProfilePage() {
       return;
     }
     try {
-      await updateProfile({
-        password: values.new_password,
-      }).unwrap();
+      await updateProfile({ password: values.new_password }).unwrap();
       messageApi.success('Password changed');
       setPwdModal(false);
       pwdForm.resetFields();
@@ -67,17 +81,17 @@ export default function ProfilePage() {
   };
 
   const handleVerify = async () => {
-  if (!profile?.email) {
-    messageApi.error('Email not found');
-    return;
-  }
-  try {
-    await requestVerifyToken(profile.email).unwrap(); // ← SEND EMAIL
-    messageApi.success('Verification email sent!');
-  } catch (err) {
-    messageApi.error(err?.data?.detail?.[0]?.msg || 'Failed to send email');
-  }
-};
+    if (!profile?.email) {
+      messageApi.error('Email not found');
+      return;
+    }
+    try {
+      messageApi.success('Verification email sent!');
+      await requestVerifyToken(profile.email).unwrap(); // sends JSON
+    } catch (err) {
+      messageApi.error(err?.data?.detail?.[0]?.msg || 'Failed to send email');
+    }
+  };
 
   const handleAvatarUpload = async ({ file }) => {
     const formData = new FormData();
@@ -91,10 +105,26 @@ export default function ProfilePage() {
     }
   };
 
+  // --- Enter Edit Mode ---
+  const enterEditMode = () => {
+    const current = form.getFieldsValue();
+    setOriginalValues(current);
+    setEditMode(true);
+  };
+
+  // --- Cancel Edit ---
+  const cancelEdit = () => {
+    form.setFieldsValue(originalValues);
+    setEditMode(false);
+  };
+
+  // --- Loading ---
   if (isLoading) return <div className="p-8 text-center">Loading...</div>;
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+      {contextHolder}
+
       {/* Header */}
       <Card className="mb-6 w-full shadow-sm">
         <div className="flex items-center justify-between">
@@ -120,7 +150,7 @@ export default function ProfilePage() {
               </Space>
             </div>
           </div>
-          <Button type="primary" icon={<EditOutlined />} onClick={() => setEditMode(true)} disabled={editMode}>
+          <Button type="primary" icon={<EditOutlined />} onClick={enterEditMode} disabled={editMode}>
             Edit Profile
           </Button>
         </div>
@@ -145,7 +175,7 @@ export default function ProfilePage() {
           {editMode && (
             <Form.Item className="text-right mb-0">
               <Space>
-                <Button onClick={() => { setEditMode(false); form.resetFields(); }}>Cancel</Button>
+                <Button onClick={cancelEdit}>Cancel</Button>
                 <Button type="primary" htmlType="submit" loading={isUpdating}>Save Changes</Button>
               </Space>
             </Form.Item>

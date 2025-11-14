@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const profileApi = createApi({
   reducerPath: 'profileApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:8000',
+    baseUrl: process.env.REACT_APP_API_URL || 'http://localhost:8000',
     credentials: 'include',
   }),
   tagTypes: ['Profile'],
@@ -14,35 +14,24 @@ export const profileApi = createApi({
       providesTags: ['Profile'],
     }),
 
-    // PATCH /users/me
     updateProfile: builder.mutation({
-      query: (data) => {
-        const body = new URLSearchParams();
-        Object.entries(data).forEach(([k, v]) => {
-          if (v !== undefined && v !== null && v !== '') body.append(k, v);
-        });
-        return {
-          url: '/users/me',
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: body.toString(),
-        };
-      },
+      query: (data) => ({
+        url: '/users/me',
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
       invalidatesTags: ['Profile'],
     }),
 
     // POST /auth/request-verify-token
     requestVerifyToken: builder.mutation({
-      query: (email) => {
-        const body = new URLSearchParams();
-        body.append('email', email);
-        return {
-          url: '/auth/request-verify-token',
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: body.toString(),
-        };
-      },
+      query: (email) => ({
+        url: '/auth/request-verify-token',
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }, // JSON
+        body: JSON.stringify({ email }),                  // { email: "..." }
+      }),
     }),
 
     // POST /auth/verify
@@ -50,8 +39,8 @@ export const profileApi = createApi({
       query: (token) => ({
         url: '/auth/verify',
         method: 'POST',
-        body: new URLSearchParams({ token }).toString(),
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }), // { token: "abc123" }
       }),
     }),
 
