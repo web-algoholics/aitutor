@@ -57,6 +57,7 @@ export const profileApi = createApi({
     // GET /users/me/icon (base64)
     getAvatar: builder.query({
       query: () => '/users/me/icon',
+      providesTags: ['Profile'], // Must match invalidatesTags
     }),
   }),
 });
