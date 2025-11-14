@@ -1,4 +1,4 @@
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, Layout } from 'antd';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -8,23 +8,31 @@ import ForgotPasswordPage from './pages/ForgotPassword';
 import ResetPasswordPage from './pages/ResetPassword';
 import React from 'react';
 import Dashboard from './pages/Dashboard';
+import AuthLayout from './components/AuthLayout';
+import Navbar from './components/Navbar';
+
+const { Content } = Layout;
 
 function App() {
   return (
-    <ConfigProvider theme={{ token: { colorPrimary: '#4f46e5' } }}>
       <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/*" element={<Dashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/verify-email" element={<VerifyEmailPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
-        </Routes>
+        <Layout className="min-h-screen bg-gray-50">
+          <Navbar /> {/* Always shown */}
+            <Content>
+                <Routes>
+                  {/* Public Routes – No Navbar */}
+                    <Route path="/login" element={<LoginPage title="Sign In" />} />
+                    <Route path="/register" element={<RegisterPage title="Create Account" />} />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage title="Forgot Password" />} />
+                    <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+                  {/* Protected Routes – With Navbar */}
+                    <Route path="/dashboard" element={<Dashboard title="Dashboard" />} />
+                    <Route path="/profile" element={<ProfilePage title="Profile" />} />
+                </Routes>
+            </Content>
+        </Layout>
       </BrowserRouter>
-    </ConfigProvider>
   );
 }
 

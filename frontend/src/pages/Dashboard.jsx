@@ -1,9 +1,11 @@
-import React from 'react'
+import React from 'react';
+import AuthLayout from '../components/AuthLayout';
 
-const Dashboard = () => {
+export default function Dashboard() {
   return (
-    <div>Dashboard</div>
-  )
+    <AuthLayout title="Dashboard">
+        <h2 className="text-xl font-semibold">Welcome back!</h2>
+        <p className="text-gray-600 mt-2">This is your dashboard.</p>
+    </AuthLayout>
+  );
 }
-
-export default Dashboard

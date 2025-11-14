@@ -120,6 +120,7 @@ export default function ProfilePage() {
 
   // --- Loading ---
   if (isLoading) return <div className="p-8 text-center">Loading...</div>;
+  if (!profile) navigate("/login");
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">

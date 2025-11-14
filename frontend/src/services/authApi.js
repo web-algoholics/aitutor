@@ -6,6 +6,7 @@ export const authApi = createApi({
     baseUrl: process.env.REACT_APP_API_URL || 'http://localhost:8000',
     credentials: 'include',
   }),
+  tagTypes: ['Profile'],
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (payload) => ({
@@ -29,6 +30,7 @@ export const authApi = createApi({
           body: body.toString(), // ← "username=john%40example.com&password=..."
         };
       },
+      invalidatesTags: ['Profile'],
     }),
     getCurrentUser: builder.query({
       query: () => '/users/me',
@@ -38,6 +40,7 @@ export const authApi = createApi({
         url: '/auth/cookie/logout',
         method: 'POST',
       }),
+      invalidatesTags: ['Profile'], // ← This clears getProfile & getAvatar
     }),
     forgotPassword: builder.mutation({
       query: (email) => ({
