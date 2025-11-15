@@ -6,6 +6,7 @@ import VerifyEmailPage from './pages/VerifyEmailPage';
 import ProfilePage from './pages/ProfilePage';
 import ForgotPasswordPage from './pages/ForgotPassword';
 import ResetPasswordPage from './pages/ResetPassword';
+import Roadmap from './pages/Roadmap';
 import React from 'react';
 import Dashboard from './pages/Dashboard';
 import AuthLayout from './components/AuthLayout';
@@ -29,6 +30,7 @@ function App() {
                   {/* Protected Routes – With Navbar */}
                     <Route path="/dashboard" element={<Dashboard title="Dashboard" />} />
                     <Route path="/profile" element={<ProfilePage title="Profile" />} />
+                    <Route path="/roadmap" element={<Roadmap />} />
                 </Routes>
             </Content>
         </Layout>
