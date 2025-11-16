@@ -10,6 +10,7 @@ import Roadmap from './pages/Roadmap';
 import React from 'react';
 import Dashboard from './pages/Dashboard';
 import AuthLayout from './components/AuthLayout';
+import ProtectedLayout from './components/ProtectedLayout';
 import Navbar from './components/Navbar';
 
 const { Content } = Layout;
