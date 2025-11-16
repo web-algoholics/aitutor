@@ -18,23 +18,23 @@ const { Content } = Layout;
 function App() {
   return (
       <BrowserRouter>
-        <Layout className="min-h-screen bg-gray-50">
-          <Navbar /> {/* Always shown */}
-            <Content>
-                <Routes>
-                  {/* Public Routes – No Navbar */}
-                    <Route path="/login" element={<LoginPage title="Sign In" />} />
-                    <Route path="/register" element={<RegisterPage title="Create Account" />} />
-                    <Route path="/forgot-password" element={<ForgotPasswordPage title="Forgot Password" />} />
-                    <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Routes>
 
-                  {/* Protected Routes – With Navbar */}
-                    <Route path="/dashboard" element={<Dashboard title="Dashboard" />} />
-                    <Route path="/profile" element={<ProfilePage title="Profile" />} />
-                    <Route path="/roadmap" element={<Roadmap />} />
-                </Routes>
-            </Content>
-        </Layout>
+          {/* Public Routes (no navbar) */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
+
+          {/* Protected Routes (with navbar) */}
+          <Route element={<ProtectedLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/roadmap" element={<Roadmap />} />
+          </Route>
+
+        </Routes>
       </BrowserRouter>
   );
 }
