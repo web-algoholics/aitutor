@@ -37,6 +37,7 @@ export default function Navbar() {
       {/* Middle: Links */}
       <div style={{ display: "flex", gap: 20 }}>
         <Link to="/dashboard">Dashboard</Link>
+        <Link to="/roadmap">Roadmap</Link>
       </div>
 
       {/* Right: Avatar or Sign In */}
