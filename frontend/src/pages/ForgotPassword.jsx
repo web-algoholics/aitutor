@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
           </Form.Item>
 
           <div className="text-center">
-            <Link to="/login">Back to Sign In</Link>
+            <Link to="/login" className='hover:text-black'>Back to Sign In</Link>
           </div>
         </Form>
       </div>

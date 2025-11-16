@@ -79,7 +79,7 @@ export default function LoginPage() {
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox>Remember me</Checkbox>
             </Form.Item>
-            <Link to="/forgot-password" className="text-sm">
+            <Link to="/forgot-password" className="text-sm hover:text-black hover:underline">
               Forgot password?
             </Link>
           </div>
@@ -92,7 +92,7 @@ export default function LoginPage() {
         </Form.Item>
 
         <div className="text-center text-sm">
-          Don’t have an account? <Link to="/register">Sign up</Link>
+          Don’t have an account? <Link to="/register" className="hover:text-black hover:underline">Sign up</Link>
         </div>
       </Form>
     </AuthLayout>

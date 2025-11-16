@@ -1,75 +1,65 @@
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Layout, Avatar, Button } from "antd";
+import { Avatar, Button } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { useGetCurrentUserQuery, useLogoutMutation } from "../services/authApi";
-import { useGetAvatarQuery } from "../services/profileApi"; 
-import React from "react";
-
-const { Header } = Layout;
+import { useGetAvatarQuery } from "../services/profileApi";
 
 export default function Navbar() {
   const { data: user } = useGetCurrentUserQuery();
-  const { data: avatarData } = useGetAvatarQuery(undefined, {
-    skip: !user,
-  });
-
+  const { data: avatarData } = useGetAvatarQuery(undefined, { skip: !user });
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
 
-  // Avatar is returned as: { image: "data:image..." }
   const avatarUrl = avatarData?.image || null;
 
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
+
   return (
-    <Header
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        background: "#fff",
-        borderBottom: "1px solid #eee",
-      }}
-    >
-      {/* Left: Logo */}
-      <div style={{ fontWeight: 700, fontSize: 20 }}>
-        <Link to="/dashboard">MyApp</Link>
+    <header className="bg-white border-b border-gray-200 flex items-center justify-between px-6 h-16">
+      {/* Logo */}
+      <div className=" font-bold text-xl">
+        <Link to="/dashboard" className="hover:text-gray-500">MyApp</Link>
       </div>
 
-      {/* Middle: Links */}
-      <div style={{ display: "flex", gap: 20 }}>
-        <Link to="/dashboard">Dashboard</Link>
-        <Link to="/roadmap">Roadmap</Link>
-      </div>
+      {/* Middle Links */}
+      <nav className="hidden md:flex gap-6 text-sm font-medium text-black">
+        <Link to="/dashboard" className="hover:text-gray-600 transition-colors">
+          Dashboard
+        </Link>
+        <Link to="/roadmap" className="hover:text-gray-600 transition-colors">
+          Roadmap
+        </Link>
+      </nav>
 
-      {/* Right: Avatar or Sign In */}
-      <div>
+      {/* Right: Auth */}
+      <div className="flex items-center gap-4">
         {user ? (
-          <div style={{ display: "flex", gap: 15, alignItems: "center" }}>
-            
-            {/* Avatar – link to profile */}
+          <>
+            {/* Avatar → Profile */}
             <Link to="/profile">
               <Avatar
                 src={avatarUrl}
                 icon={<UserOutlined />}
-                style={{ cursor: "pointer" }}
+                className="cursor-pointer border border-gray-300 hover:border-gray-400 transition-colors"
+                size={36}
               />
             </Link>
 
-            <Button
-              type="default"
-              onClick={async () => {
-                await logout();
-                navigate("/login");
-              }}
-            >
+            {/* Logout Button */}
+            <Button type="default" onClick={handleLogout} size="middle">
               Logout
             </Button>
-          </div>
+          </>
         ) : (
           <Button type="primary">
             <Link to="/login">Sign In</Link>
           </Button>
         )}
       </div>
-    </Header>
+    </header>
   );
 }
