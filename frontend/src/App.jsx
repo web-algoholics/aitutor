@@ -29,6 +29,7 @@ function App() {
 
           {/* Protected Routes (with navbar) */}
           <Route element={<ProtectedLayout />}>
+            <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/roadmap" element={<Roadmap />} />
