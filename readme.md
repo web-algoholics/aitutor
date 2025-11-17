@@ -1,1 +1,3 @@
-This is initial setup of AI tutor project.
+AI Tutor
+npm start - start local development,
+npm run build - build project.
