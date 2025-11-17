@@ -1,29 +1,61 @@
 {
-    "name": "aitutor",
-    "version": "1.0.0",
-    "description": "Sber web project",
-    "main": "index.js",
-    "scripts": {
-        "start": "node index.js",
-        "dev": "node index.js",
-        "install-deps": "npm install",
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build:prod": "npm run clean && brojs build"
-    },
-    "private": true,
-    "dependencies": {
-        "express": "^4.18.2",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/web-algoholics/aitutor.git"
-    },
-    "author": "web-algoholics",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/web-algoholics/aitutor/issues"
-    },
-    "homepage": "https://github.com/web-algoholics/aitutor#readme"
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack serve --mode development",
+    "build": "webpack --mode production",
+    "dev": "webpack serve --mode development",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ant-design/icons": "^6.1.0",
+    "@reduxjs/toolkit": "^2.10.1",
+    "antd": "^5.28.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.9.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "@babel/preset-react": "^7.28.5",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
+    "autoprefixer": "^10.4.21",
+    "babel-loader": "^10.0.0",
+    "css-loader": "^7.1.2",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.6.4",
+    "less": "^4.4.2",
+    "less-loader": "^12.3.0",
+    "postcss": "^8.5.6",
+    "postcss-loader": "^8.2.0",
+    "prettier": "^3.6.2",
+    "sass": "^1.93.3",
+    "sass-loader": "^16.0.6",
+    "style-loader": "^4.0.0",
+    "tailwindcss": "^3.4.18",
+    "typescript": "^5.9.3",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.102.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
+  }
 }
