@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard';
 import AuthLayout from './components/AuthLayout';
 import ProtectedLayout from './components/ProtectedLayout';
 import Navbar from './components/Navbar';
+import ChatPage from './pages/ChatPage';
 
 const { Content } = Layout;
 
@@ -33,6 +34,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/roadmap" element={<Roadmap />} />
+            <Route path="/chat" element={<ChatPage />} />
           </Route>
 
         </Routes>

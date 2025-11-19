@@ -3,8 +3,10 @@ from fastapi import FastAPI, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from pydantic import BaseModel
+from .gigachat import giga
 
-from database import init_db
+from .database import init_db
 from config import settings
 
 from auth.auth import fastapi_users, current_active_user, auth_backend
@@ -79,3 +81,12 @@ app.include_router(upload_router)
 @app.get("/protected")
 def protected_route(user: User = Depends(current_active_user)):
     return {"message": f"Hello {user.email}! Your session is active."}
+
+
+class ChatInput(BaseModel):
+    question: str
+@app.post("/api/gigachat")
+def chat(input: ChatInput):
+    result = giga.ask(input.question)
+    answer = result.get("choices", [{}])[0].get("message", {}).get("content", "Ошибка ответа")
+    return {"answer": answer}
