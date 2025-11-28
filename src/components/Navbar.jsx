@@ -22,7 +22,7 @@ export default function Navbar() {
     <header className="bg-white border-b border-gray-200 flex items-center justify-between px-6 h-16">
       {/* Logo */}
       <div className=" font-bold text-xl">
-        <Link to="/dashboard" className="hover:text-gray-500">MyApp</Link>
+        <Link to="/dashboard" className="hover:text-gray-500">ну и попа</Link>
       </div>
 
       {/* Middle Links */}

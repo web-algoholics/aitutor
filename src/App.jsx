@@ -8,7 +8,7 @@ import ForgotPasswordPage from './pages/ForgotPassword';
 import ResetPasswordPage from './pages/ResetPassword';
 import Roadmap from './pages/Roadmap';
 import React from 'react';
-import Dashboard from './pages/Dashboard';
+import Dashboard, { CoursePage } from './pages/Dashboard';
 import AuthLayout from './components/AuthLayout';
 import ProtectedLayout from './components/ProtectedLayout';
 import Navbar from './components/Navbar';
@@ -28,12 +28,13 @@ function App() {
           <Route path="/verify-email" element={<VerifyEmailPage />} />
 
           {/* Protected Routes (with navbar) */}
-          <Route element={<ProtectedLayout />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/roadmap" element={<Roadmap />} />
-          </Route>
+        <Route element={<ProtectedLayout />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/courses/:language" element={<CoursePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/roadmap" element={<Roadmap />} />
+        </Route>
 
         </Routes>
       </BrowserRouter>
