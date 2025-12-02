@@ -1,9 +1,10 @@
 import requests
 import time
 import base64
+import uuid
 
-CLIENT_ID = "019a9c5f-f253-76bd-87a3-84ccf1ab8d62"
-CLIENT_SECRET = "5dc9f05d-4811-44b6-b7f5-74fb1de5e37b"
+CLIENT_ID = "019a3eb7-2b8b-7059-8eec-8b38d23f53aa"
+CLIENT_SECRET = "31329df0-471d-48ce-b319-b0106b4d00d8"
 AUTH = f"{CLIENT_ID}:{CLIENT_SECRET}"
 
 class GigaChat:
@@ -15,16 +16,19 @@ class GigaChat:
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
             "Accept": "application/json",
-            "RqUID": "any-uuid-строка",  # например, random uuid
-            "Authorization": "Basic " + base64.b64encode(AUTH.encode()).decode()
+            "RqUID": str(uuid.uuid4()),
+            "Authorization": "Basic " + base64.b64encode(AUTH.encode()).decode(),
         }
-        data = {"scope": "GIGACHAT_API_B2B"}
+        data = {"scope": "GIGACHAT_API_PERS"}
+        # Получаем OAuth‑токен, а не делаем чат‑запрос
         response = requests.post(
-            "https://ngw.devices.sberbank.ru:9443/api/v2/oauth", 
-            headers=headers, 
-            data=data, 
-            verify=False
+            "https://ngw.devices.sberbank.ru:9443/api/v2/oauth",
+            headers=headers,
+            data=data,
+            verify=False,
         )
+        if response.status_code != 200:
+            raise Exception(f"Ошибка получения токена: {response.status_code} - {response.text}")
         resp_json = response.json()
         self.token = resp_json["access_token"]
         self.token_expires = time.time() + resp_json.get("expires_in", 3600) - 120
@@ -47,8 +51,11 @@ class GigaChat:
         response = requests.post(
             "https://gigachat.devices.sberbank.ru/api/v1/chat/completions",
             headers=headers,
-            json=payload
+            json=payload,
+            verify=False,  # Отключаем проверку сертификата (для тестов / self-signed)
         )
+        if response.status_code != 200:
+            raise Exception(f"Ошибка GigaChat API: {response.status_code} - {response.text}")
         return response.json()
 
 giga = GigaChat()

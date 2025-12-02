@@ -7,12 +7,29 @@ const { Title } = Typography;
 
 // Функция для общения с backend GigaChat API
 async function askBot(question) {
-  const response = await fetch('/api/gigachat', {
+  const response = await fetch('http://localhost:8000/api/gigachat', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      accept: 'application/json',
+    },
     body: JSON.stringify({ question }),
   });
+
+  // Проверяем HTTP‑статус
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(
+      `Ошибка сервера ${response.status}: ${text.slice(0, 200)}`
+    );
+  }
+
+  // Гарантируем, что backend вернул именно JSON
   const data = await response.json();
+  if (!data || typeof data.answer !== 'string') {
+    throw new Error('Некорректный формат ответа backend (нет поля answer)');
+  }
+
   return data.answer;
 }
 
@@ -24,24 +41,46 @@ export default function ChatBotPage() {
   const [loading, setLoading] = useState(false);
 
   const handleSend = async () => {
-    if (!input.trim()) return;
-    setMessages((msgs) => [...msgs, { sender: 'user', text: input }]);
-    setLoading(true);
-    try {
-      const botReply = await askBot(input); // Отправка запроса на backend
-      setMessages((msgs) => [...msgs, { sender: 'bot', text: botReply }]);
-    } catch (e) {
-      setMessages((msgs) => [...msgs, { sender: 'bot', text: 'Ошибка: ' + e.message }]);
-    }
-    setLoading(false);
+    if (!input.trim() || loading) return;
+
+    const userText = input.trim();
+
+    setMessages((msgs) => [
+      ...msgs,
+      { sender: 'user', text: userText },
+    ]);
     setInput('');
+    setLoading(true);
+
+    try {
+      const botReply = await askBot(userText);
+      setMessages((msgs) => [
+        ...msgs,
+        { sender: 'bot', text: botReply },
+      ]);
+    } catch (e) {
+      setMessages((msgs) => [
+        ...msgs,
+        {
+          sender: 'bot',
+          text:
+            'Ошибка при обращении к серверу: ' +
+            (e instanceof Error ? e.message : String(e)),
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <AuthLayout title="Чат-бот">
       <div className="flex justify-center items-center min-h-[70vh]">
         <Card className="w-full max-w-md mx-auto shadow-lg">
-          <Title level={4} className="text-center mb-6">GigaChat Bot</Title>
+          <Title level={4} className="text-center mb-6">
+            GigaChat Bot
+          </Title>
+
           <div className="flex flex-col gap-2 mb-4">
             {messages.map((msg, idx) => (
               <div
@@ -61,6 +100,7 @@ export default function ChatBotPage() {
               </div>
             )}
           </div>
+
           <div className="flex gap-2">
             <TextArea
               rows={2}
@@ -88,4 +128,3 @@ export default function ChatBotPage() {
     </AuthLayout>
   );
 }
-
