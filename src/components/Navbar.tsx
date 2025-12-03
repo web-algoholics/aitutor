@@ -22,15 +22,15 @@ export default function Navbar() {
     <header className="bg-white border-b border-gray-200 flex items-center justify-between px-6 h-16">
       {/* Logo */}
       <div className=" font-bold text-xl">
-        <Link to="/dashboard" className="hover:text-gray-500">AI Tutor</Link>
+        <Link to="/dashboard" className="text-black hover:text-gray-500">AI Tutor</Link>
       </div>
 
       {/* Middle Links */}
       <nav className="hidden md:flex gap-6 text-sm font-medium text-black">
-        <Link to="/dashboard" className="hover:text-gray-600 transition-colors">
+        <Link to="/dashboard" className="text-black hover:text-gray-600 transition-colors">
           Dashboard
         </Link>
-        <Link to="/roadmap" className="hover:text-gray-600 transition-colors">
+        <Link to="/roadmap" className="text-black hover:text-gray-600 transition-colors">
           Roadmap
         </Link>
       </nav>

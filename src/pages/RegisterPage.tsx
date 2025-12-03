@@ -154,7 +154,7 @@ export default function RegisterPage() {
 
         {/* Login Link */}
         <div className="text-center text-sm">
-          Already have an account? <Link to="/login">Sign in</Link>
+          Already have an account? <Link to="/login" className="text-sm hover:text-black hover:underline">Sign in</Link>
         </div>
       </Form>
     </AuthLayout>
