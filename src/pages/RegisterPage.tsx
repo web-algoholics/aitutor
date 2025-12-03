@@ -4,22 +4,28 @@ import { UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRegisterMutation } from '../services/authApi';
 import AuthLayout from '../components/AuthLayout';
+import type { FormInstance } from 'antd';
+
+interface RegisterValues {
+  username: string;
+  email: string;
+  password: string;
+  confirm: string;
+  agree: boolean;
+}
 
 export default function RegisterPage() {
   const [register, { isLoading, isSuccess, error }] = useRegisterMutation();
   const navigate = useNavigate();
-
-  // ADD FORM INSTANCE
-  const [form] = Form.useForm();
-
-  // HOOK-BASED MESSAGE
+  const [form] = Form.useForm<RegisterValues>();
   const [messageApi, contextHolder] = message.useMessage();
 
   // HANDLE 422 + FIELD ERRORS
   useEffect(() => {
-    if (error?.status === 422 && error?.data?.detail) {
-      const fieldErrors = error.data.detail.map(err => {
-        const fieldName = err.loc[err.loc.length - 1]; // "username", "email", "password"
+    if (error && 'status' in error && error.status === 422 && 'data' in error && error.data && typeof error.data === 'object' && 'detail' in error.data) {
+      const errorData = error.data as any;
+      const fieldErrors = errorData.detail.map((err: any) => {
+        const fieldName = err.loc[err.loc.length - 1];
         return {
           name: fieldName,
           errors: [err.msg],
@@ -27,8 +33,8 @@ export default function RegisterPage() {
       });
       form.setFields(fieldErrors);
     } else if (error) {
-      const msg = typeof error?.data?.detail === 'string'
-        ? error.data.detail
+      const msg = 'data' in error && error.data && typeof error.data === 'object' && 'detail' in error.data
+        ? (error.data as any).detail
         : 'Registration failed';
       messageApi.error(msg);
     }
@@ -42,7 +48,7 @@ export default function RegisterPage() {
     }
   }, [isSuccess, navigate, messageApi]);
 
-  const onFinish = async (values) => {
+  const onFinish = async (values: RegisterValues) => {
     try {
       await register({
         username: values.username,
@@ -57,8 +63,8 @@ export default function RegisterPage() {
   return (
     <AuthLayout title="Create Account">
       {contextHolder}
-      <Form
-        form={form}  // ← ADD THIS
+      <Form<RegisterValues>
+        form={form}
         layout="vertical"
         onFinish={onFinish}
         autoComplete="off"

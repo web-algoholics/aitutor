@@ -3,19 +3,18 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const profileApi = createApi({
   reducerPath: 'profileApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.REACT_APP_API_URL || 'http://localhost:8000',
+    baseUrl: (process.env as any).REACT_APP_API_URL || 'http://localhost:8000',
     credentials: 'include',
   }),
   tagTypes: ['Profile'],
   endpoints: (builder) => ({
-    // GET /users/me
     getProfile: builder.query({
       query: () => '/users/me',
       providesTags: ['Profile'],
     }),
 
     updateProfile: builder.mutation({
-      query: (data) => ({
+      query: (data: { username?: string; email?: string; password?: string }) => ({
         url: '/users/me',
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -24,29 +23,26 @@ export const profileApi = createApi({
       invalidatesTags: ['Profile'],
     }),
 
-    // POST /auth/request-verify-token
     requestVerifyToken: builder.mutation({
-      query: (email) => ({
+      query: (email: string) => ({
         url: '/auth/request-verify-token',
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }, // JSON
-        body: JSON.stringify({ email }),                  // { email: "..." }
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
       }),
     }),
 
-    // POST /auth/verify
     verifyEmail: builder.mutation({
-      query: (token) => ({
+      query: (token: string) => ({
         url: '/auth/verify',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token }), // { token: "abc123" }
+        body: JSON.stringify({ token }),
       }),
     }),
 
-    // POST /users/me/upload-icon
     uploadAvatar: builder.mutation({
-      query: (file) => ({
+      query: (file: FormData) => ({
         url: '/users/me/upload-icon',
         method: 'POST',
         body: file,
@@ -54,10 +50,9 @@ export const profileApi = createApi({
       invalidatesTags: ['Profile'],
     }),
 
-    // GET /users/me/icon (base64)
     getAvatar: builder.query({
       query: () => '/users/me/icon',
-      providesTags: ['Profile'], // Must match invalidatesTags
+      providesTags: ['Profile'],
     }),
   }),
 });

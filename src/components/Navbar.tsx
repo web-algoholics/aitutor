@@ -6,15 +6,15 @@ import { useGetCurrentUserQuery, useLogoutMutation } from "../services/authApi";
 import { useGetAvatarQuery } from "../services/profileApi";
 
 export default function Navbar() {
-  const { data: user } = useGetCurrentUserQuery();
+  const { data: user } = useGetCurrentUserQuery(undefined, {});
   const { data: avatarData } = useGetAvatarQuery(undefined, { skip: !user });
-  const [logout] = useLogoutMutation();
+  const [logout] = useLogoutMutation(undefined);
   const navigate = useNavigate();
 
   const avatarUrl = avatarData?.image || null;
 
   const handleLogout = async () => {
-    await logout();
+    await logout(undefined);
     navigate("/login");
   };
 
@@ -22,7 +22,7 @@ export default function Navbar() {
     <header className="bg-white border-b border-gray-200 flex items-center justify-between px-6 h-16">
       {/* Logo */}
       <div className=" font-bold text-xl">
-        <Link to="/dashboard" className="hover:text-gray-500">ну и попа</Link>
+        <Link to="/dashboard" className="hover:text-gray-500">AI Tutor</Link>
       </div>
 
       {/* Middle Links */}

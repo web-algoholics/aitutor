@@ -7,43 +7,51 @@ import { useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
+interface ProfileFormValues {
+  username: string;
+  email: string;
+}
+
+interface PasswordChangeValues {
+  new_password: string;
+  confirm_password: string;
+}
+
 export default function ProfilePage() {
   const navigate = useNavigate();
 
-  // --- RTK Query ---
-  const { data: profile, isLoading, refetch } = useGetProfileQuery();
-  const { data: avatarData } = useGetAvatarQuery(undefined, { skip: !profile?.profile_icon_filename });
+  const { data: profile, isLoading, refetch } = useGetProfileQuery(undefined);
+  const { data: avatarData } = useGetAvatarQuery(undefined, { skip: !profile?.profile_icon_filename } as any);
   const [updateProfile, { isSuccess, isError, error: updateError, isLoading: isUpdating }] = useUpdateProfileMutation();
   const [requestVerifyToken] = useRequestVerifyTokenMutation();
   const [uploadAvatar, { isLoading: isUploading }] = useUploadAvatarMutation();
 
-  // --- State ---
   const [editMode, setEditMode] = useState(false);
   const [pwdModal, setPwdModal] = useState(false);
-  const [form] = Form.useForm();
-  const [pwdForm] = Form.useForm();
+  const [form] = Form.useForm<ProfileFormValues>();
+  const [pwdForm] = Form.useForm<PasswordChangeValues>();
   const [messageApi, contextHolder] = message.useMessage();
 
-  // --- Avatar ---
   const avatarUrl = avatarData?.image || `https://via.placeholder.com/80?text=${profile?.first_name?.[0] || 'U'}`;
 
-  // --- Save Original Values When Entering Edit Mode ---
-  const [originalValues, setOriginalValues] = useState({});
+  const [originalValues, setOriginalValues] = useState<ProfileFormValues>({
+    username: '',
+    email: '',
+  });
 
   useEffect(() => {
     if (profile) {
-      const values = {
-        username: profile.username || '',
-        email: profile.email || '',
+      const values: ProfileFormValues = {
+        username: ('username' in profile ? profile.username : '') || '',
+        email: ('email' in profile ? profile.email : '') || '',
       };
       form.setFieldsValue(values);
       if (!editMode) {
-        setOriginalValues(values); // Save as original
+        setOriginalValues(values);
       }
     }
   }, [profile, form, editMode]);
 
-  // --- Show Success/Error Messages ---
   useEffect(() => {
     if (isSuccess) {
       messageApi.success('Profile updated successfully');
@@ -51,13 +59,14 @@ export default function ProfilePage() {
       refetch();
     }
     if (isError) {
-      const msg = updateError?.data?.detail?.[0]?.msg || 'Failed to update profile';
+      const msg = updateError && 'data' in updateError && updateError.data && typeof updateError.data === 'object' && 'detail' in updateError.data
+        ? (updateError.data as any).detail?.[0]?.msg || 'Failed to update profile'
+        : 'Failed to update profile';
       messageApi.error(msg);
     }
   }, [isSuccess, isError, updateError, messageApi, refetch]);
 
-  // --- Handlers ---
-  const onFinish = async (values) => {
+  const onFinish = async (values: ProfileFormValues) => {
     try {
       await updateProfile(values).unwrap();
     } catch {
@@ -65,7 +74,7 @@ export default function ProfilePage() {
     }
   };
 
-  const onPasswordChange = async (values) => {
+  const onPasswordChange = async (values: PasswordChangeValues) => {
     if (values.new_password !== values.confirm_password) {
       pwdForm.setFields([{ name: 'confirm_password', errors: ['Passwords do not match'] }]);
       return;
@@ -75,25 +84,26 @@ export default function ProfilePage() {
       messageApi.success('Password changed');
       setPwdModal(false);
       pwdForm.resetFields();
-    } catch (err) {
+    } catch (err: any) {
       messageApi.error(err?.data?.detail?.[0]?.msg || 'Password change failed');
     }
   };
 
   const handleVerify = async () => {
-    if (!profile?.email) {
+    if (!profile || !('email' in profile) || !profile.email) {
       messageApi.error('Email not found');
       return;
     }
     try {
       messageApi.success('Verification email sent!');
-      await requestVerifyToken(profile.email).unwrap(); // sends JSON
-    } catch (err) {
+      await requestVerifyToken(profile.email as string).unwrap();
+    } catch (err: any) {
       messageApi.error(err?.data?.detail?.[0]?.msg || 'Failed to send email');
     }
   };
 
-  const handleAvatarUpload = async ({ file }) => {
+  const handleAvatarUpload = async (info: any) => {
+    const file = info.file;
     const formData = new FormData();
     formData.append('file', file);
     try {
@@ -105,29 +115,26 @@ export default function ProfilePage() {
     }
   };
 
-  // --- Enter Edit Mode ---
   const enterEditMode = () => {
     const current = form.getFieldsValue();
     setOriginalValues(current);
     setEditMode(true);
   };
 
-  // --- Cancel Edit ---
   const cancelEdit = () => {
     form.setFieldsValue(originalValues);
     setEditMode(false);
   };
 
-  // --- Loading ---
   if (isLoading) return <div className="p-8 text-center">Loading...</div>;
   if (!profile) navigate("/login");
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+    <div className="max-w-4xl mx-auto px-6 py-8 w-full">
       {contextHolder}
 
       {/* Header */}
-      <Card className="mb-6 w-full shadow-sm">
+      <Card className="mb-6 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Upload
@@ -144,10 +151,10 @@ export default function ProfilePage() {
               />
             </Upload>
             <div>
-              <Title level={4} className="m-0">{profile?.username}</Title>
+              <Title level={4} className="m-0">{profile && 'username' in profile ? profile.username : 'User'}</Title>
               <Space size={4} className="text-gray-600">
                 <MailOutlined />
-                <Text>{profile?.email}</Text>
+                <Text>{profile && 'email' in profile ? profile.email : 'Loading...'}</Text>
               </Space>
             </div>
           </div>
@@ -158,8 +165,8 @@ export default function ProfilePage() {
       </Card>
 
       {/* Profile Form */}
-      <Card title="Profile Information" className="w-full shadow-sm">
-        <Form form={form} layout="vertical" onFinish={onFinish} disabled={!editMode}>
+      <Card title="Profile Information" className="shadow-sm">
+        <Form<ProfileFormValues> form={form} layout="vertical" onFinish={onFinish} disabled={!editMode}>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item label="Username" name="username">
@@ -184,7 +191,7 @@ export default function ProfilePage() {
         </Form>
 
         {/* Email Verification */}
-        {!profile?.is_verified ? (
+        {profile && 'is_verified' in profile && !profile.is_verified ? (
           <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <Space>
               <ExclamationCircleOutlined className="text-yellow-600" />
@@ -220,7 +227,7 @@ export default function ProfilePage() {
         onCancel={() => { setPwdModal(false); pwdForm.resetFields(); }}
         footer={null}
       >
-        <Form form={pwdForm} layout="vertical" onFinish={onPasswordChange}>
+        <Form<PasswordChangeValues> form={pwdForm} layout="vertical" onFinish={onPasswordChange}>
           <Form.Item
             name="new_password"
             rules={[

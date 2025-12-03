@@ -7,5 +7,14 @@
 </head>
 <body>
     <div id="root"></div>
+    <script>
+        // Ensure root element exists before React tries to mount
+        if (!document.getElementById('root')) {
+            console.error('Root element not found! Creating one.');
+            const root = document.createElement('div');
+            root.id = 'root';
+            document.body.appendChild(root);
+        }
+    </script>
 </body>
 </html>

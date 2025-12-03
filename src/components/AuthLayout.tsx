@@ -1,8 +1,13 @@
-import { Card } from 'antd';
+import { Card, CardProps } from 'antd';
 import { Link } from 'react-router-dom';
-import React from 'react';
+import React, { ReactNode } from 'react';
 
-export default function AuthLayout({ children, title }) {
+interface AuthLayoutProps {
+  children: ReactNode;
+  title?: string;
+}
+
+export default function AuthLayout({ children, title }: AuthLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <Card

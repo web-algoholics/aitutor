@@ -2,10 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { Card, Button, Progress, Dropdown, Modal, Form, Select, message, Empty, Space, Spin } from 'antd';
 import { MoreOutlined, PlusOutlined, DeleteOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { Link, useParams } from 'react-router-dom';
+import type { FormInstance } from 'antd';
+import type { MenuProps } from 'antd';
 
-// === MOCK DATA ===
+interface Lesson {
+  id: number;
+  title: string;
+  duration: string;
+  completed: boolean;
+}
 
-const LANGUAGE_COURSES = [
+interface Course {
+  id: number;
+  name: string;
+  path: string;
+  hours: number;
+  projects: number;
+  progress: number;
+  description: string;
+  lessons: Lesson[];
+}
+
+const LANGUAGE_COURSES: Course[] = [
   {
     id: 1,
     name: 'Python',
@@ -102,13 +120,15 @@ const LANGUAGE_COURSES = [
   }
 ];
 
-// === DASHBOARD ===
+interface AddCourseFormValues {
+  courseId: number;
+}
 
 export function Dashboard() {
-  const [enrolledLanguages, setEnrolledLanguages] = useState([]);
+  const [enrolledLanguages, setEnrolledLanguages] = useState<Course[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<AddCourseFormValues>();
   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
@@ -118,8 +138,8 @@ export function Dashboard() {
     }, 500);
   }, []);
 
-  const handleAddLanguage = (values) => {
-    const selectedCourse = LANGUAGE_COURSES.find(c => c.id === parseInt(values.courseId));
+  const handleAddLanguage = (values: AddCourseFormValues) => {
+    const selectedCourse = LANGUAGE_COURSES.find(c => c.id === parseInt(values.courseId.toString()));
     if (!selectedCourse) {
       messageApi.error('Course not found');
       return;
@@ -134,7 +154,7 @@ export function Dashboard() {
     setIsModalVisible(false);
   };
 
-  const handleDeleteLanguage = (id) => {
+  const handleDeleteLanguage = (id: number) => {
     Modal.confirm({
       title: 'Remove Course',
       content: 'Are you sure you want to remove this course from your learning path?',
@@ -144,7 +164,7 @@ export function Dashboard() {
       onOk() {
         const course = enrolledLanguages.find(l => l.id === id);
         setEnrolledLanguages(enrolledLanguages.filter(l => l.id !== id));
-        messageApi.success(`${course.name} removed from your courses`);
+        messageApi.success(`${course?.name} removed from your courses`);
       }
     });
   };
@@ -292,7 +312,7 @@ export function Dashboard() {
                                 danger: true,
                                 onClick: () => handleDeleteLanguage(course.id)
                               }
-                            ]
+                            ] as MenuProps['items']
                           }}
                           trigger={['click']}
                         >
@@ -326,8 +346,7 @@ export function Dashboard() {
         width={600}
         centered
       >
-
-        <Form
+        <Form<AddCourseFormValues>
           form={form}
           layout="vertical"
           onFinish={handleAddLanguage}
@@ -343,16 +362,15 @@ export function Dashboard() {
               optionLabelProp="label"
               maxTagTextLength={30}
             >
-            {availableCourses.map(course => (
-              <Select.Option 
-                key={course.id} 
-                value={course.id}
-                label={`${course.name} (${course.hours}h)`}
-              >
-                {course.name}
-              </Select.Option>
-            ))}
-
+              {availableCourses.map(course => (
+                <Select.Option 
+                  key={course.id} 
+                  value={course.id}
+                  label={`${course.name} (${course.hours}h)`}
+                >
+                  {course.name}
+                </Select.Option>
+              ))}
             </Select>
           </Form.Item>
 
@@ -367,10 +385,8 @@ export function Dashboard() {
   );
 }
 
-// === COURSE PAGE ===
-
 export function CoursePage() {
-  const { language } = useParams();
+  const { language } = useParams<{ language: string }>();
   const [messageApi, contextHolder] = message.useMessage();
 
   const course = LANGUAGE_COURSES.find(c => c.path === `/courses/${language}`);
