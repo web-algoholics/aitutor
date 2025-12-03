@@ -1,7 +1,24 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
-const App = (props) => {
-  const modules = props.modules || [
+interface Module {
+  id: number;
+  title: string;
+  moduleInfo: string;
+  description: string;
+  theoryTopics: number;
+  exercises: number;
+  hours: number;
+  status: 'completed' | 'in-progress' | 'locked';
+  progress?: number;
+  icon: string;
+}
+
+interface RoadmapProps {
+  modules?: Module[];
+}
+
+const Roadmap: React.FC<RoadmapProps> = (props) => {
+  const modules: Module[] = props.modules || [
     {
       id: 1,
       title: 'Introduction to Programming',
@@ -71,7 +88,7 @@ const App = (props) => {
     }
   ];
 
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status: string): ReactNode => {
     switch (status) {
       case 'completed':
         return <span className="px-3 py-1 bg-gray-800 text-white text-xs rounded-full">Completed</span>;
@@ -84,7 +101,7 @@ const App = (props) => {
     }
   };
 
-  const getCircleStyle = (status) => {
+  const getCircleStyle = (status: string): string => {
     switch (status) {
       case 'completed':
         return 'bg-gray-800 text-white';
@@ -196,4 +213,4 @@ const App = (props) => {
   );
 };
 
-export default App;
+export default Roadmap;

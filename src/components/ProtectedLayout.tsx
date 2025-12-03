@@ -7,10 +7,10 @@ const { Content } = Layout;
 
 export default function ProtectedLayout() {
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <Navbar />
 
-      <Content style={{ padding: "24px" }}>
+      <Content style={{ padding: "24px", flex: 1, display: "flex", flexDirection: "column" }}>
         <Outlet />
       </Content>
     </Layout>

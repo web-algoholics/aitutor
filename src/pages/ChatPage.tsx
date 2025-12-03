@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, KeyboardEvent } from 'react';
 import { Card, Input, Button, Spin, Typography } from 'antd';
 import AuthLayout from '../components/AuthLayout';
 
 const { TextArea } = Input;
 const { Title } = Typography;
 
+// Типы для сообщений
+interface Message {
+  sender: 'user' | 'bot';
+  text: string;
+}
+
+// Тип для ответа от API
+interface BotResponse {
+  answer: string;
+}
+
 // Функция для общения с backend GigaChat API
-async function askBot(question) {
+async function askBot(question: string): Promise<string> {
   const response = await fetch('http://localhost:8000/api/gigachat', {
     method: 'POST',
     headers: {
@@ -25,7 +36,7 @@ async function askBot(question) {
   }
 
   // Гарантируем, что backend вернул именно JSON
-  const data = await response.json();
+  const data: BotResponse = await response.json();
   if (!data || typeof data.answer !== 'string') {
     throw new Error('Некорректный формат ответа backend (нет поля answer)');
   }
@@ -33,14 +44,14 @@ async function askBot(question) {
   return data.answer;
 }
 
-export default function ChatBotPage() {
-  const [messages, setMessages] = useState([
+const ChatBotPage: React.FC = () => {
+  const [messages, setMessages] = useState<Message[]>([
     { sender: 'bot', text: 'Привет! Я ваш чат-бот. Задайте вопрос.' },
   ]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [input, setInput] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSend = async () => {
+  const handleSend = async (): Promise<void> => {
     if (!input.trim() || loading) return;
 
     const userText = input.trim();
@@ -58,18 +69,28 @@ export default function ChatBotPage() {
         ...msgs,
         { sender: 'bot', text: botReply },
       ]);
-    } catch (e) {
+    } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : String(e);
       setMessages((msgs) => [
         ...msgs,
         {
           sender: 'bot',
-          text:
-            'Ошибка при обращении к серверу: ' +
-            (e instanceof Error ? e.message : String(e)),
+          text: `Ошибка при обращении к серверу: ${errorMessage}`,
         },
       ]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>): void => {
+    setInput(e.target.value);
+  };
+
+  const handleKeyPress = (e: KeyboardEvent<HTMLTextAreaElement>): void => {
+    if (!e.shiftKey && e.key === 'Enter') {
+      e.preventDefault();
+      handleSend();
     }
   };
 
@@ -105,14 +126,9 @@ export default function ChatBotPage() {
             <TextArea
               rows={2}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyPress}
               placeholder="Введите сообщение..."
-              onPressEnter={(e) => {
-                if (!e.shiftKey) {
-                  e.preventDefault();
-                  handleSend();
-                }
-              }}
               disabled={loading}
             />
             <Button
@@ -127,4 +143,6 @@ export default function ChatBotPage() {
       </div>
     </AuthLayout>
   );
-}
+};
+
+export default ChatBotPage;
