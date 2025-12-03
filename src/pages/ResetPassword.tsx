@@ -1,9 +1,14 @@
 import React, { useEffect } from 'react';
-import { Form, Input, Button, message, Card, Result, Spin } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import { LockOutlined } from '@ant-design/icons';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useResetPasswordMutation } from '../services/authApi';
 import AuthLayout from '../components/AuthLayout';
+
+interface ResetPasswordValues {
+  password: string;
+  confirm: string;
+}
 
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
@@ -12,7 +17,7 @@ export default function ResetPasswordPage() {
 
   const [resetPassword, { isLoading, isSuccess, isError, error }] = useResetPasswordMutation();
   const [messageApi, contextHolder] = message.useMessage();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<ResetPasswordValues>();
 
   useEffect(() => {
     if (!token) {
@@ -20,13 +25,13 @@ export default function ResetPasswordPage() {
     }
   }, [token, messageApi]);
 
-  const onFinish = async (values) => {
+  const onFinish = async (values: ResetPasswordValues) => {
     if (values.password !== values.confirm) {
       form.setFields([{ name: 'confirm', errors: ['Passwords do not match'] }]);
       return;
     }
     try {
-      await resetPassword({ token, password: values.password }).unwrap();
+      await resetPassword({ token: token!, password: values.password }).unwrap();
     } catch {
       // Error handled below
     }
@@ -35,7 +40,10 @@ export default function ResetPasswordPage() {
   if (!token) {
     return (
       <AuthLayout>
-        <Result status="error" title="Invalid Link" subTitle="No reset token found." />
+        <div className="text-center">
+          <p className="text-red-600">Invalid Link</p>
+          <p className="text-gray-600 text-sm">No reset token found.</p>
+        </div>
       </AuthLayout>
     );
   }
@@ -44,7 +52,7 @@ export default function ResetPasswordPage() {
     return (
       <AuthLayout>
         <div className="flex justify-center items-center h-64">
-          <Spin size="large" tip="Resetting password..." />
+          <p>Resetting password...</p>
         </div>
       </AuthLayout>
     );
@@ -53,16 +61,13 @@ export default function ResetPasswordPage() {
   if (isSuccess) {
     return (
       <AuthLayout>
-        <Result
-          status="success"
-          title="Password Reset!"
-          subTitle="Your password has been changed successfully."
-          extra={
-            <Button type="primary" onClick={() => navigate('/login')}>
-              Go to Sign In
-            </Button>
-          }
-        />
+        <div className="text-center">
+          <p className="text-green-600 font-semibold">Password Reset!</p>
+          <p className="text-gray-600 text-sm">Your password has been changed successfully.</p>
+          <Button type="primary" onClick={() => navigate('/login')} className="mt-4">
+            Go to Sign In
+          </Button>
+        </div>
       </AuthLayout>
     );
   }
@@ -70,16 +75,17 @@ export default function ResetPasswordPage() {
   if (isError) {
     return (
       <AuthLayout>
-        <Result
-          status="error"
-          title="Reset Failed"
-          subTitle={error?.data?.detail || 'Token may be expired or invalid.'}
-          extra={
-            <Button type="primary" onClick={() => navigate('/forgot-password')}>
-              Try Again
-            </Button>
-          }
-        />
+        <div className="text-center">
+          <p className="text-red-600 font-semibold">Reset Failed</p>
+          <p className="text-gray-600 text-sm">
+            {error && 'data' in error && error.data && typeof error.data === 'object' && 'detail' in error.data
+              ? (error.data as any).detail
+              : 'Token may be expired or invalid.'}
+          </p>
+          <Button type="primary" onClick={() => navigate('/forgot-password')} className="mt-4">
+            Try Again
+          </Button>
+        </div>
       </AuthLayout>
     );
   }
@@ -88,7 +94,7 @@ export default function ResetPasswordPage() {
     <AuthLayout title="Set New Password">
       {contextHolder}
       <div className="max-w-md mx-auto py-4">
-        <Form form={form} layout="vertical" onFinish={onFinish}>
+        <Form<ResetPasswordValues> form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item
             name="password"
             rules={[

@@ -1,25 +1,32 @@
-// src/pages/LoginPage.jsx
 import React, { useEffect } from 'react';
 import { Form, Input, Button, Checkbox, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLoginMutation, useGetCurrentUserQuery } from '../services/authApi';
 import AuthLayout from '../components/AuthLayout';
+import type { FormInstance } from 'antd';
+
+interface LoginValues {
+  email: string;
+  password: string;
+  remember?: boolean;
+}
 
 export default function LoginPage() {
   const [login, { isLoading, isSuccess, error }] = useLoginMutation();
   const { data: user, isFetching } = useGetCurrentUserQuery(undefined, { skip: !isSuccess });
   const navigate = useNavigate();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<LoginValues>();
   const [messageApi, contextHolder] = message.useMessage();
 
   // HANDLE 422 + FIELD ERRORS
   useEffect(() => {
-    if (error?.status === 422 && error?.data?.detail) {
-      const fieldErrors = error.data.detail.map(err => {
-        const fieldName = err.loc[err.loc.length - 1]; // "username" or "password"
+    if (error && 'status' in error && error.status === 422 && 'data' in error && error.data && typeof error.data === 'object' && 'detail' in error.data) {
+      const errorData = error.data as any;
+      const fieldErrors = errorData.detail.map((err: any) => {
+        const fieldName = err.loc[err.loc.length - 1];
         return {
-          name: fieldName === 'username' ? 'email' : fieldName, // ← Map back to form field
+          name: fieldName === 'username' ? 'email' : fieldName,
           errors: [err.msg],
         };
       });
@@ -32,19 +39,19 @@ export default function LoginPage() {
   // SUCCESS REDIRECT
   useEffect(() => {
     if (isSuccess && !isFetching && user) {
-      if (!user.is_verified) {
+      if (!('is_verified' in user) || !user.is_verified) {
         messageApi.info('Please verify your email.');
-        navigate('/dashboard');;
+        navigate('/dashboard');
       } else {
         navigate('/dashboard');
       }
     }
   }, [isSuccess, isFetching, user, navigate, messageApi]);
 
-  const onFinish = async (values) => {
+  const onFinish = async (values: LoginValues) => {
     try {
       await login({
-        email: values.email,       // ← From form
+        email: values.email,
         password: values.password,
       }).unwrap();
     } catch {
@@ -55,7 +62,7 @@ export default function LoginPage() {
   return (
     <AuthLayout title="Sign In">
       {contextHolder}
-      <Form form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
+      <Form<LoginValues> form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
         <Form.Item
           label="Email or Username"
           name="email"
@@ -92,7 +99,7 @@ export default function LoginPage() {
         </Form.Item>
 
         <div className="text-center text-sm">
-          Don’t have an account? <Link to="/register" className="hover:text-black hover:underline">Sign up</Link>
+          Don't have an account? <Link to="/register" className="hover:text-black hover:underline">Sign up</Link>
         </div>
       </Form>
     </AuthLayout>

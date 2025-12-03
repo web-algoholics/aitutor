@@ -1,25 +1,28 @@
 import React from 'react';
 import { Form, Input, Button, message, Card, Typography } from 'antd';
 import { MailOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForgotPasswordMutation } from '../services/authApi';
 import AuthLayout from '../components/AuthLayout';
 
 const { Title, Text } = Typography;
 
+interface ForgotPasswordValues {
+  email: string;
+}
+
 export default function ForgotPasswordPage() {
   const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
   const [messageApi, contextHolder] = message.useMessage();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<ForgotPasswordValues>();
   const navigate = useNavigate();
 
-  const onFinish = async (values) => {
+  const onFinish = async (values: ForgotPasswordValues) => {
     try {
       await forgotPassword(values.email).unwrap();
       messageApi.success('Password reset link sent to your email!');
       form.resetFields();
-    } catch (err) {
+    } catch (err: any) {
       messageApi.error(err?.data?.detail || 'Failed to send reset link');
     }
   };
@@ -33,7 +36,7 @@ export default function ForgotPasswordPage() {
           Enter your email and we'll send you a link to reset your password.
         </Text>
 
-        <Form form={form} layout="vertical" onFinish={onFinish}>
+        <Form<ForgotPasswordValues> form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item
             name="email"
             rules={[

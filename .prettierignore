@@ -1,5 +1,7 @@
-node_modules
-dist
+# Ignore artifacts:
 build
-*.log
-.env
+dist
+coverage
+stubs
+logs
+d-scripts
