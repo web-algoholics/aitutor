@@ -29,6 +29,8 @@ idna==3.10
 iniconfig==2.1.0
 iso8601==0.1.16
 Jinja2==3.1.6
+langchain>=0.1.0
+langchain-community>=0.0.10
 makefun==1.16.0
 markdown-it-py==3.0.0
 MarkupSafe==3.0.2

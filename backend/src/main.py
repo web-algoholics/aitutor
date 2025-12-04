@@ -11,6 +11,7 @@ from auth.auth import fastapi_users, current_active_user, auth_backend
 from auth.models import User
 from auth.schemas import UserRead, UserCreate, UserUpdate
 from auth.routing import router as upload_router
+from courses.routing import router as courses_router
 
 
 @asynccontextmanager
@@ -35,7 +36,7 @@ app.mount(settings.PROFILE_ICON_URL_PATH, StaticFiles(directory=settings.UPLOAD_
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL],    # Change on production
+    allow_origins=[settings.FRONTEND_URL],  # Allow all origins for development
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -74,6 +75,7 @@ app.include_router(
 )
 
 app.include_router(upload_router)
+app.include_router(courses_router)
 
 # --- Example Protected Route ---
 @app.get("/protected")
