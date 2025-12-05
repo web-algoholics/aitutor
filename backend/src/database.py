@@ -5,6 +5,10 @@ from sqlalchemy.orm import sessionmaker
 from typing import AsyncGenerator
 from config import settings
 
+# Import all models to ensure they are registered
+from auth.models import User  # noqa: F401
+from jobs.models import JobVacancy, JobAnalysis, MarketTrend  # noqa: F401
+
 # Async engine
 engine: AsyncEngine = create_async_engine(settings.DATABASE_URL, echo=True)
 

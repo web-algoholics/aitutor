@@ -13,6 +13,7 @@ import Roadmap from './pages/Roadmap';
 import React from 'react';
 import Dashboard, { CoursePage } from './pages/Dashboard';
 import ProtectedLayout from './components/ProtectedLayout';
+import MarketAnalysis from './pages/MarketAnalysis';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
               <Route path="/courses/:language" element={<CoursePage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/roadmap" element={<Roadmap />} />
+              <Route path="/market-analysis" element={<MarketAnalysis />} />
             </Route>
 
           </Routes>

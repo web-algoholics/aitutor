@@ -1,16 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { authApi } from '../services/authApi';
 import { profileApi } from '../services/profileApi';
+import { jobsApi } from '../services/jobsApi';
 
 export const store = configureStore({
   reducer: {
     [authApi.reducerPath]: authApi.reducer,
     [profileApi.reducerPath]: profileApi.reducer,
+    [jobsApi.reducerPath]: jobsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(authApi.middleware)
       .concat(profileApi.middleware)
+      .concat(jobsApi.middleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>;

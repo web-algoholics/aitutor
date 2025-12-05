@@ -11,6 +11,7 @@ from auth.auth import fastapi_users, current_active_user, auth_backend
 from auth.models import User
 from auth.schemas import UserRead, UserCreate, UserUpdate
 from auth.routing import router as upload_router
+from jobs.routing import router as jobs_router
 
 
 @asynccontextmanager
@@ -74,6 +75,7 @@ app.include_router(
 )
 
 app.include_router(upload_router)
+app.include_router(jobs_router)
 
 # --- Example Protected Route ---
 @app.get("/protected")
