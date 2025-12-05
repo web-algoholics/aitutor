@@ -62,6 +62,10 @@ class ChatSession(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: int = Field(foreign_key="users.id")
     module_id: int = Field(foreign_key="modules.id")
+    stage: str = Field(default="theory")  # theory, quiz, coding, completed
+    theory_confirmed: bool = False
+    quiz_score: Optional[int] = None
+    coding_complete: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
     
     # Relationships

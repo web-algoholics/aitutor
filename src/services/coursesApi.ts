@@ -64,6 +64,74 @@ export interface HintResponse {
   hint: string;
 }
 
+export interface SessionStatus {
+  session_id: number;
+  module_id: number;
+  stage: 'theory' | 'quiz' | 'coding' | 'completed';
+  theory_confirmed: boolean;
+  quiz_score: number | null;
+  coding_complete: boolean;
+  completed: boolean;
+}
+
+export interface QuizQuestion {
+  id: number;
+  question: string;
+  options: string[];
+  correct_answer: string;
+}
+
+export interface QuizData {
+  questions: QuizQuestion[];
+}
+
+export interface CodingTask {
+  title: string;
+  description: string;
+  code_template: string;
+  expected_concepts: string[];
+  success_criteria: string[];
+}
+
+export interface InitSessionResponse {
+  session_id: number;
+  module_id: number;
+  stage: string;
+  message: string;
+}
+
+export interface ConfirmTheoryResponse {
+  session_id: number;
+  stage: string;
+  quiz: QuizData;
+}
+
+export interface SubmitQuizResponse {
+  session_id: number;
+  quiz_result: {
+    score: number;
+    passed: boolean;
+    feedback: string;
+  };
+  stage: string;
+  task: CodingTask;
+}
+
+export interface CodeEvaluation {
+  passed: boolean;
+  score: number;
+  feedback: string;
+  strengths: string[];
+  improvements: string[];
+}
+
+export interface SubmitCodeResponse {
+  session_id: number;
+  evaluation: CodeEvaluation;
+  stage: string;
+  completed: boolean;
+}
+
 export const coursesApi = createApi({
   reducerPath: 'coursesApi',
   baseQuery: fetchBaseQuery({
@@ -140,6 +208,50 @@ export const coursesApi = createApi({
       }),
       invalidatesTags: ['Modules', 'Courses'],
     }),
+    initSession: builder.mutation<InitSessionResponse, { moduleId: number; userId: number }>({
+      query: ({ moduleId, userId }) => ({
+        url: `/api/courses/modules/${moduleId}/chat/start`,
+        method: 'POST',
+        params: { user_id: userId },
+      }),
+      invalidatesTags: ['Chat'],
+    }),
+    confirmTheory: builder.mutation<ConfirmTheoryResponse, { sessionId: number }>({
+      query: ({ sessionId }) => ({
+        url: `/api/courses/chat/${sessionId}/confirm-theory`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Chat'],
+    }),
+    submitQuiz: builder.mutation<SubmitQuizResponse, { sessionId: number; answers: Record<number, string> }>({
+      query: ({ sessionId, answers }) => ({
+        url: `/api/courses/chat/${sessionId}/submit-quiz`,
+        method: 'POST',
+        body: { answers },
+      }),
+      invalidatesTags: ['Chat'],
+    }),
+    submitCode: builder.mutation<SubmitCodeResponse, { sessionId: number; code: string }>({
+      query: ({ sessionId, code }) => ({
+        url: `/api/courses/chat/${sessionId}/submit-code`,
+        method: 'POST',
+        params: { code },
+      }),
+      invalidatesTags: ['Chat', 'Submissions'],
+    }),
+    getSessionHint: builder.mutation<HintResponse, { sessionId: number; currentCode: string }>({
+      query: ({ sessionId, currentCode }) => ({
+        url: `/api/courses/chat/${sessionId}/hint`,
+        method: 'POST',
+        params: { current_code: currentCode },
+      }),
+    }),
+    getSessionStatus: builder.query<SessionStatus, number>({
+      query: (sessionId) => ({
+        url: `/api/courses/chat/${sessionId}/status`,
+      }),
+      providesTags: (result, error, id) => [{ type: 'Chat', id }],
+    }),
   }),
 });
 
@@ -157,4 +269,9 @@ export const {
   useGetCodeHintMutation,
   useGetUserProgressQuery,
   useMarkModuleCompleteMutation,
+  useInitSessionMutation,
+  useConfirmTheoryMutation,
+  useSubmitQuizMutation,
+  useGetSessionHintMutation,
+  useGetSessionStatusQuery,
 } = coursesApi;

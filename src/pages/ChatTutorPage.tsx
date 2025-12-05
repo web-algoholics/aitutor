@@ -1,256 +1,402 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Input, Button, Card, Spin, message, Space, Empty, Avatar } from 'antd';
-import { SendOutlined, RobotOutlined, UserOutlined, CheckOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
+import { Button, Card, Spin, message, Space, Empty, Collapse, Radio, Typography, Divider } from 'antd';
+import { CheckCircleOutlined, BookOutlined, FileTextOutlined, CodeOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import ReactMarkdown from 'react-markdown';
+import Editor from '@monaco-editor/react';
 import {
   useGetModuleDetailQuery,
-  useStartChatSessionMutation,
-  useSendChatMessageMutation,
-  useGetChatHistoryQuery,
-  useMarkModuleCompleteMutation,
-  Module,
-  ChatHistory
+  useInitSessionMutation,
+  useConfirmTheoryMutation,
+  useSubmitQuizMutation,
+  useSubmitCodeMutation,
+  useGetSessionHintMutation,
+  coursesApi,
+  SessionStatus,
+  QuizQuestion,
+  CodingTask,
 } from '../services/coursesApi';
 import { useGetCurrentUserQuery } from '../services/authApi';
 
-interface Message {
-  role: 'user' | 'ai';
-  content: string;
-  timestamp: Date;
-}
+const { Title, Paragraph, Text } = Typography;
 
 export default function ChatTutorPage() {
   const { courseId, moduleId } = useParams<{ courseId: string; moduleId: string }>();
   const navigate = useNavigate();
-  const [sessionId, setSessionId] = useState<number | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const [sending, setSending] = useState(false);
+  const dispatch = useDispatch();
   const [messageApi, contextHolder] = message.useMessage();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // API Hooks
+  // State management
+  const [status, setStatus] = useState<SessionStatus | null>(null);
+  const [theoryText, setTheoryText] = useState('');
+  const [quizData, setQuizData] = useState<{ questions: QuizQuestion[] } | null>(null);
+  const [quizAnswers, setQuizAnswers] = useState<Record<number, string>>({});
+  const [codingTask, setCodingTask] = useState<CodingTask | null>(null);
+  const [code, setCode] = useState('');
+  const [evaluation, setEvaluation] = useState<any>(null);
+
+  // RTK Query hooks
   const { data: module, isLoading: moduleLoading } = useGetModuleDetailQuery(Number(moduleId), { skip: !moduleId });
   const { data: currentUser } = useGetCurrentUserQuery(undefined);
-  const [startChatSession] = useStartChatSessionMutation();
-  const [sendChatMessage] = useSendChatMessageMutation();
-  const { data: chatHistory } = useGetChatHistoryQuery(sessionId ?? 0, { skip: !sessionId });
-  const [markModuleComplete] = useMarkModuleCompleteMutation();
 
+  const [initSession, { isLoading: initLoading }] = useInitSessionMutation();
+  const [confirmTheory, { isLoading: confirmLoading }] = useConfirmTheoryMutation();
+  const [submitQuiz, { isLoading: quizLoading }] = useSubmitQuizMutation();
+  const [submitCode, { isLoading: codeLoading }] = useSubmitCodeMutation();
+  const [getHint, { isLoading: hintLoading }] = useGetSessionHintMutation();
+
+  const loading = initLoading || confirmLoading || quizLoading || codeLoading || hintLoading;
+
+  // Initialize session
   useEffect(() => {
     if (moduleId && currentUser?.id) {
-      initializeChatSession();
+      handleInitializeSession();
     }
   }, [moduleId, currentUser?.id]);
 
-  // Update messages from chat history
-  useEffect(() => {
-    if (chatHistory?.messages) {
-      const historyMessages = chatHistory.messages.map((msg: any) => ({
-        role: (msg.role === 'assistant' ? 'ai' : 'user') as 'user' | 'ai',
-        content: msg.content,
-        timestamp: new Date(msg.created_at)
-      }));
-      setMessages(historyMessages);
-    }
-  }, [chatHistory]);
-
-  // Auto-scroll to bottom
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const initializeChatSession = async () => {
+  const handleInitializeSession = async () => {
     try {
-      const result = await startChatSession({
+      const response = await initSession({
         moduleId: Number(moduleId),
-        userId: currentUser!.id
-      }).unwrap();
-
-      setSessionId(result.session_id);
-
-      // Add initial AI greeting
-      const greeting = `Привет! 👋 Я твой персональный AI-преподаватель. Сегодня мы изучаем "${module?.title}". 
-
-Что ты уже знаешь об этой теме? Можешь также спросить что-нибудь, и я помогу тебе разобраться!`;
-      
-      setMessages([{
-        role: 'ai',
-        content: greeting,
-        timestamp: new Date()
-      }]);
-    } catch (error) {
-      messageApi.error('Ошибка при инициализации чата');
-      console.error(error);
-    }
-  };
-
-  const sendMessage = async () => {
-    if (!input.trim() || !sessionId) return;
-
-    const userMessage = input;
-    setInput('');
-    setSending(true);
-
-    try {
-      // Add user message to chat optimistically
-      setMessages(prev => [...prev, {
-        role: 'user',
-        content: userMessage,
-        timestamp: new Date()
-      }]);
-
-      // Send to AI
-      const response = await sendChatMessage({
-        sessionId,
-        question: userMessage
-      }).unwrap();
-
-      // Add AI response
-      setMessages(prev => [...prev, {
-        role: 'ai',
-        content: response.ai_response,
-        timestamp: new Date()
-      }]);
-    } catch (error) {
-      messageApi.error('Ошибка при отправке сообщения');
-      console.error(error);
-      // Remove last user message on error
-      setMessages(prev => prev.slice(0, -1));
-    } finally {
-      setSending(false);
-    }
-  };
-
-  const handleCompleteModule = async () => {
-    try {
-      await markModuleComplete({
         userId: currentUser!.id,
-        moduleId: Number(moduleId)
       }).unwrap();
 
-      messageApi.success('Модуль завершен! 🎉');
-      setTimeout(() => {
-        navigate(`/courses/${courseId}/roadmap`);
-      }, 1500);
-    } catch (error) {
-      messageApi.error('Ошибка при завершении модуля');
+      setTheoryText(response.message);
+      setStatus({
+        session_id: response.session_id,
+        module_id: response.session_id,
+        stage: 'theory',
+        theory_confirmed: false,
+        quiz_score: null,
+        coding_complete: false,
+        completed: false,
+      });
+    } catch (error: any) {
+      console.error('Init error:', error);
+      messageApi.error(error?.data?.detail || 'Ошибка при инициализации сессии');
     }
   };
 
-  if (moduleLoading) return <Spin size="large" className="flex items-center justify-center min-h-screen" />;
-  if (!module) return <Empty description="Модуль не найден" />;
+  const handleConfirmTheory = async () => {
+    if (!status) return;
+    try {
+      const response = await confirmTheory({
+        sessionId: status.session_id,
+      }).unwrap();
+
+      setStatus(prev => prev ? { ...prev, stage: 'quiz', theory_confirmed: true } : null);
+      setQuizData(response.quiz);
+      messageApi.success('Отлично! Переходим к тесту');
+    } catch (error: any) {
+      console.error('Confirm theory error:', error);
+      messageApi.error(error?.data?.detail || 'Ошибка при переходе к тесту');
+    }
+  };
+
+  const handleSubmitQuiz = async () => {
+    if (!status || !quizData) return;
+    try {
+      const response = await submitQuiz({
+        sessionId: status.session_id,
+        answers: quizAnswers,
+      }).unwrap();
+
+      setStatus(prev => prev ? { ...prev, stage: 'coding', quiz_score: response.quiz_result.score } : null);
+      setCodingTask(response.task);
+      setCode(response.task.code_template);
+      messageApi.success(`Тест пройден! Результат: ${response.quiz_result.score}%`);
+    } catch (error: any) {
+      console.error('Submit quiz error:', error);
+      messageApi.error(error?.data?.detail || 'Ошибка при проверке теста');
+    }
+  };
+
+  const handleSubmitCode = async () => {
+    if (!status || !code) return;
+    try {
+      const response = await submitCode({
+        sessionId: status.session_id,
+        code,
+      }).unwrap();
+
+      setEvaluation(response.evaluation);
+      setStatus(prev => prev ? { ...prev, stage: response.stage as any, completed: response.completed } : null);
+
+      if (response.evaluation.passed) {
+        messageApi.success('Отлично! Код прошел проверку! 🎉');
+        // Invalidate roadmap data to refresh progress
+        dispatch(coursesApi.util.invalidateTags([{ type: 'Modules', id: `course-${courseId}` }]));
+        setTimeout(() => {
+          navigate(`/courses/${courseId}/roadmap`);
+        }, 2000);
+      } else {
+        messageApi.error('Код требует исправлений');
+      }
+    } catch (error: any) {
+      console.error('Submit code error:', error);
+      messageApi.error(error?.data?.detail || 'Ошибка при проверке кода');
+    }
+  };
+
+  const handleGetHint = async () => {
+    if (!status) return;
+    try {
+      const response = await getHint({
+        sessionId: status.session_id,
+        currentCode: code,
+      }).unwrap();
+
+      messageApi.info(response.hint);
+    } catch (error: any) {
+      console.error('Get hint error:', error);
+      messageApi.error(error?.data?.detail || 'Ошибка при получении подсказки');
+    }
+  };
+
+  if (moduleLoading || initLoading) {
+    return <Spin size="large" className="flex items-center justify-center min-h-screen" />;
+  }
+
+  if (!module) {
+    return <Empty description="Модуль не найден" />;
+  }
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className="max-w-6xl mx-auto px-6 py-8">
       {contextHolder}
 
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-bold">{module.title}</h2>
-            <p className="text-sm text-gray-600">{module.description}</p>
-          </div>
-          <Button onClick={() => navigate(`/courses/${courseId}/roadmap`)}>
-            ← Назад
-          </Button>
-        </div>
-      </div>
+      {/* Module Header */}
+      <Card className="mb-8">
+        <Title level={2}>{module.title}</Title>
+        <Paragraph>{module.description}</Paragraph>
 
-      {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-4 max-w-4xl mx-auto w-full">
-        <div className="space-y-4">
-          {messages.length === 0 ? (
-            <Empty description="Начни разговор с AI преподавателем" />
-          ) : (
-            messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                {msg.role === 'ai' && (
-                  <Avatar
-                    size={32}
-                    icon={<RobotOutlined />}
-                    className="bg-blue-500 flex-shrink-0"
-                  />
-                )}
-
-                <div
-                  className={`max-w-2xl p-4 rounded-lg ${
-                    msg.role === 'user'
-                      ? 'bg-blue-500 text-white rounded-br-none'
-                      : 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'
-                  }`}
-                >
-                  <p className="text-sm whitespace-pre-wrap leading-relaxed">
-                    {msg.content}
-                  </p>
-                  <p className={`text-xs mt-2 ${
-                    msg.role === 'user' ? 'text-blue-100' : 'text-gray-500'
-                  }`}>
-                    {msg.timestamp.toLocaleTimeString('ru-RU', {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </p>
-                </div>
-
-                {msg.role === 'user' && (
-                  <Avatar
-                    size={32}
-                    icon={<UserOutlined />}
-                    className="bg-green-500 flex-shrink-0"
-                  />
-                )}
+        {/* Progress */}
+        <div className="flex items-center justify-between mb-6">
+          <Space size="large">
+            <div className="flex items-center gap-2">
+              <BookOutlined className={status?.theory_confirmed ? 'text-green-500' : 'text-gray-400'} style={{ fontSize: 20 }} />
+              <Text>Теория</Text>
+            </div>
+            <div className="flex items-center gap-2">
+              <FileTextOutlined className={status?.stage === 'quiz' || status?.quiz_score ? 'text-green-500' : 'text-gray-400'} style={{ fontSize: 20 }} />
+              <Text>Тест</Text>
+            </div>
+            <div className="flex items-center gap-2">
+              <CodeOutlined className={status?.coding_complete ? 'text-green-500' : 'text-gray-400'} style={{ fontSize: 20 }} />
+              <Text>Код</Text>
+            </div>
+            {status?.completed && (
+              <div className="flex items-center gap-2">
+                <CheckCircleOutlined className="text-green-500" style={{ fontSize: 20 }} />
+                <Text className="text-green-500">Завершено</Text>
               </div>
-            ))
-          )}
-          <div ref={messagesEndRef} />
+            )}
+          </Space>
         </div>
-      </div>
+      </Card>
 
-      {/* Input Area */}
-      <div className="bg-white border-t border-gray-200 p-4 sticky bottom-0">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex gap-3">
-            <Input
-              placeholder="Задай вопрос преподавателю..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onPressEnter={sendMessage}
-              disabled={sending}
-              size="large"
-            />
+      {/* STAGE 1: THEORY */}
+      {status?.stage === 'theory' && (
+        <Card className="mb-8">
+          <Title level={4}>📚 Теория</Title>
+          <div className="prose prose-sm max-w-none bg-gray-50 p-6 rounded-lg mb-6 border border-gray-200">
+            <ReactMarkdown
+              components={{
+                h1: ({node, ...props}) => <h1 className="text-2xl font-bold mt-4 mb-2" {...props} />,
+                h2: ({node, ...props}) => <h2 className="text-xl font-bold mt-3 mb-2" {...props} />,
+                h3: ({node, ...props}) => <h3 className="text-lg font-semibold mt-3 mb-1" {...props} />,
+                p: ({node, ...props}) => <p className="mb-3 leading-relaxed" {...props} />,
+                code: ({node, inline, ...props}: any) =>
+                  inline ? (
+                    <code className="bg-gray-200 px-2 py-1 rounded text-red-600 font-mono text-sm" {...props} />
+                  ) : (
+                    <code className="block bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-3" {...props} />
+                  ),
+                pre: ({node, ...props}) => <pre className="mb-3 overflow-x-auto" {...props} />,
+                ul: ({node, ...props}) => <ul className="list-disc list-inside mb-3 space-y-1" {...props} />,
+                ol: ({node, ...props}) => <ol className="list-decimal list-inside mb-3 space-y-1" {...props} />,
+                li: ({node, ...props}) => <li className="mb-1" {...props} />,
+                blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-600 my-3" {...props} />,
+                table: ({node, ...props}) => <table className="border-collapse border border-gray-300 mb-3 w-full" {...props} />,
+                th: ({node, ...props}) => <th className="border border-gray-300 p-2 bg-gray-200" {...props} />,
+                td: ({node, ...props}) => <td className="border border-gray-300 p-2" {...props} />,
+                a: ({node, ...props}) => <a className="text-blue-600 underline" {...props} />,
+              }}
+            >
+              {theoryText}
+            </ReactMarkdown>
+          </div>
+          <Button type="primary" size="large" onClick={handleConfirmTheory} loading={confirmLoading}>
+            Я прочитал теорию → К тесту
+          </Button>
+        </Card>
+      )}
+
+      {/* STAGE 2: QUIZ */}
+      {status?.stage === 'quiz' && quizData && (
+        <Card className="mb-8">
+          <Title level={4}>📝 Проверка знаний</Title>
+          <Space direction="vertical" className="w-full" size="large">
+            {quizData.questions.map((question) => (
+              <div key={question.id} className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50 p-4 rounded">
+                <Paragraph className="font-semibold text-base mb-3">{question.question}</Paragraph>
+                <Radio.Group
+                  value={quizAnswers[question.id]}
+                  onChange={(e) => setQuizAnswers({ ...quizAnswers, [question.id]: e.target.value })}
+                  className="flex flex-col gap-2"
+                >
+                  {question.options.map((option, idx) => (
+                    <Radio key={idx} value={String.fromCharCode(97 + idx)}>
+                      <span className="text-base">{option}</span>
+                    </Radio>
+                  ))}
+                </Radio.Group>
+              </div>
+            ))}
+          </Space>
+          <Divider />
+          <Button
+            type="primary"
+            size="large"
+            onClick={handleSubmitQuiz}
+            disabled={Object.keys(quizAnswers).length < quizData.questions.length}
+            loading={quizLoading}
+          >
+            Отправить ответы
+          </Button>
+        </Card>
+      )}
+
+      {/* STAGE 3: CODING TASK */}
+      {status?.stage === 'coding' && codingTask && (
+        <div className="mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Task Description */}
+            <Card>
+              <Title level={4}>💻 Практическое задание</Title>
+
+              <div className="mb-6">
+                <Title level={5}>{codingTask.title}</Title>
+                <Paragraph className="whitespace-pre-wrap">{codingTask.description}</Paragraph>
+
+                <Collapse
+                  items={[
+                    {
+                      key: 'criteria',
+                      label: '✓ Критерии успеха',
+                      children: (
+                        <ul className="list-disc pl-5 space-y-1">
+                          {codingTask.success_criteria.map((criterion, idx) => (
+                            <li key={idx} className="text-sm">{criterion}</li>
+                          ))}
+                        </ul>
+                      ),
+                    },
+                    {
+                      key: 'concepts',
+                      label: '🎯 Концепции',
+                      children: (
+                        <ul className="list-disc pl-5 space-y-1">
+                          {(Array.isArray(codingTask.expected_concepts) 
+                            ? codingTask.expected_concepts 
+                            : typeof codingTask.expected_concepts === 'string' 
+                              ? JSON.parse(codingTask.expected_concepts) 
+                              : []
+                          ).map((concept: string, idx: number) => (
+                            <li key={idx} className="text-sm">{concept}</li>
+                          ))}
+                        </ul>
+                      ),
+                    },
+                  ]}
+                />
+              </div>
+
+              {evaluation && (
+                <Card className={`border-l-4 ${evaluation.passed ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}`}>
+                  <Title level={5}>{evaluation.passed ? '✅ Отлично!' : '⚠️ Требует доработки'}</Title>
+                  <Paragraph><strong>Результат:</strong> {evaluation.score}/100</Paragraph>
+                  <Paragraph><strong>Отзыв:</strong> {evaluation.feedback}</Paragraph>
+
+                  {evaluation.strengths && evaluation.strengths.length > 0 && (
+                    <div className="mt-3">
+                      <Text strong>✅ Что получилось:</Text>
+                      <ul className="list-disc pl-5 mt-2 text-sm">
+                        {evaluation.strengths.map((item: string, idx: number) => (
+                          <li key={idx}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {evaluation.improvements && evaluation.improvements.length > 0 && (
+                    <div className="mt-3">
+                      <Text strong>💡 Что улучшить:</Text>
+                      <ul className="list-disc pl-5 mt-2 text-sm">
+                        {evaluation.improvements.map((item: string, idx: number) => (
+                          <li key={idx}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </Card>
+              )}
+            </Card>
+
+            {/* Code Editor */}
+            <Card title="Редактор кода" className="flex flex-col">
+              <div className="flex-grow border rounded-lg overflow-hidden bg-white">
+                <Editor
+                  height="500px"
+                  language="python"
+                  value={code}
+                  onChange={(value) => setCode(value || '')}
+                  theme="vs-light"
+                  options={{
+                    minimap: { enabled: false },
+                    fontSize: 14,
+                    lineNumbers: 'on',
+                    wordWrap: 'on',
+                    automaticLayout: true,
+                    tabSize: 4,
+                    insertSpaces: true,
+                  }}
+                />
+              </div>
+
+              <Space className="mt-4 w-full justify-between">
+                <Space>
+                  <Button type="primary" size="large" onClick={handleSubmitCode} loading={codeLoading}>
+                    Отправить решение
+                  </Button>
+                  <Button onClick={handleGetHint} loading={hintLoading}>
+                    💡 Подсказка
+                  </Button>
+                </Space>
+              </Space>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* STAGE 4: COMPLETED */}
+      {status?.completed && (
+        <Card className="mb-8 bg-gradient-to-r from-green-50 to-blue-50 border-green-300">
+          <div className="text-center py-12">
+            <CheckCircleOutlined style={{ fontSize: 80, color: '#22c55e', marginBottom: 24 }} />
+            <Title level={3}>Модуль завершен! 🎉</Title>
+            <Paragraph className="text-lg">Отлично поработал! Ты освоил этот модуль.</Paragraph>
             <Button
               type="primary"
               size="large"
-              icon={<SendOutlined />}
-              onClick={sendMessage}
-              loading={sending}
-              disabled={!input.trim() || sending}
+              onClick={() => navigate(`/courses/${courseId}/roadmap`)}
             >
-              Отправить
+              Вернуться к дорожной карте
             </Button>
           </div>
-
-          <div className="mt-4 flex gap-2">
-            <Button
-              type="dashed"
-              block
-              icon={<CheckOutlined />}
-              onClick={handleCompleteModule}
-            >
-              Завершить модуль
-            </Button>
-          </div>
-        </div>
-      </div>
+        </Card>
+      )}
     </div>
   );
 }
