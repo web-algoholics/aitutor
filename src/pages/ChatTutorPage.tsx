@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { Button, Card, Spin, message, Space, Empty, Collapse, Radio, Typography, Divider } from 'antd';
 import { CheckCircleOutlined, BookOutlined, FileTextOutlined, CodeOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import ReactMarkdown from 'react-markdown';
-import Editor from '@monaco-editor/react';
+
+// Lazy load Monaco Editor for better performance
+const MonacoEditor = lazy(() => import('@monaco-editor/react'));
 import {
   useGetModuleDetailQuery,
   useInitSessionMutation,
@@ -20,6 +22,120 @@ import {
 import { useGetCurrentUserQuery } from '../services/authApi';
 
 const { Title, Paragraph, Text } = Typography;
+
+// Fallback simple code editor component
+const SimpleCodeEditor = React.memo(({ value, onChange }: {
+  value: string;
+  onChange: (value: string) => void;
+}) => (
+  <textarea
+    value={value}
+    onChange={(e) => onChange(e.target.value)}
+    className="w-full h-full p-4 font-mono text-sm bg-gray-900 text-green-400 border border-gray-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+    placeholder="Введите ваш код здесь..."
+    style={{ minHeight: '500px', fontFamily: 'Consolas, Monaco, "Courier New", monospace' }}
+  />
+));
+
+// Memoized Monaco Editor component with fallback
+const MemoizedMonacoEditor = React.memo(({ value, onChange, language = 'python' }: {
+  value: string;
+  onChange: (value: string | undefined) => void;
+  language?: string;
+}) => {
+  const [useSimpleEditor, setUseSimpleEditor] = useState(false);
+  const [editorLoading, setEditorLoading] = useState(true);
+
+  // Auto-switch to simple editor after 10 seconds if Monaco hasn't loaded
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (editorLoading) {
+        console.warn('Monaco Editor taking too long to load, switching to simple editor');
+        setUseSimpleEditor(true);
+        setEditorLoading(false);
+      }
+    }, 10000);
+
+    return () => clearTimeout(timer);
+  }, [editorLoading]);
+
+  if (useSimpleEditor) {
+    return (
+      <div className="relative">
+        <div className="absolute top-2 right-2 text-xs text-gray-500 bg-yellow-100 px-2 py-1 rounded">
+          Простой редактор
+        </div>
+        <SimpleCodeEditor
+          value={value}
+          onChange={(newValue) => onChange(newValue)}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-full bg-gray-50 rounded">
+        <Spin size="large" tip="Загрузка редактора..." />
+      </div>
+    }>
+      <MonacoEditor
+        height="500px"
+        language={language}
+        value={value}
+        onChange={onChange}
+        theme="vs-light"
+        loading={editorLoading ? <Spin size="large" tip="Инициализация..." /> : null}
+        onMount={() => setEditorLoading(false)}
+        options={{
+          minimap: { enabled: false },
+          fontSize: 14,
+          lineNumbers: 'on',
+          wordWrap: 'on',
+          tabSize: 4,
+          insertSpaces: true,
+          scrollBeyondLastLine: false,
+          automaticLayout: false, // Disabled for better performance
+          renderLineHighlight: 'line',
+          fontFamily: 'Consolas, Monaco, "Courier New", monospace',
+          fontLigatures: true,
+          smoothScrolling: true,
+          cursorBlinking: 'blink',
+          contextmenu: true,
+          mouseWheelZoom: false,
+          quickSuggestions: {
+            other: true,
+            comments: false,
+            strings: true
+          },
+          parameterHints: {
+            enabled: true
+          },
+          suggestOnTriggerCharacters: true,
+          acceptSuggestionOnEnter: 'on',
+          tabCompletion: 'on',
+          wordBasedSuggestions: 'currentDocument',
+          // Additional performance optimizations
+          glyphMargin: false,
+          folding: true,
+          lineDecorationsWidth: 10,
+          lineNumbersMinChars: 3,
+          renderWhitespace: 'selection',
+          rulers: [],
+          overviewRulerLanes: 0,
+          overviewRulerBorder: false,
+          hideCursorInOverviewRuler: true,
+          scrollbar: {
+            vertical: 'visible',
+            horizontal: 'visible',
+            verticalScrollbarSize: 14,
+            horizontalScrollbarSize: 14
+          }
+        }}
+      />
+    </Suspense>
+  );
+});
 
 export default function ChatTutorPage() {
   const { courseId, moduleId } = useParams<{ courseId: string; moduleId: string }>();
@@ -47,6 +163,31 @@ export default function ChatTutorPage() {
   const [getHint, { isLoading: hintLoading }] = useGetSessionHintMutation();
 
   const loading = initLoading || confirmLoading || quizLoading || codeLoading || hintLoading;
+
+  // Configure Monaco Editor when coding stage is reached
+  useEffect(() => {
+    if (status?.stage === 'coding' && typeof window !== 'undefined') {
+      // Configure Monaco to work in SES environment by avoiding require()
+      try {
+        // Set up Monaco environment with inline workers to avoid loading issues
+        window.MonacoEnvironment = {
+          getWorkerUrl: function (workerId, label) {
+            // Use inline worker to avoid external loading issues
+            return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+              self.MonacoEnvironment = {
+                baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/'
+              };
+              importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/base/worker/workerMain.js');
+            `)}`;
+          }
+        };
+
+        // Monaco environment configured for SES compatibility
+      } catch (error) {
+        console.warn('Monaco configuration warning:', error);
+      }
+    }
+  }, [status?.stage]);
 
   // Initialize session
   useEffect(() => {
@@ -346,22 +487,11 @@ export default function ChatTutorPage() {
 
             {/* Code Editor */}
             <Card title="Редактор кода" className="flex flex-col">
-              <div className="flex-grow border rounded-lg overflow-hidden bg-white">
-                <Editor
-                  height="500px"
-                  language="python"
+              <div className="flex-grow border rounded-lg overflow-hidden bg-white min-h-[500px]">
+                <MemoizedMonacoEditor
                   value={code}
                   onChange={(value) => setCode(value || '')}
-                  theme="vs-light"
-                  options={{
-                    minimap: { enabled: false },
-                    fontSize: 14,
-                    lineNumbers: 'on',
-                    wordWrap: 'on',
-                    automaticLayout: true,
-                    tabSize: 4,
-                    insertSpaces: true,
-                  }}
+                  language="python"
                 />
               </div>
 
