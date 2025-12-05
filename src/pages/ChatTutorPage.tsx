@@ -1,12 +1,84 @@
-import React, { useEffect, useState, lazy, Suspense } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Card, Spin, message, Space, Empty, Collapse, Radio, Typography, Divider } from 'antd';
 import { CheckCircleOutlined, BookOutlined, FileTextOutlined, CodeOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import ReactMarkdown from 'react-markdown';
+import { Controlled as CodeMirror } from 'react-codemirror2';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/material.css';
+import 'codemirror/mode/python/python';
 
-// Lazy load Monaco Editor for better performance
-const MonacoEditor = lazy(() => import('@monaco-editor/react'));
+// Custom styles for CodeMirror
+const codemirrorStyles = `
+  .codemirror-container .CodeMirror {
+    height: 500px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    border-radius: 6px;
+  }
+
+  .codemirror-container .CodeMirror-focused {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  }
+
+  .codemirror-container .CodeMirror-gutters {
+    background-color: #2d3748;
+    border-right: 1px solid #4a5568;
+    color: #a0aec0;
+  }
+
+  .codemirror-container .CodeMirror-linenumber {
+    color: #a0aec0;
+  }
+
+  .codemirror-container .CodeMirror-cursor {
+    border-left: 2px solid #ffffff;
+  }
+
+  .codemirror-container .CodeMirror-selected {
+    background-color: rgba(66, 153, 225, 0.3);
+  }
+
+  .codemirror-container .CodeMirror-focused .CodeMirror-selected {
+    background-color: rgba(66, 153, 225, 0.5);
+  }
+
+  /* Syntax highlighting for Python */
+  .codemirror-container .cm-keyword { color: #c792ea; }
+  .codemirror-container .cm-atom { color: #f78c6c; }
+  .codemirror-container .cm-number { color: #f78c6c; }
+  .codemirror-container .cm-def { color: #82aaff; }
+  .codemirror-container .cm-variable,
+  .codemirror-container .cm-punctuation,
+  .codemirror-container .cm-property,
+  .codemirror-container .cm-operator { color: #ffffff; }
+  .codemirror-container .cm-variable-2 { color: #eeffff; }
+  .codemirror-container .cm-variable-3,
+  .codemirror-container .cm-type { color: #ffcb6b; }
+  .codemirror-container .cm-comment { color: #546e7a; }
+  .codemirror-container .cm-string { color: #c3e88d; }
+  .codemirror-container .cm-string-2 { color: #f07178; }
+  .codemirror-container .cm-meta { color: #ffcb6b; }
+  .codemirror-container .cm-qualifier { color: #decb6b; }
+  .codemirror-container .cm-builtin { color: #ffcb6b; }
+  .codemirror-container .cm-bracket { color: #a6e22e; }
+  .codemirror-container .cm-tag { color: #f07178; }
+  .codemirror-container .cm-attribute { color: #c792ea; }
+  .codemirror-container .cm-hr { color: #ffffff; }
+  .codemirror-container .cm-link { color: #80cbc4; }
+`;
+
+// Inject CodeMirror styles
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = codemirrorStyles;
+  document.head.appendChild(style);
+}
+
+
+
 import {
   useGetModuleDetailQuery,
   useInitSessionMutation,
@@ -23,117 +95,70 @@ import { useGetCurrentUserQuery } from '../services/authApi';
 
 const { Title, Paragraph, Text } = Typography;
 
-// Fallback simple code editor component
-const SimpleCodeEditor = React.memo(({ value, onChange }: {
-  value: string;
-  onChange: (value: string) => void;
-}) => (
-  <textarea
-    value={value}
-    onChange={(e) => onChange(e.target.value)}
-    className="w-full h-full p-4 font-mono text-sm bg-gray-900 text-green-400 border border-gray-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-    placeholder="Введите ваш код здесь..."
-    style={{ minHeight: '500px', fontFamily: 'Consolas, Monaco, "Courier New", monospace' }}
-  />
-));
+// Enhanced code editor with syntax highlighting
 
-// Memoized Monaco Editor component with fallback
-const MemoizedMonacoEditor = React.memo(({ value, onChange, language = 'python' }: {
+// Fast CodeMirror Editor component (primary choice)
+const CodeMirrorEditor = React.memo(({ value, onChange }: {
   value: string;
   onChange: (value: string | undefined) => void;
-  language?: string;
 }) => {
-  const [useSimpleEditor, setUseSimpleEditor] = useState(false);
-  const [editorLoading, setEditorLoading] = useState(true);
+  const [editorValue, setEditorValue] = useState(value);
 
-  // Auto-switch to simple editor after 10 seconds if Monaco hasn't loaded
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (editorLoading) {
-        console.warn('Monaco Editor taking too long to load, switching to simple editor');
-        setUseSimpleEditor(true);
-        setEditorLoading(false);
-      }
-    }, 10000);
+    setEditorValue(value);
+  }, [value]);
 
-    return () => clearTimeout(timer);
-  }, [editorLoading]);
-
-  if (useSimpleEditor) {
-    return (
-      <div className="relative">
-        <div className="absolute top-2 right-2 text-xs text-gray-500 bg-yellow-100 px-2 py-1 rounded">
-          Простой редактор
-        </div>
-        <SimpleCodeEditor
-          value={value}
-          onChange={(newValue) => onChange(newValue)}
-        />
-      </div>
-    );
-  }
+  const handleChange = (editor: any, data: any, newValue: string) => {
+    setEditorValue(newValue);
+    onChange(newValue);
+  };
 
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center h-full bg-gray-50 rounded">
-        <Spin size="large" tip="Загрузка редактора..." />
-      </div>
-    }>
-      <MonacoEditor
-        height="500px"
-        language={language}
+    <CodeMirror
+      value={editorValue}
+      onBeforeChange={handleChange}
+      options={{
+        mode: 'python',
+        theme: 'material',
+        lineNumbers: true,
+        lineWrapping: true,
+        indentUnit: 4,
+        tabSize: 4,
+        smartIndent: true,
+        electricChars: true,
+        autoCloseBrackets: true,
+        matchBrackets: true,
+        styleActiveLine: true,
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+        foldGutter: true,
+        readOnly: false,
+        scrollbarStyle: 'native',
+        viewportMargin: Infinity,
+        extraKeys: {
+          'Ctrl-Space': 'autocomplete',
+          'Ctrl-/': 'toggleComment',
+          'Cmd-/': 'toggleComment',
+        },
+      }}
+      onChange={(editor, data, value) => {
+        // Additional change handler if needed
+      }}
+    />
+  );
+});
+
+// Simple and fast CodeMirror Editor
+const CodeMirrorEditorComponent = React.memo(({ value, onChange }: {
+  value: string;
+  onChange: (value: string | undefined) => void;
+}) => {
+  return (
+    <div className="codemirror-container">
+      <CodeMirrorEditor
         value={value}
         onChange={onChange}
-        theme="vs-light"
-        loading={editorLoading ? <Spin size="large" tip="Инициализация..." /> : null}
-        onMount={() => setEditorLoading(false)}
-        options={{
-          minimap: { enabled: false },
-          fontSize: 14,
-          lineNumbers: 'on',
-          wordWrap: 'on',
-          tabSize: 4,
-          insertSpaces: true,
-          scrollBeyondLastLine: false,
-          automaticLayout: false, // Disabled for better performance
-          renderLineHighlight: 'line',
-          fontFamily: 'Consolas, Monaco, "Courier New", monospace',
-          fontLigatures: true,
-          smoothScrolling: true,
-          cursorBlinking: 'blink',
-          contextmenu: true,
-          mouseWheelZoom: false,
-          quickSuggestions: {
-            other: true,
-            comments: false,
-            strings: true
-          },
-          parameterHints: {
-            enabled: true
-          },
-          suggestOnTriggerCharacters: true,
-          acceptSuggestionOnEnter: 'on',
-          tabCompletion: 'on',
-          wordBasedSuggestions: 'currentDocument',
-          // Additional performance optimizations
-          glyphMargin: false,
-          folding: true,
-          lineDecorationsWidth: 10,
-          lineNumbersMinChars: 3,
-          renderWhitespace: 'selection',
-          rulers: [],
-          overviewRulerLanes: 0,
-          overviewRulerBorder: false,
-          hideCursorInOverviewRuler: true,
-          scrollbar: {
-            vertical: 'visible',
-            horizontal: 'visible',
-            verticalScrollbarSize: 14,
-            horizontalScrollbarSize: 14
-          }
-        }}
       />
-    </Suspense>
+    </div>
   );
 });
 
@@ -164,30 +189,6 @@ export default function ChatTutorPage() {
 
   const loading = initLoading || confirmLoading || quizLoading || codeLoading || hintLoading;
 
-  // Configure Monaco Editor when coding stage is reached
-  useEffect(() => {
-    if (status?.stage === 'coding' && typeof window !== 'undefined') {
-      // Configure Monaco to work in SES environment by avoiding require()
-      try {
-        // Set up Monaco environment with inline workers to avoid loading issues
-        window.MonacoEnvironment = {
-          getWorkerUrl: function (workerId, label) {
-            // Use inline worker to avoid external loading issues
-            return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
-              self.MonacoEnvironment = {
-                baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/'
-              };
-              importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/base/worker/workerMain.js');
-            `)}`;
-          }
-        };
-
-        // Monaco environment configured for SES compatibility
-      } catch (error) {
-        console.warn('Monaco configuration warning:', error);
-      }
-    }
-  }, [status?.stage]);
 
   // Initialize session
   useEffect(() => {
@@ -350,9 +351,9 @@ export default function ChatTutorPage() {
                 p: ({node, ...props}) => <p className="mb-3 leading-relaxed" {...props} />,
                 code: ({node, inline, ...props}: any) =>
                   inline ? (
-                    <code className="bg-gray-200 px-2 py-1 rounded text-red-600 font-mono text-sm" {...props} />
+                    <code className="bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono text-sm" {...props} />
                   ) : (
-                    <code className="block bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-3" {...props} />
+                    <code className="block bg-gray-100 text-gray-800 p-3 rounded border-l-4 border-blue-400 overflow-x-auto font-mono text-sm mb-3" {...props} />
                   ),
                 pre: ({node, ...props}) => <pre className="mb-3 overflow-x-auto" {...props} />,
                 ul: ({node, ...props}) => <ul className="list-disc list-inside mb-3 space-y-1" {...props} />,
@@ -411,102 +412,99 @@ export default function ChatTutorPage() {
 
       {/* STAGE 3: CODING TASK */}
       {status?.stage === 'coding' && codingTask && (
-        <div className="mb-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Task Description */}
-            <Card>
-              <Title level={4}>💻 Практическое задание</Title>
+        <div className="mb-8 space-y-6">
+          {/* Task Description */}
+          <Card>
+            <Title level={4}>💻 Практическое задание</Title>
 
-              <div className="mb-6">
-                <Title level={5}>{codingTask.title}</Title>
-                <Paragraph className="whitespace-pre-wrap">{codingTask.description}</Paragraph>
+            <div className="mb-6">
+              <Title level={5}>{codingTask.title}</Title>
+              <Paragraph className="whitespace-pre-wrap">{codingTask.description}</Paragraph>
 
-                <Collapse
-                  items={[
-                    {
-                      key: 'criteria',
-                      label: '✓ Критерии успеха',
-                      children: (
-                        <ul className="list-disc pl-5 space-y-1">
-                          {codingTask.success_criteria.map((criterion, idx) => (
-                            <li key={idx} className="text-sm">{criterion}</li>
-                          ))}
-                        </ul>
-                      ),
-                    },
-                    {
-                      key: 'concepts',
-                      label: '🎯 Концепции',
-                      children: (
-                        <ul className="list-disc pl-5 space-y-1">
-                          {(Array.isArray(codingTask.expected_concepts) 
-                            ? codingTask.expected_concepts 
-                            : typeof codingTask.expected_concepts === 'string' 
-                              ? JSON.parse(codingTask.expected_concepts) 
-                              : []
-                          ).map((concept: string, idx: number) => (
-                            <li key={idx} className="text-sm">{concept}</li>
-                          ))}
-                        </ul>
-                      ),
-                    },
-                  ]}
-                />
-              </div>
-
-              {evaluation && (
-                <Card className={`border-l-4 ${evaluation.passed ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}`}>
-                  <Title level={5}>{evaluation.passed ? '✅ Отлично!' : '⚠️ Требует доработки'}</Title>
-                  <Paragraph><strong>Результат:</strong> {evaluation.score}/100</Paragraph>
-                  <Paragraph><strong>Отзыв:</strong> {evaluation.feedback}</Paragraph>
-
-                  {evaluation.strengths && evaluation.strengths.length > 0 && (
-                    <div className="mt-3">
-                      <Text strong>✅ Что получилось:</Text>
-                      <ul className="list-disc pl-5 mt-2 text-sm">
-                        {evaluation.strengths.map((item: string, idx: number) => (
-                          <li key={idx}>{item}</li>
+              <Collapse
+                items={[
+                  {
+                    key: 'criteria',
+                    label: '✓ Критерии успеха',
+                    children: (
+                      <ul className="list-disc pl-5 space-y-1">
+                        {codingTask.success_criteria.map((criterion, idx) => (
+                          <li key={idx} className="text-sm">{criterion}</li>
                         ))}
                       </ul>
-                    </div>
-                  )}
-
-                  {evaluation.improvements && evaluation.improvements.length > 0 && (
-                    <div className="mt-3">
-                      <Text strong>💡 Что улучшить:</Text>
-                      <ul className="list-disc pl-5 mt-2 text-sm">
-                        {evaluation.improvements.map((item: string, idx: number) => (
-                          <li key={idx}>{item}</li>
+                    ),
+                  },
+                  {
+                    key: 'concepts',
+                    label: '🎯 Концепции',
+                    children: (
+                      <ul className="list-disc pl-5 space-y-1">
+                        {(Array.isArray(codingTask.expected_concepts)
+                          ? codingTask.expected_concepts
+                          : typeof codingTask.expected_concepts === 'string'
+                            ? JSON.parse(codingTask.expected_concepts)
+                            : []
+                        ).map((concept: string, idx: number) => (
+                          <li key={idx} className="text-sm">{concept}</li>
                         ))}
                       </ul>
-                    </div>
-                  )}
-                </Card>
-              )}
-            </Card>
+                    ),
+                  },
+                ]}
+              />
+            </div>
 
-            {/* Code Editor */}
-            <Card title="Редактор кода" className="flex flex-col">
-              <div className="flex-grow border rounded-lg overflow-hidden bg-white min-h-[500px]">
-                <MemoizedMonacoEditor
-                  value={code}
-                  onChange={(value) => setCode(value || '')}
-                  language="python"
-                />
-              </div>
+            {evaluation && (
+              <Card className={`border-l-4 ${evaluation.passed ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}`}>
+                <Title level={5}>{evaluation.passed ? '✅ Отлично!' : '⚠️ Требует доработки'}</Title>
+                <Paragraph><strong>Результат:</strong> {evaluation.score}/100</Paragraph>
+                <Paragraph><strong>Отзыв:</strong> {evaluation.feedback}</Paragraph>
 
-              <Space className="mt-4 w-full justify-between">
-                <Space>
-                  <Button type="primary" size="large" onClick={handleSubmitCode} loading={codeLoading}>
-                    Отправить решение
-                  </Button>
-                  <Button onClick={handleGetHint} loading={hintLoading}>
-                    💡 Подсказка
-                  </Button>
-                </Space>
+                {evaluation.strengths && evaluation.strengths.length > 0 && (
+                  <div className="mt-3">
+                    <Text strong>✅ Что получилось:</Text>
+                    <ul className="list-disc pl-5 mt-2 text-sm">
+                      {evaluation.strengths.map((item: string, idx: number) => (
+                        <li key={idx}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {evaluation.improvements && evaluation.improvements.length > 0 && (
+                  <div className="mt-3">
+                    <Text strong>💡 Что улучшить:</Text>
+                    <ul className="list-disc pl-5 mt-2 text-sm">
+                      {evaluation.improvements.map((item: string, idx: number) => (
+                        <li key={idx}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </Card>
+            )}
+          </Card>
+
+          {/* Code Editor - Full Width */}
+          <Card title="✏️ Редактор кода - введите ваше решение" className="flex flex-col">
+            <div className="flex-grow border rounded-lg overflow-hidden bg-gray-900 min-h-[500px]">
+              <CodeMirrorEditorComponent
+                value={code}
+                onChange={(value) => setCode(value || '')}
+              />
+            </div>
+
+            <Space className="mt-4 w-full justify-between">
+              <Space>
+                <Button type="primary" size="large" onClick={handleSubmitCode} loading={codeLoading}>
+                  🚀 Отправить решение
+                </Button>
+                <Button onClick={handleGetHint} loading={hintLoading}>
+                  💡 Подсказка
+                </Button>
               </Space>
-            </Card>
-          </div>
+            </Space>
+          </Card>
         </div>
       )}
 

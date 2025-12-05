@@ -135,7 +135,7 @@ export function Dashboard() {
     setTimeout(() => {
       setEnrolledLanguages([LANGUAGE_COURSES[0], LANGUAGE_COURSES[1], LANGUAGE_COURSES[2]]);
       setIsLoading(false);
-    }, 500);
+    }, 0);
   }, []);
 
   const handleAddLanguage = (values: AddCourseFormValues) => {
