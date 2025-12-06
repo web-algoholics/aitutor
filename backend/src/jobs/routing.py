@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel.ext.asyncio.session import AsyncSession
 from pydantic import BaseModel
-import logging
-import httpx
 
 from database import get_session
 from auth.auth import current_active_user
@@ -10,15 +8,14 @@ from auth.models import User
 from .schemas import AnalysisRequest, MarketAnalysisResponse, SkillRecommendation
 from .analyzer import JobAnalyzer
 
-logger = logging.getLogger(__name__)
-
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 
 @router.post("/analyze", response_model=MarketAnalysisResponse)
 async def analyze_job_market(
     request: AnalysisRequest,
-    session: AsyncSession = Depends(get_session)
+    session: AsyncSession = Depends(get_session),
+    user: User = Depends(current_active_user)
 ):
     """
     Анализ рынка вакансий по запросу
