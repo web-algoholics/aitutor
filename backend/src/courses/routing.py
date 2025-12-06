@@ -620,6 +620,25 @@ async def get_user_progress(user_id: int, db: AsyncSession = Depends(get_session
     }
 
 
+@router.get("/user/{user_id}/modules/progress")
+async def get_user_module_progress(user_id: int, db: AsyncSession = Depends(get_session)):
+    """Get user's progress for all modules"""
+    result = await db.execute(
+        select(UserModuleProgress).where(UserModuleProgress.user_id == user_id)
+    )
+    progress = result.scalars().all()
+
+    return [
+        {
+            "id": p.id,
+            "module_id": p.module_id,
+            "is_completed": p.is_completed,
+            "last_accessed": p.last_accessed.isoformat() if p.last_accessed else None
+        }
+        for p in progress
+    ]
+
+
 @router.post("/user/{user_id}/module/{module_id}/complete")
 async def mark_module_complete(
     user_id: int, 

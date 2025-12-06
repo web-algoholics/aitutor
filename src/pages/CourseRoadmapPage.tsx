@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Button, Spin, message, Steps, Space, Tag, Progress, Empty, Badge } from 'antd';
 import { CheckCircleOutlined, LockOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useGetCourseQuery, useGetCourseRoadmapQuery, useGetUserProgressQuery, type Course, type Module } from '../services/coursesApi';
+import { useGetCourseQuery, useGetCourseRoadmapQuery, useGetUserProgressQuery, useGetUserModuleProgressQuery, type Course, type Module } from '../services/coursesApi';
 import { useGetCurrentUserQuery } from '../services/authApi';
 
 // Helper function to ensure array
@@ -29,13 +29,14 @@ export default function CourseRoadmapPage() {
   const { data: currentUser } = useGetCurrentUserQuery(undefined);
   const userId = currentUser?.id;
   const { data: progressData } = useGetUserProgressQuery(userId ?? 0, { skip: !userId });
+  const { data: moduleProgressData = [] } = useGetUserModuleProgressQuery(userId ?? 0, { skip: !userId });
 
   const handleStartModule = (moduleId: number) => {
     navigate(`/courses/${courseId}/modules/${moduleId}/chat`);
   };
 
   const getModuleProgress = (moduleId: number) => {
-    return progressData?.enrollments?.[0];
+    return moduleProgressData.find(progress => progress.module_id === moduleId);
   };
 
   if (courseLoading || modulesLoading) return <Spin size="large" className="flex items-center justify-center min-h-screen" />;
@@ -43,7 +44,7 @@ export default function CourseRoadmapPage() {
 
   const sortedModules = [...(modules as Module[])].sort((a, b) => a.order - b.order);
   const courseProgress = progressData?.enrollments?.[0];
-  const completedCount = courseProgress?.is_completed ? sortedModules.length : Math.floor((courseProgress?.progress_percentage || 0) / 100 * sortedModules.length);
+  const completedCount = moduleProgressData.filter(progress => progress.is_completed).length;
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-8">
@@ -56,8 +57,8 @@ export default function CourseRoadmapPage() {
         
         <div className="bg-blue-50 p-4 rounded-lg mb-6">
           <p className="font-semibold mb-2">Прогресс курса:</p>
-          <Progress 
-            percent={Math.max(0, (courseProgress?.progress_percentage || 0))}
+          <Progress
+            percent={Math.max(0, sortedModules.length > 0 ? (completedCount / sortedModules.length) * 100 : 0)}
             status={courseProgress?.is_completed ? 'success' : 'active'}
           />
           <p className="text-sm text-gray-600 mt-2">
@@ -69,7 +70,8 @@ export default function CourseRoadmapPage() {
       {/* Modules Timeline */}
       <div className="space-y-4">
         {sortedModules.map((module, idx) => {
-          const isCompleted = courseProgress?.is_completed || false;
+          const moduleProgress = getModuleProgress(module.id);
+          const isCompleted = moduleProgress?.is_completed || false;
 
           return (
             <Card

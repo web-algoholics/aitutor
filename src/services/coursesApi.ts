@@ -37,6 +37,13 @@ export interface UserProgress {
   }>;
 }
 
+export interface UserModuleProgress {
+  id: number;
+  module_id: number;
+  is_completed: boolean;
+  last_accessed: string;
+}
+
 export interface ChatResponse {
   session_id: number;
   user_message?: string;
@@ -201,6 +208,11 @@ export const coursesApi = createApi({
     getUserProgress: builder.query<UserProgress, number>({
       query: (userId) => ({ url: `/api/courses/user/${userId}/progress` }),
     }),
+    getUserModuleProgress: builder.query<UserModuleProgress[], number>({
+      query: (userId) => ({ url: `/api/courses/user/${userId}/modules/progress` }),
+      providesTags: (result, error, userId) =>
+        result ? result.map((p: any) => ({ type: 'Modules' as const, id: `progress-${p.module_id}` })) : [],
+    }),
     markModuleComplete: builder.mutation<unknown, { userId: number; moduleId: number }>({
       query: ({ userId, moduleId }) => ({ 
         url: `/api/courses/user/${userId}/module/${moduleId}/complete`, 
@@ -268,6 +280,7 @@ export const {
   useSubmitCodeMutation,
   useGetCodeHintMutation,
   useGetUserProgressQuery,
+  useGetUserModuleProgressQuery,
   useMarkModuleCompleteMutation,
   useInitSessionMutation,
   useConfirmTheoryMutation,
