@@ -127,15 +127,11 @@ interface AddCourseFormValues {
 export function Dashboard() {
   const [enrolledLanguages, setEnrolledLanguages] = useState<Course[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [form] = Form.useForm<AddCourseFormValues>();
   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
-    setTimeout(() => {
       setEnrolledLanguages([LANGUAGE_COURSES[0], LANGUAGE_COURSES[1], LANGUAGE_COURSES[2]]);
-      setIsLoading(false);
-    }, 500);
   }, []);
 
   const handleAddLanguage = (values: AddCourseFormValues) => {
@@ -180,14 +176,6 @@ export function Dashboard() {
   const availableCourses = LANGUAGE_COURSES.filter(
     course => !enrolledLanguages.some(l => l.id === course.id)
   );
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Spin size="large" />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">

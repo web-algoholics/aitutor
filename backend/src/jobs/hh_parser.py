@@ -5,7 +5,10 @@ import httpx
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 import re
+import logging
 from config import settings
+
+logger = logging.getLogger(__name__)
 
 HH_API_BASE = "https://api.hh.ru"
 
@@ -58,10 +61,21 @@ class HHParser:
         try:
             response = await self.client.get("/vacancies", params=params)
             response.raise_for_status()
-            return response.json()
-        except httpx.HTTPError as e:
-            print(f"Error fetching vacancies from hh.ru: {e}")
-            return {"items": [], "found": 0, "pages": 0}
+            data = response.json()
+            # Проверка формата ответа
+            if not isinstance(data, dict) or "items" not in data:
+                logger.error(f"Unexpected response format from HH API: {type(data)}")
+                return {"items": [], "found": 0, "pages": 0}
+            return data
+        except httpx.HTTPStatusError as e:
+            logger.error(f"HTTP error fetching vacancies from hh.ru: {e.response.status_code} - {e.response.text[:200]}")
+            raise
+        except httpx.RequestError as e:
+            logger.error(f"Request error fetching vacancies from hh.ru: {e}")
+            raise
+        except Exception as e:
+            logger.error(f"Unexpected error fetching vacancies from hh.ru: {e}", exc_info=True)
+            raise
     
     async def get_vacancy_details(self, vacancy_id: str) -> Optional[Dict[str, Any]]:
         """Получить детальную информацию о вакансии"""
@@ -69,7 +83,8 @@ class HHParser:
             response = await self.client.get(f"/vacancies/{vacancy_id}")
             response.raise_for_status()
             return response.json()
-        except httpx.HTTPError:
+        except httpx.HTTPError as e:
+            logger.warning(f"Error fetching vacancy details {vacancy_id}: {e}")
             return None
     
     def extract_skills(self, description: str, requirements: str = "") -> List[str]:
@@ -126,42 +141,72 @@ class HHParser:
     
     def normalize_vacancy(self, vacancy_data: Dict[str, Any]) -> Dict[str, Any]:
         """Нормализация данных вакансии для сохранения в БД"""
-        description = vacancy_data.get("description", "")
-        requirements = vacancy_data.get("snippet", {}).get("requirement", "")
-        
-        # Извлечение навыков
-        skills = self.extract_skills(description, requirements)
-        
-        # Парсинг зарплаты
-        salary_from, salary_to, currency = self.parse_salary(vacancy_data.get("salary"))
-        
-        # Парсинг даты
-        published_at = None
-        if vacancy_data.get("published_at"):
-            try:
-                published_at = datetime.fromisoformat(
-                    vacancy_data["published_at"].replace("Z", "+00:00")
-                )
-            except:
-                pass
-        
-        return {
-            "hh_id": str(vacancy_data["id"]),
-            "name": vacancy_data.get("name", ""),
-            "description": description,
-            "employer_name": vacancy_data.get("employer", {}).get("name"),
-            "salary_from": salary_from,
-            "salary_to": salary_to,
-            "currency": currency,
-            "experience": vacancy_data.get("experience", {}).get("id"),
-            "employment": vacancy_data.get("employment", {}).get("id"),
-            "schedule": vacancy_data.get("schedule", {}).get("id"),
-            "area": vacancy_data.get("area", {}).get("name"),
-            "skills": skills,
-            "requirements": requirements or description,
-            "url": vacancy_data.get("alternate_url", ""),
-            "published_at": published_at,
-        }
+        try:
+            # Безопасное извлечение данных
+            vacancy_id = vacancy_data.get("id")
+            if not vacancy_id:
+                logger.warning(f"Vacancy data missing 'id' field: {vacancy_data.keys()}")
+                raise ValueError("Vacancy data missing required 'id' field")
+            
+            description = vacancy_data.get("description", "")
+            snippet = vacancy_data.get("snippet", {})
+            requirements = snippet.get("requirement", "") if isinstance(snippet, dict) else ""
+            
+            # Извлечение навыков
+            skills = self.extract_skills(description, requirements)
+            
+            # Парсинг зарплаты
+            salary_from, salary_to, currency = self.parse_salary(vacancy_data.get("salary"))
+            
+            # Парсинг даты
+            published_at = None
+            if vacancy_data.get("published_at"):
+                try:
+                    published_at_str = vacancy_data["published_at"]
+                    if isinstance(published_at_str, str):
+                        published_at = datetime.fromisoformat(
+                            published_at_str.replace("Z", "+00:00")
+                        )
+                except (ValueError, AttributeError) as e:
+                    logger.debug(f"Error parsing published_at: {e}")
+            
+            # Безопасное извлечение вложенных объектов
+            employer = vacancy_data.get("employer", {})
+            employer_name = employer.get("name") if isinstance(employer, dict) else None
+            
+            experience = vacancy_data.get("experience", {})
+            experience_id = experience.get("id") if isinstance(experience, dict) else None
+            
+            employment = vacancy_data.get("employment", {})
+            employment_id = employment.get("id") if isinstance(employment, dict) else None
+            
+            schedule = vacancy_data.get("schedule", {})
+            schedule_id = schedule.get("id") if isinstance(schedule, dict) else None
+            
+            area = vacancy_data.get("area", {})
+            area_name = area.get("name") if isinstance(area, dict) else None
+            
+            return {
+                "hh_id": str(vacancy_id),
+                "name": vacancy_data.get("name", ""),
+                "description": description,
+                "employer_name": employer_name,
+                "salary_from": salary_from,
+                "salary_to": salary_to,
+                "currency": currency,
+                "experience": experience_id,
+                "employment": employment_id,
+                "schedule": schedule_id,
+                "area": area_name,
+                "skills": skills,
+                "requirements": requirements or description,
+                "url": vacancy_data.get("alternate_url", ""),
+                "published_at": published_at,
+            }
+        except Exception as e:
+            logger.error(f"Error normalizing vacancy data: {e}", exc_info=True)
+            logger.debug(f"Vacancy data: {vacancy_data}")
+            raise
     
     async def fetch_and_normalize_vacancies(
         self,
@@ -198,9 +243,13 @@ class HHParser:
                 if len(all_vacancies) >= limit:
                     break
                 
-                # Используем данные из списка, можно дополнительно запросить детали
-                normalized = self.normalize_vacancy(item)
-                all_vacancies.append(normalized)
+                try:
+                    # Используем данные из списка, можно дополнительно запросить детали
+                    normalized = self.normalize_vacancy(item)
+                    all_vacancies.append(normalized)
+                except Exception as e:
+                    logger.warning(f"Error normalizing vacancy item: {e}, skipping...")
+                    continue  # Пропускаем проблемную вакансию и продолжаем
             
             # Проверка, есть ли еще страницы
             pages = result.get("pages", 0)
