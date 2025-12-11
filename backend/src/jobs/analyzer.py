@@ -1,12 +1,18 @@
 """
 Сервис для анализа вакансий и генерации рекомендаций
 """
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Set
 from collections import Counter
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 from .models import JobVacancy, JobAnalysis
 from .hh_parser import HHParser
+
+try:
+    from courses.models import Course
+except ImportError:
+    # Если модуль courses не настроен, создаем заглушку
+    Course = None
 
 class JobAnalyzer:
     """Анализатор вакансий"""
@@ -14,6 +20,7 @@ class JobAnalyzer:
     def __init__(self, session: AsyncSession):
         self.session = session
         self.parser = HHParser()
+        self._available_courses: Optional[Set[str]] = None
     
     async def analyze_market(
         self,
@@ -47,7 +54,9 @@ class JobAnalyzer:
                 "salary_stats": {},
                 "experience_distribution": {},
                 "recommended_courses": [],
-                "skill_gaps": []
+                "skill_gaps": [],
+                "top_skills": [],
+                "skill_combinations": []
             }
         
         # Сохранить вакансии в БД (опционально, можно кэшировать)
@@ -61,11 +70,14 @@ class JobAnalyzer:
         skill_counter = Counter(all_skills)
         total = len(vacancies_data)
         
+        # Получить список доступных курсов
+        await self._load_available_courses()
+        
         # Категоризация навыков
-        technologies = self._categorize_skills(skill_counter, "technologies")
-        frameworks = self._categorize_skills(skill_counter, "frameworks")
-        databases = self._categorize_skills(skill_counter, "databases")
-        tools = self._categorize_skills(skill_counter, "tools")
+        technologies = await self._categorize_skills(skill_counter, "technologies")
+        frameworks = await self._categorize_skills(skill_counter, "frameworks")
+        databases = await self._categorize_skills(skill_counter, "databases")
+        tools = await self._categorize_skills(skill_counter, "tools")
         
         # Статистика зарплат
         salary_stats = self._analyze_salaries(vacancies_data)
@@ -79,6 +91,10 @@ class JobAnalyzer:
         # Навыки, которых не хватает (можно расширить логику)
         skill_gaps = self._identify_skill_gaps(technologies, frameworks, databases)
         
+        # Дополнительная аналитика (после загрузки курсов)
+        top_skills = self._get_top_skills(technologies, frameworks, databases, tools)
+        skill_combinations = self._analyze_skill_combinations(vacancies_data)
+        
         return {
             "query": query,
             "total_vacancies": total,
@@ -89,20 +105,81 @@ class JobAnalyzer:
             "salary_stats": salary_stats,
             "experience_distribution": experience_dist,
             "recommended_courses": recommended_courses,
-            "skill_gaps": skill_gaps
+            "skill_gaps": skill_gaps,
+            "top_skills": top_skills,
+            "skill_combinations": skill_combinations
         }
     
-    def _categorize_skills(
+    async def _load_available_courses(self):
+        """Загрузить список доступных курсов из БД"""
+        if self._available_courses is None:
+            if Course is None:
+                # Если модель Course не импортирована, используем пустой набор
+                self._available_courses = set()
+                return
+            
+            try:
+                result = await self.session.exec(
+                    select(Course.slug).where(Course.is_active == True)
+                )
+                slugs = result.all()
+                self._available_courses = set(slugs) if slugs else set()
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.info(f"Loaded {len(self._available_courses)} available courses: {self._available_courses}")
+            except Exception as e:
+                # Если таблица курсов не существует или произошла ошибка,
+                # просто используем пустой набор - ссылки на курсы не будут показываться
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f"Could not load courses: {e}. Continuing without course links.")
+                self._available_courses = set()
+    
+    def _get_course_url(self, skill: str) -> Optional[str]:
+        """Получить URL курса для навыка, если курс существует"""
+        if not self._available_courses:
+            return None
+        
+        # Нормализация названия навыка для поиска курса
+        skill_lower = skill.lower().strip()
+        
+        # Прямое совпадение
+        if skill_lower in self._available_courses:
+            url = f"/courses/{skill_lower}"
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.debug(f"Found course URL for skill '{skill}': {url}")
+            return url
+        
+        # Маппинг для случаев, когда название навыка отличается от slug курса
+        skill_mapping = {
+            "csharp": "c-sharp",
+            "c#": "c-sharp",
+            "postgresql": "postgres",
+            "mongodb": "mongo",
+        }
+        
+        mapped_skill = skill_mapping.get(skill_lower)
+        if mapped_skill and mapped_skill in self._available_courses:
+            url = f"/courses/{mapped_skill}"
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.debug(f"Found course URL for skill '{skill}' (mapped to '{mapped_skill}'): {url}")
+            return url
+        
+        return None
+    
+    async def _categorize_skills(
         self,
         skill_counter: Counter,
         category: str
     ) -> List[Dict[str, Any]]:
-        """Категоризация навыков"""
+        """Категоризация навыков с добавлением ссылок на курсы"""
         categories = {
-            "technologies": ["python", "javascript", "java", "csharp", "php", "go", "rust", "sql"],
-            "frameworks": ["react", "vue", "angular", "django", "flask", "spring"],
-            "databases": ["sql", "mongodb", "redis", "postgresql", "mysql"],
-            "tools": ["docker", "kubernetes", "git", "linux", "aws"]
+            "technologies": ["python", "javascript", "java", "csharp", "php", "go", "rust", "sql", "typescript"],
+            "frameworks": ["react", "vue", "angular", "django", "flask", "spring", "nextjs", "nuxt"],
+            "databases": ["sql", "mongodb", "redis", "postgresql", "mysql", "postgres"],
+            "tools": ["docker", "kubernetes", "git", "linux", "aws", "gcp", "azure"]
         }
         
         category_skills = categories.get(category, [])
@@ -112,12 +189,17 @@ class JobAnalyzer:
         for skill in category_skills:
             count = skill_counter.get(skill, 0)
             if count > 0:
-                results.append({
+                course_url = self._get_course_url(skill)
+                result_item = {
                     "skill": skill,
                     "demand_count": count,
                     "percentage": round((count / total) * 100, 2) if total > 0 else 0,
                     "trend": "stable"  # Можно добавить логику определения тренда
-                })
+                }
+                if course_url:
+                    result_item["course_url"] = course_url
+                
+                results.append(result_item)
         
         # Сортировка по популярности
         results.sort(key=lambda x: x["demand_count"], reverse=True)
@@ -239,6 +321,75 @@ class JobAnalyzer:
                 self.session.add(vacancy)
         
         await self.session.commit()
+    
+    def _get_top_skills(
+        self,
+        technologies: List[Dict[str, Any]],
+        frameworks: List[Dict[str, Any]],
+        databases: List[Dict[str, Any]],
+        tools: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        """Получить топ навыков из всех категорий"""
+        all_skills = []
+        all_skills.extend(technologies[:5])
+        all_skills.extend(frameworks[:3])
+        all_skills.extend(databases[:3])
+        all_skills.extend(tools[:3])
+        
+        # Убрать дубликаты по названию навыка, оставляя тот, у которого больше demand_count
+        skills_dict = {}
+        for skill in all_skills:
+            skill_name = skill["skill"].lower()
+            if skill_name not in skills_dict:
+                skills_dict[skill_name] = skill
+            else:
+                # Если уже есть, берем тот, у которого больше demand_count
+                if skill["demand_count"] > skills_dict[skill_name]["demand_count"]:
+                    skills_dict[skill_name] = skill
+        
+        # Преобразовать обратно в список
+        unique_skills = list(skills_dict.values())
+        
+        # Добавить ссылки на курсы для топ навыков
+        for skill in unique_skills:
+            # Всегда проверяем и добавляем course_url
+            course_url = self._get_course_url(skill["skill"])
+            if course_url:
+                skill["course_url"] = course_url
+            elif "course_url" in skill:
+                # Если курс не найден, удаляем старый course_url
+                del skill["course_url"]
+        
+        # Сортировка по популярности
+        unique_skills.sort(key=lambda x: x["demand_count"], reverse=True)
+        return unique_skills[:10]
+    
+    def _analyze_skill_combinations(self, vacancies: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Анализ популярных комбинаций навыков"""
+        combinations = []
+        for vacancy in vacancies[:50]:  # Анализируем первые 50 для производительности
+            skills = vacancy.get("skills", [])
+            if len(skills) >= 2:
+                # Берем топ-3 навыка из вакансии
+                top_skills = sorted(skills, key=lambda x: skills.count(x), reverse=True)[:3]
+                if len(top_skills) >= 2:
+                    combo = tuple(sorted(top_skills[:2]))
+                    combinations.append(combo)
+        
+        # Подсчет популярных комбинаций
+        from collections import Counter
+        combo_counter = Counter(combinations)
+        
+        # Возвращаем топ-5 комбинаций
+        top_combos = combo_counter.most_common(5)
+        return [
+            {
+                "skills": list(combo),
+                "count": count,
+                "percentage": round((count / len(vacancies)) * 100, 2) if vacancies else 0
+            }
+            for combo, count in top_combos
+        ]
     
     async def close(self):
         """Закрыть парсер"""

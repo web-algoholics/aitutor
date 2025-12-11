@@ -61,6 +61,7 @@ class SkillRecommendation(BaseModel):
     percentage: float  # Процент от всех вакансий
     average_salary: Optional[float] = None
     trend: str = "stable"  # "growing", "declining", "stable"
+    course_url: Optional[str] = None  # Ссылка на курс, если курс существует
 
 class MarketAnalysisResponse(BaseModel):
     """Полный ответ с анализом рынка"""
@@ -74,4 +75,6 @@ class MarketAnalysisResponse(BaseModel):
     experience_distribution: Dict[str, int]
     recommended_courses: List[str]  # Рекомендуемые курсы на основе анализа
     skill_gaps: List[str]  # Навыки, которых не хватает
+    top_skills: Optional[List[Dict[str, Any]]] = None  # Топ навыков из всех категорий
+    skill_combinations: Optional[List[Dict[str, Any]]] = None  # Популярные комбинации навыков
 

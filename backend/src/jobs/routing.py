@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel.ext.asyncio.session import AsyncSession
 from pydantic import BaseModel
+import logging
 
 from database import get_session
 from auth.auth import current_active_user
@@ -8,14 +9,15 @@ from auth.models import User
 from .schemas import AnalysisRequest, MarketAnalysisResponse, SkillRecommendation
 from .analyzer import JobAnalyzer
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 
 @router.post("/analyze", response_model=MarketAnalysisResponse)
 async def analyze_job_market(
     request: AnalysisRequest,
-    session: AsyncSession = Depends(get_session),
-    user: User = Depends(current_active_user)
+    session: AsyncSession = Depends(get_session)
 ):
     """
     Анализ рынка вакансий по запросу
@@ -37,30 +39,42 @@ async def analyze_job_market(
         )
         
         # Преобразовать в формат ответа
-        response = MarketAnalysisResponse(
-            query=analysis["query"],
-            total_vacancies=analysis["total_vacancies"],
-            technologies=[
-                SkillRecommendation(**tech) for tech in analysis["technologies"]
-            ],
-            frameworks=[
-                SkillRecommendation(**fw) for fw in analysis["frameworks"]
-            ],
-            databases=[
-                SkillRecommendation(**db) for db in analysis["databases"]
-            ],
-            tools=[
-                SkillRecommendation(**tool) for tool in analysis["tools"]
-            ],
-            salary_stats=analysis["salary_stats"],
-            experience_distribution=analysis["experience_distribution"],
-            recommended_courses=analysis["recommended_courses"],
-            skill_gaps=analysis["skill_gaps"]
-        )
+        try:
+            response = MarketAnalysisResponse(
+                query=analysis["query"],
+                total_vacancies=analysis["total_vacancies"],
+                technologies=[
+                    SkillRecommendation(**tech) for tech in analysis["technologies"]
+                ],
+                frameworks=[
+                    SkillRecommendation(**fw) for fw in analysis["frameworks"]
+                ],
+                databases=[
+                    SkillRecommendation(**db) for db in analysis["databases"]
+                ],
+                tools=[
+                    SkillRecommendation(**tool) for tool in analysis["tools"]
+                ],
+                salary_stats=analysis["salary_stats"],
+                experience_distribution=analysis["experience_distribution"],
+                recommended_courses=analysis["recommended_courses"],
+                skill_gaps=analysis["skill_gaps"],
+                top_skills=analysis.get("top_skills"),
+                skill_combinations=analysis.get("skill_combinations")
+            )
+        except Exception as validation_error:
+            logger.error(f"Validation error: {validation_error}", exc_info=True)
+            raise HTTPException(
+                status_code=500, 
+                detail=f"Response validation failed: {str(validation_error)}"
+            )
         
         return response
     
+    except HTTPException:
+        raise
     except Exception as e:
+        logger.error(f"Analysis failed: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
     
     finally:

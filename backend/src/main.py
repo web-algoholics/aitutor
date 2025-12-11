@@ -12,6 +12,7 @@ from auth.models import User
 from auth.schemas import UserRead, UserCreate, UserUpdate
 from auth.routing import router as upload_router
 from jobs.routing import router as jobs_router
+from courses.routing import router as courses_router
 
 
 @asynccontextmanager
@@ -76,6 +77,7 @@ app.include_router(
 
 app.include_router(upload_router)
 app.include_router(jobs_router)
+app.include_router(courses_router)
 
 # --- Example Protected Route ---
 @app.get("/protected")
