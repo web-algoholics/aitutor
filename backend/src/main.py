@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from fastapi import FastAPI, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,11 +8,26 @@ from contextlib import asynccontextmanager
 from database import init_db
 from config import settings
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,  # Show INFO level and above
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),  # Output to console
+        logging.FileHandler('logs/app.log'),  # Save to file
+        logging.FileHandler('logs/errors.log', mode='a')  # Error logs
+    ]
+)
+
+# Create logs directory
+import os
+os.makedirs('logs', exist_ok=True)
+
 from auth.auth import fastapi_users, current_active_user, auth_backend
 from auth.models import User
 from auth.schemas import UserRead, UserCreate, UserUpdate
 from auth.routing import router as upload_router
-from courses.routing import router as courses_router
+from theory.routing import router as theory_router
 
 
 @asynccontextmanager
@@ -36,7 +52,7 @@ app.mount(settings.PROFILE_ICON_URL_PATH, StaticFiles(directory=settings.UPLOAD_
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for development
+    allow_origins=["http://localhost:8099", "http://localhost:8000", "http://127.0.0.1:8099", "http://127.0.0.1:8000"],  # Allow frontend and API origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -75,7 +91,9 @@ app.include_router(
 )
 
 app.include_router(upload_router)
-app.include_router(courses_router)
+
+# Theory router
+app.include_router(theory_router)
 
 # --- Example Protected Route ---
 @app.get("/protected")

@@ -5,6 +5,10 @@ from sqlalchemy.orm import sessionmaker
 from typing import AsyncGenerator
 from config import settings
 
+# Import all models for table creation
+from auth.models import User
+from theory.models import TheoryCourse, TheoryModule, TheoryLesson, TheoryContent
+
 # Async engine
 engine: AsyncEngine = create_async_engine(settings.DATABASE_URL, echo=True)
 

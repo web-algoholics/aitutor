@@ -30,6 +30,12 @@ export default function Navbar() {
         <Link to="/dashboard" className="text-black hover:text-gray-600 transition-colors">
           Dashboard
         </Link>
+        <Link to="/courses" className="text-black hover:text-gray-600 transition-colors">
+          Курсы
+        </Link>
+        <Link to="/theory" className="text-black hover:text-gray-600 transition-colors">
+          AI Курсы
+        </Link>
         <Link to="/roadmap" className="text-black hover:text-gray-600 transition-colors">
           Roadmap
         </Link>

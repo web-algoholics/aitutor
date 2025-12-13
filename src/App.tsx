@@ -18,6 +18,12 @@ import CourseRoadmapPage from './pages/CourseRoadmapPage';
 import ChatTutorPage from './pages/ChatTutorPage';
 import CodeEditorPage from './pages/CodeEditorPage';
 
+// Theory pages
+import TheoryCoursesPage from './pages/TheoryCoursesPage';
+import CreateTheoryCoursePage from './pages/CreateTheoryCoursePage';
+import TheoryCourseTreePage from './pages/TheoryCourseTreePage';
+import TheoryLessonPage from './pages/TheoryLessonPage';
+
 function App() {
   return (
     <Provider store={store}>
@@ -45,6 +51,12 @@ function App() {
               <Route path="/courses/:courseId/roadmap" element={<CourseRoadmapPage />} />
               <Route path="/courses/:courseId/modules/:moduleId/chat" element={<ChatTutorPage />} />
               <Route path="/lessons/:lessonId/editor" element={<CodeEditorPage />} />
+
+              {/* Theory Courses Routes */}
+              <Route path="/theory" element={<TheoryCoursesPage />} />
+              <Route path="/theory/create" element={<CreateTheoryCoursePage />} />
+              <Route path="/theory/courses/:courseId" element={<TheoryCourseTreePage />} />
+              <Route path="/theory/lessons/:lessonId" element={<TheoryLessonPage />} />
             </Route>
 
           </Routes>
