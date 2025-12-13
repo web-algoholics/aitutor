@@ -1,9 +1,10 @@
 import asyncio
 import logging
+from datetime import datetime
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, joinedload
 
 from database import get_session as get_db
 from .models import TheoryCourse, TheoryModule, TheoryLesson, TheoryContent
@@ -83,10 +84,59 @@ async def generate_first_module_only(course_id: int, background_tasks=None):
         finally:
             await db.close()
 
+async def create_course_structure_and_generate(course_id: int, plan_data: dict, background_tasks=None):
+    """Create course structure (modules/lessons) and start content generation"""
+    # Create new database session for background task
+    async for db in get_db():
+        try:
+            logger.info(f"Creating course structure for course {course_id}")
+
+            # Create modules and lessons structure
+            for module_data in plan_data["modules"]:
+                module = TheoryModule(
+                    course_id=course_id,
+                    title=module_data["title"],
+                    description=module_data["description"],
+                    order=module_data["order"],
+                    learning_objectives=module_data["learning_objectives"],
+                    key_concepts=module_data["key_concepts"]
+                )
+                db.add(module)
+                await db.flush()  # Get module ID
+
+                # Create lessons for this module
+                for lesson_data in module_data["lessons"]:
+                    lesson = TheoryLesson(
+                        module_id=module.id,
+                        title=lesson_data["title"],
+                        description=lesson_data["description"],
+                        order=lesson_data["order"],
+                        estimated_duration=lesson_data["estimated_duration"],
+                        learning_objectives=lesson_data["learning_objectives"],
+                        key_concepts=lesson_data["key_concepts"]
+                    )
+                    db.add(lesson)
+
+            await db.commit()
+            logger.info(f"Successfully created course structure for course {course_id}")
+
+            # Start background generation of course content
+            if background_tasks:
+                background_tasks.add_task(generate_first_module_only, course_id, background_tasks)
+            else:
+                asyncio.create_task(generate_first_module_only(course_id))
+
+        except Exception as e:
+            logger.error(f"Error creating course structure for {course_id}: {e}")
+            await db.rollback()
+        finally:
+            await db.close()
+
+
 async def generate_course_content(course_id: int, plan_data: dict):
-    """Deprecated: Use generate_first_module_only directly"""
+    """Deprecated: Use create_course_structure_and_generate directly"""
     # This function is kept for backward compatibility
-    await generate_first_module_only(course_id)
+    await create_course_structure_and_generate(course_id, plan_data)
 
 async def generate_remaining_modules(course_id: int):
     """Generate theory content for remaining modules (2+)"""
@@ -158,6 +208,94 @@ async def generate_remaining_modules(course_id: int):
             await db.rollback()
         finally:
             await db.close()
+
+
+async def generate_course_content_background(course_id: int):
+    """Generate theory content for all lessons in the course (background task)"""
+    # Create new database session for background task
+    async for db in get_db():
+        try:
+            # Get course topic for context
+            result = await db.execute(
+                select(TheoryCourse).where(TheoryCourse.id == course_id)
+            )
+            course = result.scalar_one_or_none()
+            course_topic = course.title if course else "курс по запросу пользователя"
+
+            logger.info(f"Starting background content generation for course {course_id}")
+
+            # Get all lessons for the course with modules loaded
+            result = await db.execute(
+                select(TheoryLesson)
+                .join(TheoryModule)
+                .where(TheoryModule.course_id == course_id)
+                .options(joinedload(TheoryLesson.module))
+                .order_by(TheoryModule.order, TheoryLesson.order)
+            )
+            lessons = result.unique().scalars().all()
+            lessons = result.scalars().all()
+
+            logger.info(f"Found {len(lessons)} lessons to generate content for")
+
+            for lesson in lessons:
+                try:
+                    # Double-check if content already exists (in case of concurrent requests)
+                    result = await db.execute(
+                        select(TheoryContent).where(TheoryContent.lesson_id == lesson.id)
+                    )
+                    existing_content = result.scalar_one_or_none()
+
+                    if existing_content:
+                        logger.info(f"Content already exists for lesson {lesson.id}: {lesson.title}")
+                        continue
+
+                    logger.info(f"Generating theory for lesson {lesson.id}: {lesson.title}")
+
+                    content = ai_generator.generate_lesson_theory(
+                        lesson_title=lesson.title,
+                        lesson_description=lesson.description,
+                        learning_objectives=lesson.learning_objectives,
+                        key_concepts=lesson.key_concepts,
+                        module_context=f"{lesson.module.title}: {lesson.module.description}",
+                        course_topic=course_topic
+                    )
+
+                    # Save content with explicit check
+                    theory_content = TheoryContent(
+                        lesson_id=lesson.id,
+                        content=content,
+                        reading_time=len(content.split()) // 200 + 1,  # Rough estimate: 200 words per minute
+                        is_generated=True,
+                        generated_at=datetime.utcnow()
+                    )
+                    db.add(theory_content)
+
+                    try:
+                        await db.commit()
+                        logger.info(f"Generated theory for lesson {lesson.id}: {lesson.title}")
+                    except Exception as commit_error:
+                        # Check if it's a duplicate key error
+                        await db.rollback()
+                        logger.warning(f"Commit failed for lesson {lesson.id}, possibly duplicate: {commit_error}")
+
+                        # Double-check if content was created by another process
+                        result = await db.execute(
+                            select(TheoryContent).where(TheoryContent.lesson_id == lesson.id)
+                        )
+                        if result.scalar_one_or_none():
+                            logger.info(f"Content was created by another process for lesson {lesson.id}")
+                        else:
+                            logger.error(f"Failed to create content for lesson {lesson.id}: {commit_error}")
+
+                except Exception as e:
+                    logger.error(f"Error generating theory for lesson {lesson.id}: {e}")
+                    await db.rollback()  # Explicit rollback on error
+                    continue
+
+            logger.info(f"Completed background content generation for course {course_id}")
+
+        except Exception as e:
+            logger.error(f"Error in generate_course_content_background for course {course_id}: {e}")
 
 
 async def generate_all_course_theory(course_id: int):
@@ -304,6 +442,16 @@ async def generate_single_lesson_content(lesson_id: int):
 
             if not lesson:
                 logger.warning(f"Lesson {lesson_id} not found")
+                return
+
+            # Check if content already exists
+            result = await db.execute(
+                select(TheoryContent).where(TheoryContent.lesson_id == lesson_id)
+            )
+            existing_content = result.scalar_one_or_none()
+
+            if existing_content:
+                logger.info(f"Content already exists for lesson {lesson_id}: {lesson.title}")
                 return
 
             logger.info(f"🤖 Starting AI generation for lesson '{lesson.title}'")

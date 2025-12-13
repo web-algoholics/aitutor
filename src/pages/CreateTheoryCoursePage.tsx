@@ -19,12 +19,12 @@ const CreateTheoryCoursePage: React.FC = () => {
         difficulty: values.difficulty || 'intermediate',
       }).unwrap();
 
-      message.success('Курс создан! ИИ начинает генерацию контента...');
+      message.success('Курс создан! Структура готова, контент генерируется в фоне...');
 
-      // Small delay to ensure database records are created before navigation
-      setTimeout(() => {
-        navigate(`/theory/courses/${result.id}`);
-      }, 1000);
+      // Navigate immediately with course data - structure is already created
+      navigate(`/theory/courses/${result.course.id}`, {
+        state: { courseTree: result }
+      });
     } catch (error) {
       message.error('Ошибка при создании курса');
       console.error('Create course error:', error);

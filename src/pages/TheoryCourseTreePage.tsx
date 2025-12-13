@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Card, Typography, List, Button, Space, Tag, Progress,
   Skeleton, message, Spin, Alert
@@ -11,7 +11,7 @@ import {
 import {
   useGetTheoryCourseTreeQuery,
   useGenerateNextModuleMutation,
-  useRetryModuleGenerationMutation
+  useGenerateLessonContentMutation
 } from '../services/theoryApi';
 
 const { Title, Text, Paragraph } = Typography;
@@ -19,37 +19,98 @@ const { Title, Text, Paragraph } = Typography;
 const TheoryCourseTreePage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const courseIdNum = parseInt(courseId!);
 
-  const { data: courseTree, isLoading, error, refetch } = useGetTheoryCourseTreeQuery(courseIdNum);
+  // Check if we have course data from navigation state (just created)
+  const initialCourseTree = location.state?.courseTree;
+
+  const { data: courseTree, isLoading, error, refetch } = useGetTheoryCourseTreeQuery(courseIdNum, {
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    pollingInterval: (!courseTree || isGenerationInProgress) ? 3000 : undefined, // Poll every 3 seconds initially or during generation
+  });
+
+  // Use loaded data from server, or initial data if available and no server data yet
+  const currentCourseTree = courseTree || initialCourseTree;
   const [generateNextModule, { isLoading: isGenerating }] = useGenerateNextModuleMutation();
-  const [retryModuleGeneration, { isLoading: isRetrying }] = useRetryModuleGenerationMutation();
+  const [generateLessonContent] = useGenerateLessonContentMutation();
 
   // Refresh data when component mounts (in case we navigated here after course creation)
   useEffect(() => {
-    refetch();
+    console.log('🔄 Component mounted, refreshing course tree...');
+    // Force immediate refetch
+    setTimeout(() => refetch(), 100);
+    setTimeout(() => refetch(), 500);
+    setTimeout(() => refetch(), 1000);
   }, [refetch]);
 
-  // Auto-refresh while generation is in progress or for first 2 minutes after page load
+  // Auto-generate content for lessons without content
   useEffect(() => {
-    const shouldAutoRefresh = isGenerationInProgress || !courseTree; // Always refresh if no data yet
+    if (!currentCourseTree) return;
 
-    if (shouldAutoRefresh && !isLoading) {
+    const lessonsWithoutContent = currentCourseTree.lessons?.flat().filter(lesson => !lesson.has_content) || [];
+
+    if (lessonsWithoutContent.length === 0) return;
+
+    // Generate content for one lesson at a time, with delay between generations
+    const generateNextLesson = async () => {
+      const lesson = lessonsWithoutContent[0]; // Take first lesson
+      if (!lesson) return;
+
+      try {
+        console.log(`🎯 Auto-generating content for lesson: ${lesson.title}`);
+        await generateLessonContent(lesson.id).unwrap();
+        console.log(`✅ Generated content for lesson: ${lesson.title}`);
+
+        // Refresh data after successful generation
+        setTimeout(() => refetch(), 500);
+      } catch (error) {
+        console.error(`❌ Failed to generate content for lesson ${lesson.id}:`, error);
+        // Continue with next lesson even if this one failed
+      }
+    };
+
+    // Start generation immediately for first lesson
+    generateNextLesson();
+
+    // Set up interval for subsequent generations (every 15 seconds to avoid overload)
+    const interval = setInterval(() => {
+      const currentLessonsWithoutContent = currentCourseTree.lessons?.flat().filter(lesson => !lesson.has_content) || [];
+      if (currentLessonsWithoutContent.length > 0) {
+        generateNextLesson();
+      } else {
+        clearInterval(interval);
+      }
+    }, 15000); // Every 15 seconds
+
+    return () => clearInterval(interval);
+  }, [currentCourseTree, generateLessonContent, refetch]);
+
+  // Auto-refresh to show updated status
+  useEffect(() => {
+    if (!currentCourseTree) return;
+
+    const lessonsWithoutContent = currentCourseTree.lessons?.flat().filter(lesson => !lesson.has_content) || [];
+
+    if (lessonsWithoutContent.length > 0 && !isLoading) {
       const interval = setInterval(() => {
+        console.log('🔄 Auto-refreshing to show generation progress...');
         refetch();
-      }, 500); // Refresh every 500 milliseconds during generation
+      }, 2000); // Refresh every 2 seconds to show progress
 
-      // Stop auto-refresh after 2 minutes to avoid unnecessary requests
+      // Stop auto-refresh after 10 minutes
       const timeout = setTimeout(() => {
         clearInterval(interval);
-      }, 120000); // 2 minutes
+      }, 600000); // 10 minutes
 
       return () => {
         clearInterval(interval);
         clearTimeout(timeout);
       };
     }
-  }, [isGenerationInProgress, isLoading, refetch, courseTree]);
+  }, [currentCourseTree, isLoading, refetch]);
 
   // Calculate generation progress
   const totalLessonsCount = courseTree?.modules?.reduce((acc, module) => acc + (module.lessons?.length || 0), 0) || 0;
@@ -57,6 +118,13 @@ const TheoryCourseTreePage: React.FC = () => {
     acc + (module.lessons?.filter(lesson => lesson.has_content).length || 0), 0) || 0;
   const generationProgress = totalLessonsCount > 0 ? Math.round((lessonsWithContentCount / totalLessonsCount) * 100) : 0;
   const isGenerationInProgress = lessonsWithContentCount < totalLessonsCount;
+
+  console.log('📈 Generation progress:', {
+    totalLessonsCount,
+    lessonsWithContentCount,
+    generationProgress,
+    isGenerationInProgress
+  });
 
   const handleLessonClick = (lessonId: number, hasContent: boolean) => {
     if (hasContent) {
@@ -76,15 +144,6 @@ const TheoryCourseTreePage: React.FC = () => {
     }
   };
 
-  const handleRetryModuleGeneration = async (moduleId: number) => {
-    try {
-      await retryModuleGeneration(moduleId).unwrap();
-      message.success('Повторная генерация уроков начата!');
-      refetch();
-    } catch (error) {
-      message.error('Ошибка при повторной генерации');
-    }
-  };
 
   if (isLoading) {
     return (
@@ -96,7 +155,7 @@ const TheoryCourseTreePage: React.FC = () => {
     );
   }
 
-  if (error || !courseTree) {
+  if (error && !initialCourseTree) {
     return (
       <div style={{ padding: '20px' }}>
         <Alert
@@ -109,7 +168,25 @@ const TheoryCourseTreePage: React.FC = () => {
     );
   }
 
-  const { course, modules, lessons } = courseTree;
+  const { course, modules, lessons } = currentCourseTree;
+
+  console.log('📊 Course tree data:', {
+    courseId: courseIdNum,
+    currentCourseTree: currentCourseTree ? {
+      modulesCount: currentCourseTree.modules?.length,
+      lessonsCount: currentCourseTree.lessons?.flat().length,
+      lessonsWithContent: currentCourseTree.lessons?.flat().filter(l => l.has_content).length
+    } : null,
+    initialCourseTree: !!initialCourseTree,
+    loadedCourseTree: courseTree ? {
+      modulesCount: courseTree.modules?.length,
+      lessonsCount: courseTree.lessons?.flat().length,
+      lessonsWithContent: courseTree.lessons?.flat().filter(l => l.has_content).length
+    } : null,
+    isLoading,
+    error,
+    isGenerationInProgress
+  });
 
   // Calculate progress
   const totalLessons = lessons.flat().length;
@@ -231,26 +308,17 @@ const TheoryCourseTreePage: React.FC = () => {
                   {module.description}
                 </Paragraph>
 
-                {/* Retry Generation Button */}
+                {/* Auto-generation status */}
                 {(() => {
                   const lessonsWithoutContent = moduleLessons.filter(lesson => !lesson.has_content).length;
                   if (lessonsWithoutContent > 0) {
                     return (
                       <Alert
-                        message={`Есть ${lessonsWithoutContent} уроков без контента`}
-                        description="Возможно, генерация этих уроков не удалась. Попробуйте повторить генерацию."
-                        type="warning"
+                        message={`Автоматическая генерация контента`}
+                        description={`${lessonsWithoutContent} уроков еще генерируются. Обновление каждые 5 секунд.`}
+                        type="info"
                         showIcon
                         style={{ marginBottom: '16px' }}
-                        action={
-                          <Button
-                            size="small"
-                            loading={isRetrying}
-                            onClick={() => handleRetryModuleGeneration(module.id)}
-                          >
-                            Повторить генерацию
-                          </Button>
-                        }
                       />
                     );
                   }
@@ -317,18 +385,18 @@ const TheoryCourseTreePage: React.FC = () => {
           })}
         </Space>
 
-        {/* Show generation status if no modules yet */}
-        {modules.length === 0 && (
+        {/* Show loading status if no modules yet (fallback for edge cases) */}
+        {(!currentCourseTree || modules.length === 0) && (
           <Card>
             <div style={{ textAlign: 'center', padding: '40px' }}>
               <LoadingOutlined style={{ fontSize: '48px', color: '#1890ff', marginBottom: '16px' }} />
-              <Title level={4}>Создание структуры курса</Title>
+              <Title level={4}>Загрузка структуры курса</Title>
               <Paragraph>
-                ИИ создает модули и уроки курса. Это займет несколько секунд.
+                Загружаем модули и уроки курса...
               </Paragraph>
-              <Button onClick={() => refetch()} loading={isLoading}>
-                Обновить
-              </Button>
+              <Text type="secondary" style={{ display: 'block', marginTop: '8px' }}>
+                Автоматическое обновление...
+              </Text>
             </div>
           </Card>
         )}

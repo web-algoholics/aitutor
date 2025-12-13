@@ -79,13 +79,26 @@ export const theoryApi = createApi({
     }),
 
     // Create new theory course
-    createTheoryCourse: builder.mutation<TheoryCourseResponse, CreateTheoryCourseRequest>({
+    createTheoryCourse: builder.mutation<TheoryCourseTreeResponse, CreateTheoryCourseRequest>({
       query: (course) => ({
         url: '/api/theory/courses',
         method: 'POST',
         body: course,
       }),
       invalidatesTags: ['TheoryCourses', 'TheoryModules', 'TheoryLessons'],
+      onQueryStarted: async (course, { dispatch, queryFulfilled }) => {
+        try {
+          const { data: newCourse } = await queryFulfilled;
+          // Invalidate specific course cache to force refresh
+          dispatch(theoryApi.util.invalidateTags([
+            { type: 'TheoryCourses', id: newCourse.id },
+            { type: 'TheoryModules', id: `course-${newCourse.id}` },
+            { type: 'TheoryLessons', id: `course-${newCourse.id}` },
+          ]));
+        } catch {
+          // Ignore errors in invalidation
+        }
+      },
     }),
 
     // Get course tree (course + modules + lessons)
@@ -113,6 +126,8 @@ export const theoryApi = createApi({
       invalidatesTags: (result, error, lessonId) => [
         { type: 'TheoryLessons', id: lessonId },
         { type: 'TheoryContent', id: lessonId },
+        // Invalidate entire course tree to refresh lesson status
+        { type: 'TheoryCourses', id: 'ALL' }, // This will invalidate all course queries
       ],
     }),
 

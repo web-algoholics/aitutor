@@ -17,7 +17,9 @@ from .ai_generator import TheoryAIGenerator
 from .tasks import (
     generate_course_content, generate_first_module_theory,
     generate_single_lesson_content, generate_module_content_background,
-    retry_failed_lesson_generations, generate_all_course_theory, generate_first_module_only
+    retry_failed_lesson_generations, generate_all_course_theory,
+    generate_first_module_only, create_course_structure_and_generate,
+    generate_course_content_background
 )
 
 logger = logging.getLogger(__name__)
@@ -25,15 +27,14 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/theory", tags=["theory"])
 ai_generator = TheoryAIGenerator()
 
-
-@router.post("/courses", response_model=TheoryCourseResponse)
+@router.post("/courses", response_model=TheoryCourseTreeResponse)
 async def create_theory_course(
     request: CreateTheoryCourseRequest,
     background_tasks: BackgroundTasks,
     current_user=Depends(get_current_active_user),
     db: AsyncSession = Depends(get_db)
 ):
-    """Create a new theory course with AI-generated plan"""
+    """Create a new theory course with AI-generated plan and immediate structure"""
     try:
         # Generate course plan using AI
         plan = ai_generator.generate_course_plan(request.topic, request.difficulty)
@@ -51,48 +52,85 @@ async def create_theory_course(
         await db.commit()
         await db.refresh(course)
 
-        # Create modules and lessons structure immediately
-        for module_data in plan["modules"]:
+        # Create modules and lessons immediately (not in background)
+        modules_data = []
+        for module_plan in plan["modules"]:
             module = TheoryModule(
                 course_id=course.id,
-                title=module_data["title"],
-                description=module_data["description"],
-                order=module_data["order"],
-                learning_objectives=module_data["learning_objectives"],
-                key_concepts=module_data["key_concepts"]
+                title=module_plan["title"],
+                description=module_plan["description"],
+                order=module_plan["order"],
+                learning_objectives=module_plan["learning_objectives"],
+                key_concepts=module_plan["key_concepts"]
             )
             db.add(module)
             await db.flush()  # Get module ID
 
             # Create lessons for this module
-            for lesson_data in module_data["lessons"]:
+            lessons_data = []
+            for lesson_plan in module_plan["lessons"]:
                 lesson = TheoryLesson(
                     module_id=module.id,
-                    title=lesson_data["title"],
-                    description=lesson_data["description"],
-                    order=lesson_data["order"],
-                    estimated_duration=lesson_data["estimated_duration"],
-                    learning_objectives=lesson_data["learning_objectives"],
-                    key_concepts=lesson_data["key_concepts"]
+                    title=lesson_plan["title"],
+                    description=lesson_plan["description"],
+                    order=lesson_plan["order"],
+                    estimated_duration=lesson_plan["estimated_duration"],
+                    learning_objectives=lesson_plan["learning_objectives"],
+                    key_concepts=lesson_plan["key_concepts"]
                 )
                 db.add(lesson)
+                await db.flush()  # Get lesson ID
 
-        await db.commit()
+                lessons_data.append(TheoryLessonResponse(
+                    id=lesson.id,
+                    module_id=lesson.module_id,
+                    title=lesson.title,
+                    description=lesson.description,
+                    order=lesson.order,
+                    estimated_duration=lesson.estimated_duration,
+                    learning_objectives=lesson.learning_objectives,
+                    key_concepts=lesson.key_concepts,
+                    has_content=False,  # No content yet
+                    is_completed=False,
+                    created_at=lesson.created_at
+                ))
 
-        # Start background generation of course content (first module first, then others)
-        background_tasks.add_task(generate_first_module_only, course.id, background_tasks)
+            await db.commit()  # Commit lessons for this module
 
-        return TheoryCourseResponse(
-            id=course.id,
-            title=course.title,
-            description=course.description,
-            topic=course.topic,
-            difficulty=course.difficulty,
-            estimated_duration=course.estimated_duration,
-            creator_id=course.creator_id,
-            modules_count=len(plan["modules"]),
-            is_completed=False,
-            created_at=course.created_at
+            modules_data.append(TheoryModuleResponse(
+                id=module.id,
+                course_id=module.course_id,
+                title=module.title,
+                description=module.description,
+                order=module.order,
+                learning_objectives=module.learning_objectives,
+                key_concepts=module.key_concepts,
+                lessons_count=len(lessons_data),
+                is_completed=False,
+                created_at=module.created_at
+            ))
+
+        await db.commit()  # Final commit
+
+        # Start background content generation (only content, structure is already created)
+        background_tasks.add_task(generate_course_content_background, course.id)
+
+        # Return complete course tree immediately
+        return TheoryCourseTreeResponse(
+            course=TheoryCourseResponse(
+                id=course.id,
+                title=course.title,
+                description=course.description,
+                topic=course.topic,
+                difficulty=course.difficulty,
+                estimated_duration=course.estimated_duration,
+                creator_id=course.creator_id,
+                modules_count=len(modules_data),
+                is_completed=False,
+                created_at=course.created_at
+            ),
+            modules=modules_data,
+            lessons=[lessons_data for module in plan["modules"]]  # Group lessons by module
         )
 
     except Exception as e:
@@ -196,7 +234,7 @@ async def get_theory_course_tree(
             result = await db.execute(
                 select(TheoryContent).where(TheoryContent.lesson_id == lesson.id)
             )
-            has_content = result.scalar_one_or_none() is not None
+            has_content = result.first() is not None
 
             lesson_resp = TheoryLessonResponse(
                 id=lesson.id,
@@ -286,7 +324,7 @@ async def generate_lesson_content(
     result = await db.execute(
         select(TheoryContent).where(TheoryContent.lesson_id == lesson_id)
     )
-    existing_content = result.scalar_one_or_none()
+    existing_content = result.first()
 
     if existing_content:
         return {"message": "Content already exists", "content_id": existing_content.id}
