@@ -37,7 +37,7 @@ const TheoryCourseTreePage: React.FC = () => {
     if (shouldAutoRefresh && !isLoading) {
       const interval = setInterval(() => {
         refetch();
-      }, 5000); // Refresh every 5 seconds during generation
+      }, 500); // Refresh every 500 milliseconds during generation
 
       // Stop auto-refresh after 2 minutes to avoid unnecessary requests
       const timeout = setTimeout(() => {
