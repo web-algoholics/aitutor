@@ -53,6 +53,7 @@ export interface TheoryContentResponse {
   content: string;
   reading_time: number;
   is_generated: boolean;
+  lesson_is_completed: boolean;
   generated_at?: string;
   created_at: string;
 }
@@ -154,6 +155,19 @@ export const theoryApi = createApi({
       }),
       invalidatesTags: ['TheoryCourses', 'TheoryModules', 'TheoryLessons', 'TheoryContent'],
     }),
+
+    // Mark lesson as completed
+    markLessonCompleted: builder.mutation<{ message: string; is_completed: boolean }, number>({
+      query: (lessonId) => ({
+        url: `/api/theory/lessons/${lessonId}/mark-completed`,
+        method: 'POST',
+      }),
+      invalidatesTags: (result, error, lessonId) => [
+        { type: 'TheoryLessons', id: lessonId },
+        // Invalidate entire course tree to refresh lesson/module/course completion status
+        { type: 'TheoryCourses', id: 'ALL' },
+      ],
+    }),
   }),
 });
 
@@ -167,4 +181,5 @@ export const {
   useGetLessonContentQuery,
   useGenerateNextModuleMutation,
   useRetryModuleGenerationMutation,
+  useMarkLessonCompletedMutation,
 } = theoryApi;

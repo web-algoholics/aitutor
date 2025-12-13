@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form, Input, Select, Button, Card, Typography, Space, message, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useCreateTheoryCourseMutation } from '../services/theoryApi';
-import { BookOutlined, LoadingOutlined } from '@ant-design/icons';
+import { BookOutlined, LoadingOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -45,6 +45,11 @@ const CreateTheoryCoursePage: React.FC = () => {
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '20px' }}>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        <div>
+          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/theory')}>
+            К списку курсов
+          </Button>
+        </div>
         <div style={{ textAlign: 'center' }}>
           <BookOutlined style={{ fontSize: '48px', color: '#1890ff', marginBottom: '16px' }} />
           <Title level={2}>Создать AI курс</Title>
@@ -117,15 +122,6 @@ const CreateTheoryCoursePage: React.FC = () => {
               ))}
             </Space>
           </div>
-        </Card>
-
-        <Card title="Как это работает?" size="small">
-          <Space direction="vertical">
-            <Text>1. <strong>Ввод темы:</strong> Укажите интересующую вас тему обучения</Text>
-            <Text>2. <strong>AI планирование:</strong> ИИ создаст структуру курса из 5-10 модулей</Text>
-            <Text>3. <strong>Ленивая генерация:</strong> Теория генерируется по мере прохождения уроков</Text>
-            <Text>4. <strong>Качественный контент:</strong> Подробные объяснения с примерами кода</Text>
-          </Space>
         </Card>
       </Space>
     </div>

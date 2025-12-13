@@ -27,17 +27,8 @@ export default function Navbar() {
 
       {/* Middle Links */}
       <nav className="hidden md:flex gap-6 text-sm font-medium text-black">
-        <Link to="/dashboard" className="text-black hover:text-gray-600 transition-colors">
-          Dashboard
-        </Link>
-        <Link to="/courses" className="text-black hover:text-gray-600 transition-colors">
-          Курсы
-        </Link>
         <Link to="/theory" className="text-black hover:text-gray-600 transition-colors">
           AI Курсы
-        </Link>
-        <Link to="/roadmap" className="text-black hover:text-gray-600 transition-colors">
-          Roadmap
         </Link>
       </nav>
 

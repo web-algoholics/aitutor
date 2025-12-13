@@ -26,7 +26,7 @@ const TheoryCoursesPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div style={{ padding: '20px' }}>
+      <div className="p-5">
         <Skeleton active />
         <Skeleton active />
         <Skeleton active />
@@ -36,7 +36,7 @@ const TheoryCoursesPage: React.FC = () => {
 
   if (error) {
     return (
-      <div style={{ padding: '20px' }}>
+      <div className="p-5">
         <Alert
           title="Ошибка загрузки курсов"
           description="Не удалось загрузить список курсов. Попробуйте обновить страницу."
@@ -48,16 +48,16 @@ const TheoryCoursesPage: React.FC = () => {
   }
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '20px' }}>
+    <div className="max-w-6xl mx-auto p-5">
       <Space orientation="vertical" size="large" style={{ width: '100%' }}>
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="flex justify-between items-center">
           <div>
-            <Title level={1} style={{ marginBottom: '8px' }}>
+            <Title level={1} className="mb-2">
               <BookOutlined style={{ marginRight: '16px' }} />
               AI Курсы
             </Title>
-            <Paragraph style={{ fontSize: '16px', color: '#666', marginBottom: 0 }}>
+            <Paragraph className="text-base text-gray-600 mb-0">
               Персонализированные курсы, созданные ИИ специально для вас
             </Paragraph>
           </div>
@@ -66,7 +66,7 @@ const TheoryCoursesPage: React.FC = () => {
             size="large"
             icon={<PlusOutlined />}
             onClick={handleCreateCourse}
-            style={{ height: '48px', fontSize: '16px' }}
+            className="h-12 text-base"
           >
             Создать курс
           </Button>
@@ -74,9 +74,9 @@ const TheoryCoursesPage: React.FC = () => {
 
         {/* Stats */}
         {courses && courses.length > 0 && (
-          <Space size="large">
-            <Card size="small" style={{ minWidth: '120px' }}>
-              <div style={{ textAlign: 'center' }}>
+          <div className="flex gap-6">
+            <Card size="small" className="flex-1">
+              <div className="text-center">
                 <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff' }}>
                   {courses.length}
                 </Text>
@@ -85,8 +85,8 @@ const TheoryCoursesPage: React.FC = () => {
                 </div>
               </div>
             </Card>
-            <Card size="small" style={{ minWidth: '120px' }}>
-              <div style={{ textAlign: 'center' }}>
+            <Card size="small" className="flex-1">
+              <div className="text-center">
                 <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#52c41a' }}>
                   {courses.filter(c => c.is_completed).length}
                 </Text>
@@ -95,8 +95,8 @@ const TheoryCoursesPage: React.FC = () => {
                 </div>
               </div>
             </Card>
-            <Card size="small" style={{ minWidth: '120px' }}>
-              <div style={{ textAlign: 'center' }}>
+            <Card size="small" className="flex-1">
+              <div className="text-center">
                 <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#fa8c16' }}>
                   {courses.reduce((sum, c) => sum + c.estimated_duration, 0)}
                 </Text>
@@ -105,7 +105,7 @@ const TheoryCoursesPage: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </Space>
+          </div>
         )}
 
         {/* Courses List */}
@@ -116,18 +116,29 @@ const TheoryCoursesPage: React.FC = () => {
                 <Card
                   hoverable
                   onClick={() => handleCourseClick(course.id)}
-                  style={{ height: '100%' }}
+                  style={{
+                    height: '100%',
+                    minHeight: '320px',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}
+                  bodyStyle={{
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}
                   actions={[
                     <Button
                       key="start"
-                      type="primary"
+                      type={course.is_completed ? "default" : "primary"}
+                      style={course.is_completed ? { borderColor: '#52c41a', color: '#52c41a' } : {}}
                       icon={<PlayCircleOutlined />}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleCourseClick(course.id);
                       }}
                     >
-                      Продолжить
+                      {course.is_completed ? 'Посмотреть' : 'Продолжить'}
                     </Button>
                   ]}
                 >
@@ -183,22 +194,6 @@ const TheoryCoursesPage: React.FC = () => {
             </Button>
           </Empty>
         )}
-
-        {/* Info Card */}
-        <Alert
-          title="Как работают AI курсы?"
-          description={
-            <ul style={{ margin: 0, paddingLeft: '20px' }}>
-              <li><strong>Персонализация:</strong> Курс создается специально под вашу тему</li>
-              <li><strong>Качество контента:</strong> Теория генерируется по принципам Яндекс.Хэндбуков</li>
-              <li><strong>Ленивая генерация:</strong> Контент создается по мере прохождения уроков</li>
-              <li><strong>Интерактивность:</strong> Примеры кода, тесты и практические задания</li>
-            </ul>
-          }
-          type="info"
-          showIcon
-          style={{ marginTop: '32px' }}
-        />
       </Space>
     </div>
   );

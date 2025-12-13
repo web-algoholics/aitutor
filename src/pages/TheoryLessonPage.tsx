@@ -12,7 +12,8 @@ import {
 import {
   useGetLessonContentQuery,
   useGenerateLessonContentMutation,
-  useGetTheoryCourseTreeQuery
+  useGetTheoryCourseTreeQuery,
+  useMarkLessonCompletedMutation
 } from '../services/theoryApi';
 
 const { Title, Text, Paragraph } = Typography;
@@ -24,6 +25,10 @@ const TheoryLessonPage: React.FC = () => {
 
   const { data: content, isLoading: contentLoading, error: contentError, refetch } = useGetLessonContentQuery(lessonIdNum);
   const [generateContent, { isLoading: generating }] = useGenerateLessonContentMutation();
+  const [markCompleted, { isLoading: markingCompleted }] = useMarkLessonCompletedMutation();
+
+  // Optimistic update state for lesson completion
+  const [optimisticallyCompleted, setOptimisticallyCompleted] = useState(false);
 
   // Get course tree to show navigation context
   const [courseId, setCourseId] = useState<number | null>(null);
@@ -33,6 +38,8 @@ const TheoryLessonPage: React.FC = () => {
     if (content) {
       // Extract course ID from content (we'll need to get it from the lesson)
       // For now, we'll navigate back to course tree
+      // Reset optimistic state when content is loaded/refreshed
+      setOptimisticallyCompleted(false);
     }
   }, [content]);
 
@@ -54,12 +61,33 @@ const TheoryLessonPage: React.FC = () => {
     }
   };
 
+  const handleMarkCompleted = async () => {
+    // Optimistic update - immediately show as completed
+    setOptimisticallyCompleted(true);
+
+    try {
+      await markCompleted(lessonIdNum).unwrap();
+      message.success('Урок отмечен как пройденный! 🎉');
+      // Navigate back to course tree to show updated status
+      if (content?.course_id) {
+        navigate(`/theory/courses/${content.course_id}`);
+      } else {
+        navigate('/theory');
+      }
+    } catch (error) {
+      // Revert optimistic update on error
+      setOptimisticallyCompleted(false);
+      message.error('Не удалось отметить урок как пройденный');
+      console.error('Error marking lesson as completed:', error);
+    }
+  };
+
   if (contentLoading || generating) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
         <Space direction="vertical" align="center">
           <Spin size="large" />
-          <Text>Генерируем теорию урока...</Text>
+          <Text>Загрузка...</Text>
           <Progress percent={75} status="active" showInfo={false} style={{ width: '200px' }} />
         </Space>
       </div>
@@ -177,15 +205,18 @@ const TheoryLessonPage: React.FC = () => {
         <Card size="small" style={{ backgroundColor: '#f9f9f9' }}>
           <div style={{ textAlign: 'center' }}>
             <Space direction="vertical" align="center">
-              <Text type="secondary">
-                Теория сгенерирована ИИ на основе лучших практик Яндекс.Хэндбуков
-              </Text>
               <Space>
                 <Button onClick={handleBackToCourse}>
                   Вернуться к курсу
                 </Button>
-                <Button type="primary">
-                  Отметить как пройденное
+                <Button
+                  type={(content.lesson_is_completed || optimisticallyCompleted) ? "default" : "primary"}
+                  icon={(content.lesson_is_completed || optimisticallyCompleted) ? <CheckCircleOutlined /> : undefined}
+                  onClick={handleMarkCompleted}
+                  loading={markingCompleted}
+                  disabled={content.lesson_is_completed || optimisticallyCompleted}
+                >
+                  {(content.lesson_is_completed || optimisticallyCompleted) ? "Пройдено" : "Отметить как пройденное"}
                 </Button>
               </Space>
             </Space>

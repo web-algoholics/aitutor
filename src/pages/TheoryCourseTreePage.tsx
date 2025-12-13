@@ -147,7 +147,7 @@ const TheoryCourseTreePage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div style={{ padding: '20px' }}>
+      <div className="p-5">
         <Skeleton active />
         <Skeleton active />
         <Skeleton active />
@@ -157,7 +157,7 @@ const TheoryCourseTreePage: React.FC = () => {
 
   if (error && !initialCourseTree) {
     return (
-      <div style={{ padding: '20px' }}>
+      <div className="p-5">
         <Alert
           message="Ошибка загрузки курса"
           description="Не удалось загрузить информацию о курсе. Попробуйте обновить страницу."
@@ -197,10 +197,10 @@ const TheoryCourseTreePage: React.FC = () => {
   const currentModulesCompleted = modules.every(module => module.is_completed);
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '20px' }}>
+    <div className="max-w-6xl mx-auto p-5">
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         {/* Navigation */}
-        <div style={{ marginBottom: '16px' }}>
+        <div className="mb-4">
           <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/theory')}>
             К списку курсов
           </Button>
@@ -208,18 +208,18 @@ const TheoryCourseTreePage: React.FC = () => {
 
         {/* Course Header */}
         <Card>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
+          <div className="flex items-start gap-5">
             <BookOutlined style={{ fontSize: '48px', color: '#1890ff' }} />
-            <div style={{ flex: 1 }}>
-              <Title level={2} style={{ marginBottom: '8px' }}>{course.title}</Title>
-              <Paragraph style={{ fontSize: '16px', marginBottom: '12px' }}>
+            <div className="flex-1">
+              <Title level={2} className="mb-2">{course.title}</Title>
+              <Paragraph className="text-base mb-3">
                 {course.description}
               </Paragraph>
 
               {/* Generation Progress */}
               {isGenerationInProgress && (
-                <div style={{ marginBottom: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <div className="mb-4">
+                  <div className="flex items-center gap-2 mb-2">
                     <LoadingOutlined style={{ color: '#1890ff' }} />
                     <Text strong>Генерация контента уроков</Text>
                     <Button size="small" onClick={() => refetch()}>
@@ -232,8 +232,8 @@ const TheoryCourseTreePage: React.FC = () => {
                     size="small"
                     format={(percent) => `${lessonsWithContentCount}/${totalLessonsCount} уроков`}
                   />
-                  <Text type="secondary" style={{ fontSize: '12px' }}>
-                    Контент генерируется в фоне. Обновите страницу, чтобы увидеть прогресс.
+                  <Text type="secondary" className="text-xs">
+                    Уроки еще генерируются.
                   </Text>
                 </div>
               )}
@@ -250,8 +250,8 @@ const TheoryCourseTreePage: React.FC = () => {
           </div>
 
           {/* Progress */}
-          <div style={{ marginTop: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+          <div className="mt-5">
+            <div className="flex justify-between mb-2">
               <Text strong>Прогресс курса</Text>
               <Text>{completedLessons}/{totalLessons} уроков</Text>
             </div>
@@ -279,7 +279,7 @@ const TheoryCourseTreePage: React.FC = () => {
         )}
 
         {/* Modules */}
-        <Space direction="vertical" size="medium" style={{ width: '100%' }}>
+        <Space direction="vertical" size="large" className="w-full">
           {modules.map((module, moduleIndex) => {
             const moduleLessons = lessons[moduleIndex] || [];
             const completedModuleLessons = moduleLessons.filter(lesson => lesson.is_completed).length;
@@ -304,7 +304,7 @@ const TheoryCourseTreePage: React.FC = () => {
                   </Tag>
                 }
               >
-                <Paragraph style={{ marginBottom: '16px' }}>
+                <Paragraph className="mb-4">
                   {module.description}
                 </Paragraph>
 
@@ -315,10 +315,10 @@ const TheoryCourseTreePage: React.FC = () => {
                     return (
                       <Alert
                         message={`Автоматическая генерация контента`}
-                        description={`${lessonsWithoutContent} уроков еще генерируются. Обновление каждые 5 секунд.`}
+                        description="Уроки генерируются"
                         type="info"
                         showIcon
-                        style={{ marginBottom: '16px' }}
+                        className="mb-4"
                       />
                     );
                   }
@@ -326,12 +326,12 @@ const TheoryCourseTreePage: React.FC = () => {
                 })()}
 
                 {/* Learning Objectives */}
-                <div style={{ marginBottom: '16px' }}>
-                  <Text strong style={{ marginBottom: '8px', display: 'block' }}>
+                <div className="mb-4">
+                  <Text strong className="mb-2 block">
                     <BulbOutlined style={{ marginRight: '8px' }} />
                     Цели обучения:
                   </Text>
-                  <ul style={{ paddingLeft: '20px' }}>
+                  <ul className="pl-5">
                     {module.learning_objectives.map((objective, index) => (
                       <li key={index}>{objective}</li>
                     ))}
@@ -347,12 +347,16 @@ const TheoryCourseTreePage: React.FC = () => {
                       actions={[
                         <Button
                           key="start"
-                          type={lesson.has_content ? "primary" : "default"}
+                          type={lesson.has_content && lesson.is_completed ? "default" : lesson.has_content ? "primary" : "default"}
+                          style={lesson.is_completed ? { borderColor: '#52c41a', color: '#52c41a' } : {}}
                           icon={lesson.has_content ? <PlayCircleOutlined /> : <LoadingOutlined />}
                           onClick={() => handleLessonClick(lesson.id, lesson.has_content)}
                           disabled={!lesson.has_content}
                         >
-                          {lesson.has_content ? 'Изучить' : 'Генерируется...'}
+                          {lesson.has_content
+                            ? (lesson.is_completed ? 'Изучить заново' : 'Изучить')
+                            : 'Генерируется...'
+                          }
                         </Button>
                       ]}
                     >
@@ -365,17 +369,7 @@ const TheoryCourseTreePage: React.FC = () => {
                               <Spin size="small" />
                         }
                         title={`${lesson.order}. ${lesson.title}`}
-                        description={
-                          <div>
-                            <div>{lesson.description}</div>
-                            <div style={{ marginTop: '4px' }}>
-                              <Text type="secondary" style={{ fontSize: '12px' }}>
-                                <ClockCircleOutlined style={{ marginRight: '4px' }} />
-                                ~{lesson.estimated_duration} мин чтения
-                              </Text>
-                            </div>
-                          </div>
-                        }
+                        description={lesson.description}
                       />
                     </List.Item>
                   )}
@@ -388,13 +382,13 @@ const TheoryCourseTreePage: React.FC = () => {
         {/* Show loading status if no modules yet (fallback for edge cases) */}
         {(!currentCourseTree || modules.length === 0) && (
           <Card>
-            <div style={{ textAlign: 'center', padding: '40px' }}>
-              <LoadingOutlined style={{ fontSize: '48px', color: '#1890ff', marginBottom: '16px' }} />
+            <div className="text-center p-10">
+              <LoadingOutlined style={{ fontSize: '48px', color: '#1890ff' }} className="mb-4" />
               <Title level={4}>Загрузка структуры курса</Title>
               <Paragraph>
                 Загружаем модули и уроки курса...
               </Paragraph>
-              <Text type="secondary" style={{ display: 'block', marginTop: '8px' }}>
+              <Text type="secondary" className="block mt-2">
                 Автоматическое обновление...
               </Text>
             </div>

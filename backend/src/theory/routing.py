@@ -369,6 +369,7 @@ async def get_lesson_content(
         content=content.content,
         reading_time=content.reading_time,
         is_generated=content.is_generated,
+        lesson_is_completed=lesson.is_completed,
         generated_at=content.generated_at,
         created_at=content.created_at
     )
@@ -447,3 +448,51 @@ async def retry_module_lesson_generation(
     background_tasks.add_task(retry_failed_lesson_generations, module_id)
 
     return {"message": "Retry generation started for failed lessons"}
+
+
+@router.post("/lessons/{lesson_id}/mark-completed")
+async def mark_lesson_completed(
+    lesson_id: int,
+    current_user=Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Mark a lesson as completed"""
+
+    # Get lesson with module and course info
+    result = await db.execute(
+        select(TheoryLesson)
+        .where(TheoryLesson.id == lesson_id)
+        .options(selectinload(TheoryLesson.module).selectinload(TheoryModule.course))
+    )
+    lesson = result.scalar_one_or_none()
+
+    if not lesson or lesson.module.course.creator_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+
+    # Mark lesson as completed
+    lesson.is_completed = True
+    await db.commit()
+
+    # Check if all lessons in module are completed
+    result = await db.execute(
+        select(TheoryLesson).where(TheoryLesson.module_id == lesson.module_id)
+    )
+    module_lessons = result.scalars().all()
+
+    if all(lesson.is_completed for lesson in module_lessons):
+        # Mark module as completed if all lessons are completed
+        lesson.module.is_completed = True
+        await db.commit()
+
+        # Check if all modules in course are completed
+        result = await db.execute(
+            select(TheoryModule).where(TheoryModule.course_id == lesson.module.course_id)
+        )
+        course_modules = result.scalars().all()
+
+        if all(module.is_completed for module in course_modules):
+            # Mark course as completed if all modules are completed
+            lesson.module.course.is_completed = True
+            await db.commit()
+
+    return {"message": "Lesson marked as completed", "is_completed": True}

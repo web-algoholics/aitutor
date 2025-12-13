@@ -76,6 +76,7 @@ class TheoryContentResponse(BaseModel):
     content: str
     reading_time: int
     is_generated: bool
+    lesson_is_completed: bool
     generated_at: Optional[datetime]
     created_at: datetime
 
