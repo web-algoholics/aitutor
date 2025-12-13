@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ConfigProvider } from 'antd';
 import { store } from './app/store';
@@ -10,13 +10,11 @@ import ProfilePage from './pages/ProfilePage';
 import ForgotPasswordPage from './pages/ForgotPassword';
 import ResetPasswordPage from './pages/ResetPassword';
 import Roadmap from './pages/Roadmap';
+import LandingPage from './pages/LandingPage';
 import React from 'react';
 import Dashboard, { CoursePage } from './pages/Dashboard';
 import ProtectedLayout from './components/ProtectedLayout';
-import CoursesPage from './pages/CoursesPage';
-import CourseRoadmapPage from './pages/CourseRoadmapPage';
-import ChatTutorPage from './pages/ChatTutorPage';
-import CodeEditorPage from './pages/CodeEditorPage';
+import PublicLayout from './components/PublicLayout';
 
 function App() {
   return (
@@ -24,6 +22,11 @@ function App() {
       <ConfigProvider theme={designTheme}>
         <BrowserRouter basename='/aitutor'>
           <Routes>
+
+            {/* Public Routes with Layout (navbar + footer) */}
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<LandingPage />} />
+            </Route>
 
             {/* Public Routes (no navbar) */}
             <Route path="/login" element={<LoginPage />} />
@@ -34,17 +37,10 @@ function App() {
 
             {/* Protected Routes (with navbar) */}
             <Route element={<ProtectedLayout />}>
-              <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              {/* <Route path="/courses/:language" element={<CoursePage />} /> */}
+              <Route path="/courses/:language" element={<CoursePage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/roadmap" element={<Roadmap />} />
-              
-              {/* New Course Routes */}
-              <Route path="/courses" element={<CoursesPage />} />
-              <Route path="/courses/:courseId/roadmap" element={<CourseRoadmapPage />} />
-              <Route path="/courses/:courseId/modules/:moduleId/chat" element={<ChatTutorPage />} />
-              <Route path="/lessons/:lessonId/editor" element={<CodeEditorPage />} />
             </Route>
 
           </Routes>

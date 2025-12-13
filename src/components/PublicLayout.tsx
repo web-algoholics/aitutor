@@ -6,15 +6,18 @@ import React from "react";
 
 const { Content } = Layout;
 
-export default function ProtectedLayout() {
+export default function PublicLayout() {
   return (
     <Layout style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <Navbar />
-
-      <Content style={{ padding: "24px", flex: 1, display: "flex", flexDirection: "column" }}>
+      <Content style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         <Outlet />
       </Content>
-      <Footer/>
+      <Footer />
     </Layout>
   );
 }
+
+
+
+

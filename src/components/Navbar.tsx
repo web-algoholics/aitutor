@@ -19,24 +19,24 @@ export default function Navbar() {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 flex items-center justify-between px-6 h-16">
+    <header className="bg-white border-b border-gray-200 flex items-center justify-between px-8 h-16 sticky top-0 z-50">
       {/* Logo */}
-      <div className=" font-bold text-xl">
-        <Link to="/dashboard" className="text-black hover:text-gray-500">AI Tutor</Link>
+      <div className="font-bold text-2xl font-source-sans">
+        <Link to="/dashboard" className="text-black hover:text-gray-500">EdGen.</Link>
       </div>
 
       {/* Middle Links */}
-      <nav className="hidden md:flex gap-6 text-sm font-medium text-black">
+      {/* <nav className="hidden md:flex gap-6 text-sm font-medium text-black">
         <Link to="/dashboard" className="text-black hover:text-gray-600 transition-colors">
           Dashboard
         </Link>
         <Link to="/roadmap" className="text-black hover:text-gray-600 transition-colors">
           Roadmap
         </Link>
-      </nav>
+      </nav> */}
 
       {/* Right: Auth */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-6">
         {user ? (
           <>
             {/* Avatar → Profile */}

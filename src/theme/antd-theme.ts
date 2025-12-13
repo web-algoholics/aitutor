@@ -141,6 +141,7 @@ export const designTheme = {
       headerFontSize: 18,
       headerFontWeight: 600,
       headerLineHeight: 1.333,       // Line height adjusted for better centering
+      headerPadding: '16px 24px',    // Reduced padding for better alignment
       paddingLG: 24,
       marginXXS: 0,
     },
