@@ -15,6 +15,7 @@ from auth.schemas import UserRead, UserCreate, UserUpdate
 from auth.routing import router as upload_router
 from theory.routing import router as theory_router
 from quizzes.routing import router as quizzes_router
+from anki.routing import router as anki_router
 
 
 # Configure logging
@@ -98,6 +99,9 @@ app.include_router(theory_router)
 
 # Quizzes router
 app.include_router(quizzes_router)
+
+# Anki router
+app.include_router(anki_router)
 
 # --- Example Protected Route ---
 @app.get("/protected")

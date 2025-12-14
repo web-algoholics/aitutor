@@ -151,17 +151,16 @@ const QuizzesListPage: React.FC = () => {
                 <Card
                   hoverable
                   className="w-full shadow-sm hover:shadow-md transition-shadow flex flex-col"
-                  bodyStyle={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '16px' }}
                   actions={[
-                    <Button
-                      key="start"
-                      type={quiz.is_completed ? "default" : "primary"}
-                      icon={<PlayCircleOutlined />}
-                      block
-                      onClick={() => handleQuizClick(quiz.id)}
-                    >
-                      {quiz.is_completed ? 'Перепройти' : 'Пройти квиз'}
-                    </Button>,
+                    <div key="start" className="text-center py-2">
+                      <Button
+                        type={quiz.is_completed ? "default" : "primary"}
+                        icon={<PlayCircleOutlined />}
+                        onClick={() => handleQuizClick(quiz.id)}
+                      >
+                        {quiz.is_completed ? 'Перепройти' : 'Пройти квиз'}
+                      </Button>
+                    </div>,
                   ]}
                 >
                   <div className="flex flex-col h-full">

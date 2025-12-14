@@ -28,6 +28,10 @@ import TheoryLessonPage from './pages/TheoryLessonPage';
 import QuizPage from './pages/QuizPage';
 import QuizzesListPage from './pages/QuizzesListPage';
 
+// Anki pages
+import AnkiDecksListPage from './pages/AnkiDecksListPage';
+import AnkiPracticePage from './pages/AnkiPracticePage';
+
 function App() {
   return (
     <Provider store={store}>
@@ -66,6 +70,10 @@ function App() {
               <Route path="/quizzes" element={<QuizzesListPage />} />
               <Route path="/quizzes/create" element={<QuizPage />} />
               <Route path="/quizzes/:quizId" element={<QuizPage />} />
+
+              {/* Anki Routes */}
+              <Route path="/anki" element={<AnkiDecksListPage />} />
+              <Route path="/anki/decks/:deckId/practice" element={<AnkiPracticePage />} />
             </Route>
 
           </Routes>

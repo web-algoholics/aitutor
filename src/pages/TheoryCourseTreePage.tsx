@@ -6,13 +6,15 @@ import {
 } from 'antd';
 import {
   BookOutlined, PlayCircleOutlined, CheckCircleOutlined,
-  LoadingOutlined, ClockCircleOutlined, BulbOutlined, ArrowLeftOutlined
+  LoadingOutlined, ClockCircleOutlined, BulbOutlined, ArrowLeftOutlined,
+  FileTextOutlined
 } from '@ant-design/icons';
 import {
   useGetTheoryCourseTreeQuery,
   useGenerateNextModuleMutation,
   useGenerateLessonContentMutation
 } from '../services/theoryApi';
+import { useCreateDeckFromCourseMutation } from '../services/ankiApi';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -36,6 +38,7 @@ const TheoryCourseTreePage: React.FC = () => {
   const currentCourseTree = courseTree || initialCourseTree;
   const [generateNextModule, { isLoading: isGenerating }] = useGenerateNextModuleMutation();
   const [generateLessonContent] = useGenerateLessonContentMutation();
+  const [createDeckFromCourse, { isLoading: isCreatingDeck }] = useCreateDeckFromCourseMutation();
 
   // Refresh data when component mounts (in case we navigated here after course creation)
   useEffect(() => {
@@ -112,18 +115,12 @@ const TheoryCourseTreePage: React.FC = () => {
     }
   }, [currentCourseTree, isLoading, refetch]);
 
-  // Calculate generation progress
-  const totalLessonsCount = courseTree?.modules?.reduce((acc, module) => acc + (module.lessons?.length || 0), 0) || 0;
-  const lessonsWithContentCount = courseTree?.modules?.reduce((acc, module) =>
-    acc + (module.lessons?.filter(lesson => lesson.has_content).length || 0), 0) || 0;
-  const generationProgress = totalLessonsCount > 0 ? Math.round((lessonsWithContentCount / totalLessonsCount) * 100) : 0;
-  const isGenerationInProgress = lessonsWithContentCount < totalLessonsCount;
-
-  console.log('📈 Generation progress:', {
-    totalLessonsCount,
-    lessonsWithContentCount,
-    generationProgress,
-    isGenerationInProgress
+  console.log('📈 Generation progress calculation:', {
+    currentCourseTree: currentCourseTree ? {
+      modulesCount: currentCourseTree.modules?.length,
+      lessonsCount: currentCourseTree.lessons?.flat().length,
+      lessonsWithContent: currentCourseTree.lessons?.flat().filter(l => l.has_content).length
+    } : null,
   });
 
   const handleLessonClick = (lessonId: number, hasContent: boolean) => {
@@ -144,6 +141,15 @@ const TheoryCourseTreePage: React.FC = () => {
     }
   };
 
+  const handleCreateAnkiDeck = async () => {
+    try {
+      const result = await createDeckFromCourse({ course_id: courseIdNum }).unwrap();
+      message.success('Колода Anki успешно создана!');
+      navigate(`/anki/decks/${result.id}/practice`);
+    } catch (error: any) {
+      message.error(error?.data?.detail || 'Ошибка при создании колоды. Убедитесь, что все уроки имеют сгенерированный контент.');
+    }
+  };
 
   if (isLoading) {
     return (
@@ -170,27 +176,25 @@ const TheoryCourseTreePage: React.FC = () => {
 
   const { course, modules, lessons } = currentCourseTree;
 
+  // Calculate generation progress
+  // lessons is an array of arrays, where each inner array corresponds to a module
+  const allLessons = lessons.flat();
+  const totalLessonsCount = allLessons.length;
+  const lessonsWithContentCount = allLessons.filter(lesson => lesson.has_content).length;
+  const generationProgress = totalLessonsCount > 0 ? Math.round((lessonsWithContentCount / totalLessonsCount) * 100) : 0;
+  const isGenerationInProgress = lessonsWithContentCount < totalLessonsCount;
+
   console.log('📊 Course tree data:', {
     courseId: courseIdNum,
-    currentCourseTree: currentCourseTree ? {
-      modulesCount: currentCourseTree.modules?.length,
-      lessonsCount: currentCourseTree.lessons?.flat().length,
-      lessonsWithContent: currentCourseTree.lessons?.flat().filter(l => l.has_content).length
-    } : null,
-    initialCourseTree: !!initialCourseTree,
-    loadedCourseTree: courseTree ? {
-      modulesCount: courseTree.modules?.length,
-      lessonsCount: courseTree.lessons?.flat().length,
-      lessonsWithContent: courseTree.lessons?.flat().filter(l => l.has_content).length
-    } : null,
-    isLoading,
-    error,
+    totalLessonsCount,
+    lessonsWithContentCount,
+    generationProgress,
     isGenerationInProgress
   });
 
   // Calculate progress
-  const totalLessons = lessons.flat().length;
-  const completedLessons = lessons.flat().filter(lesson => lesson.is_completed).length;
+  const totalLessons = allLessons.length;
+  const completedLessons = allLessons.filter(lesson => lesson.is_completed).length;
   const progressPercent = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
   // Check if all current modules are completed
@@ -238,13 +242,22 @@ const TheoryCourseTreePage: React.FC = () => {
                 </div>
               )}
 
-              <Space>
+              <Space wrap>
                 <Tag color="blue">{course.difficulty === 'beginner' ? 'Начальный' :
                           course.difficulty === 'intermediate' ? 'Средний' : 'Продвинутый'}</Tag>
                 <Tag icon={<ClockCircleOutlined />}>
                   ~{course.estimated_duration} часов
                 </Tag>
                 <Tag>{course.modules_count} модулей</Tag>
+                <Button
+                  type="default"
+                  icon={<FileTextOutlined />}
+                  loading={isCreatingDeck}
+                  onClick={handleCreateAnkiDeck}
+                  disabled={lessonsWithContentCount === 0}
+                >
+                  Создать колоду Anki
+                </Button>
               </Space>
             </div>
           </div>
