@@ -24,6 +24,9 @@ import CreateTheoryCoursePage from './pages/CreateTheoryCoursePage';
 import TheoryCourseTreePage from './pages/TheoryCourseTreePage';
 import TheoryLessonPage from './pages/TheoryLessonPage';
 
+// Quiz pages
+import QuizPage from './pages/QuizPage';
+
 function App() {
   return (
     <Provider store={store}>
@@ -57,6 +60,9 @@ function App() {
               <Route path="/theory/create" element={<CreateTheoryCoursePage />} />
               <Route path="/theory/courses/:courseId" element={<TheoryCourseTreePage />} />
               <Route path="/theory/lessons/:lessonId" element={<TheoryLessonPage />} />
+
+              {/* Quiz Routes */}
+              <Route path="/quizzes/:quizId?" element={<QuizPage />} />
             </Route>
 
           </Routes>
