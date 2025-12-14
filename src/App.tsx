@@ -26,6 +26,7 @@ import TheoryLessonPage from './pages/TheoryLessonPage';
 
 // Quiz pages
 import QuizPage from './pages/QuizPage';
+import QuizzesListPage from './pages/QuizzesListPage';
 
 function App() {
   return (
@@ -62,7 +63,9 @@ function App() {
               <Route path="/theory/lessons/:lessonId" element={<TheoryLessonPage />} />
 
               {/* Quiz Routes */}
-              <Route path="/quizzes/:quizId?" element={<QuizPage />} />
+              <Route path="/quizzes" element={<QuizzesListPage />} />
+              <Route path="/quizzes/create" element={<QuizPage />} />
+              <Route path="/quizzes/:quizId" element={<QuizPage />} />
             </Route>
 
           </Routes>

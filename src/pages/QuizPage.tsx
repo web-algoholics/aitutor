@@ -76,11 +76,15 @@ const QuizPage: React.FC = () => {
       // If quizId is in URL, we're taking an existing quiz
       setQuizState('taking');
       setCreatedQuizId(Number(quizId));
-    } else if (lessonContent && form) {
-      // Pre-fill theory content from lesson
-      form.setFieldsValue({
-        theory_content: lessonContent.content,
-      });
+    } else {
+      // No quizId means we're creating a new quiz
+      setQuizState('create');
+      if (lessonContent && form) {
+        // Pre-fill theory content from lesson
+        form.setFieldsValue({
+          theory_content: lessonContent.content,
+        });
+      }
     }
   }, [quizId, lessonContent, form]);
 
@@ -147,9 +151,11 @@ const QuizPage: React.FC = () => {
 
   const handleBack = () => {
     if (lessonId) {
+      // If we came from a lesson, go back to that lesson
       navigate(`/theory/lessons/${lessonId}`);
     } else {
-      navigate('/theory');
+      // Otherwise, go to quizzes list
+      navigate('/quizzes');
     }
   };
 

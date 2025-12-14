@@ -83,7 +83,7 @@ const TheoryLessonPage: React.FC = () => {
   };
 
   const handleCreateQuiz = () => {
-    navigate(`/quizzes?lessonId=${lessonIdNum}`);
+    navigate(`/quizzes/create?lessonId=${lessonIdNum}`);
   };
 
   if (contentLoading || generating) {
