@@ -32,6 +32,9 @@ import QuizzesListPage from './pages/Quizzes/QuizzesListPage';
 import AnkiDecksListPage from './pages/Anki/AnkiDecksListPage';
 import AnkiPracticePage from './pages/Anki/AnkiPracticePage';
 
+// Help Center
+import HelpCenterPage from './pages/HelpCenterPage';
+
 function App() {
   return (
     <Provider store={store}>
@@ -71,6 +74,9 @@ function App() {
               {/* Anki Routes */}
               <Route path="/anki" element={<AnkiDecksListPage />} />
               <Route path="/anki/decks/:deckId/practice" element={<AnkiPracticePage />} />
+
+              {/* Help Center */}
+              <Route path="/help" element={<HelpCenterPage />} />
             </Route>
 
           </Routes>
