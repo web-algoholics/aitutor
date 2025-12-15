@@ -46,7 +46,7 @@ export default function Navbar() {
               Anki
             </Link>
             <Link to="/market-analysis" className="text-black hover:text-gray-600 transition-colors">
-              Market analysis
+               Анализ рынка
             </Link>
           </nav>
         )
@@ -69,12 +69,12 @@ export default function Navbar() {
 
             {/* Logout Button */}
             <Button type="default" onClick={handleLogout} size="middle">
-              Logout
+              Выход
             </Button>
           </>
         ) : (
           <Button type="primary">
-            <Link to="/login">Sign In</Link>
+            <Link to="/login">Регистрация</Link>
           </Button>
         )}
       </div>
