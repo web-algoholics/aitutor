@@ -35,7 +35,8 @@ class Settings(BaseSettings):
     PROFILE_ICON_URL_PATH: str = "/profile-icons"
 
     # --- Frontend url ---
-    FRONTEND_URL: str = "http://localhost:3000"
+    FRONTEND_URL: str = "http://localhost:8099"
+    GIGACHAT_API_KEY: str
     
     @property
     def DATABASE_URL(self):
