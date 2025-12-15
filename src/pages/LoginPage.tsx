@@ -41,9 +41,9 @@ export default function LoginPage() {
     if (isSuccess && !isFetching && user) {
       if (!('is_verified' in user) || !user.is_verified) {
         messageApi.info('Please verify your email.');
-        navigate('/dashboard');
+        navigate('/theory');
       } else {
-        navigate('/dashboard');
+        navigate('/theory');
       }
     }
   }, [isSuccess, isFetching, user, navigate, messageApi]);

@@ -1,23 +1,7 @@
-import { Outlet } from "react-router-dom";
-import { Layout } from "antd";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
 import React from "react";
+import { Outlet } from "react-router-dom";
 
-const { Content } = Layout;
-
+// Публичный лэйаут без навигации. Страницы сами управляют своим оформлением.
 export default function PublicLayout() {
-  return (
-    <Layout style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <Navbar />
-      <Content style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <Outlet />
-      </Content>
-      <Footer />
-    </Layout>
-  );
+  return <Outlet />;
 }
-
-
-
-

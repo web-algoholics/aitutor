@@ -39,25 +39,20 @@ function App() {
         <BrowserRouter basename='/aitutor'>
           <Routes>
 
-            {/* Public Routes with Layout (navbar + footer) */}
+            {/* Public routes (no navbar) */}
             <Route element={<PublicLayout />}>
               <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/verify-email" element={<VerifyEmailPage />} />
             </Route>
-
-            {/* Public Routes (no navbar) */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/verify-email" element={<VerifyEmailPage />} />
 
             {/* Protected Routes (with navbar) */}
             <Route element={<ProtectedLayout />}>
-              <Route path="/" element={<ProfilePage />} />
     
               <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/roadmap" element={<Roadmap />} />
-
 
               {/* Market Analysis  */}
               <Route path="/market-analysis" element={<MarketAnalysis />} />
