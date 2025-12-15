@@ -5,6 +5,7 @@ import { coursesApi } from '../services/coursesApi';
 import { theoryApi } from '../services/theoryApi';
 import { quizzesApi } from '../services/quizzesApi';
 import { ankiApi } from '../services/ankiApi';
+import { jobsApi } from '../services/jobsApi';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     [theoryApi.reducerPath]: theoryApi.reducer,
     [quizzesApi.reducerPath]: quizzesApi.reducer,
     [ankiApi.reducerPath]: ankiApi.reducer,
+    [jobsApi.reducerPath]: jobsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -22,7 +24,8 @@ export const store = configureStore({
       .concat(coursesApi.middleware)
       .concat(theoryApi.middleware)
       .concat(quizzesApi.middleware)
-      .concat(ankiApi.middleware),
+      .concat(ankiApi.middleware)
+      .concat(jobsApi.middleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>;

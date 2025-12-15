@@ -13,6 +13,7 @@ from auth.auth import fastapi_users, current_active_user, auth_backend
 from auth.models import User
 from auth.schemas import UserRead, UserCreate, UserUpdate
 from auth.routing import router as upload_router
+from jobs.routing import router as jobs_router
 from theory.routing import router as theory_router
 from quizzes.routing import router as quizzes_router
 from anki.routing import router as anki_router
@@ -94,7 +95,6 @@ app.include_router(
 
 app.include_router(upload_router)
 app.include_router(jobs_router)
-app.include_router(courses_router)
 
 # Theory router
 app.include_router(theory_router)
