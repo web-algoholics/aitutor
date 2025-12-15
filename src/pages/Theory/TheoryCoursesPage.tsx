@@ -12,7 +12,7 @@ import {
 
 import { useGetTheoryCoursesQuery, useGetStudyStreakQuery } from '../../services/theoryApi';
 
-const { Title, Text, Paragraph, Meta } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 const TheoryCoursesPage: React.FC = () => {
   const navigate = useNavigate();
