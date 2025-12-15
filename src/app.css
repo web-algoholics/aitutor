@@ -199,6 +199,10 @@ a:hover {
   margin-bottom: 2rem;
 }
 
+.mb-20 {
+  margin-bottom: 4rem;
+}
+
 .mt-1 {
   margin-top: 0.25rem;
 }
@@ -253,6 +257,11 @@ a:hover {
   padding-right: 1.5rem;
 }
 
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
@@ -276,6 +285,16 @@ a:hover {
 .py-12 {
   padding-top: 3rem;
   padding-bottom: 3rem;
+}
+
+.py-24 {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
+.py-32 {
+  padding-top: 8rem;
+  padding-bottom: 8rem;
 }
 
 /* Display & Visibility */
@@ -432,6 +451,234 @@ a:hover {
 /* Border & Border Radius */
 .border {
   border: 1px solid #e5e7eb;
+}
+
+.huge-circle {
+  width: 800px;
+  height: 800px;
+  background-color: black;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  opacity: 0;
+}
+
+.huge-circle.animate {
+  animation: fadeInCircle 0.3s ease-in-out forwards;
+}
+
+.starting-point-dot {
+  width: 20px;
+  height: 20px;
+  background-color: #000000;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 20;
+  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+.starting-point-dot:hover:not(.show-content) {
+  transform: translate(-50%, -50%) scale(1.2);
+  animation: none;
+}
+
+.starting-point-dot.show-content:hover {
+  transform: translate(-50%, -50%);
+}
+
+.starting-point-dot.expanding {
+  animation: expandDot 0.3s ease-in-out forwards;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.3);
+  }
+}
+
+.starting-point-dot.show-content {
+  width: min(800px, 90vw, 90vh);
+  height: min(800px, 90vw, 90vh);
+  cursor: default;
+}
+
+@keyframes expandDot {
+  from {
+    width: 20px;
+    height: 20px;
+    opacity: 1;
+  }
+  to {
+    width: min(800px, 90vw, 90vh);
+    height: min(800px, 90vw, 90vh);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .starting-point-dot.show-content {
+    width: min(600px, 95vw, 95vh);
+    height: min(600px, 95vw, 95vh);
+  }
+  
+  .starting-point-dot.show-content .ant-typography-h1 {
+    font-size: 2rem !important;
+  }
+  
+  .starting-point-dot.show-content .ant-typography {
+    font-size: 1rem !important;
+  }
+  
+  .starting-point-dot.show-content .ant-btn {
+    height: auto !important;
+    min-height: 32px !important;
+    padding: 8px 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .starting-point-dot.show-content {
+    width: min(500px, 98vw, 98vh);
+    height: min(500px, 98vw, 98vh);
+  }
+  
+  .starting-point-dot.show-content .ant-typography-h1 {
+    font-size: 1.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .starting-point-dot.show-content .ant-typography {
+    font-size: 0.875rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .starting-point-dot.show-content .ant-btn {
+    height: auto !important;
+    min-height: 28px !important;
+    padding: 6px 12px !important;
+    font-size: 0.875rem !important;
+  }
+  
+  .starting-point-dot.show-content .ant-space {
+    gap: 8px !important;
+  }
+}
+
+@keyframes fadeInTitle {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 40px));
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, calc(-50% - 80px));
+  }
+}
+
+.title-fade-in {
+  opacity: 0;
+  animation: fadeInTitle 1s ease-out forwards;
+}
+
+@keyframes fadeInCircle {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes textColorTransition {
+  from {
+    color: #000000;
+    opacity: 0;
+  }
+  to {
+    color: #ffffff;
+    opacity: 1;
+  }
+}
+
+.text-fade-to-white {
+  opacity: 0;
+  animation: textColorTransition 0.3s linear 0.4s forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  opacity: 0;
+}
+
+.fade-in-up.visible {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Position */
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.sticky {
+  position: sticky;
+}
+
+.top-0 {
+  top: 0;
+}
+
+.top-1\/3 {
+  top: 33.333333%;
+}
+
+.left-1\/2 {
+  left: 50%;
+}
+
+.-translate-x-1\/2 {
+  transform: translateX(-50%);
+}
+
+.-translate-y-1\/2 {
+  transform: translateY(-50%);
+}
+
+.z-10 {
+  z-index: 10;
+  position: relative;
+}
+
+.z-50 {
+  z-index: 50;
 }
 
 .border-b {

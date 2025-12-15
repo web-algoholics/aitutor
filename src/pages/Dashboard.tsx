@@ -127,12 +127,10 @@ interface AddCourseFormValues {
 export function Dashboard() {
   const [enrolledLanguages, setEnrolledLanguages] = useState<Course[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [form] = Form.useForm<AddCourseFormValues>();
   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
-    setTimeout(() => {
       setEnrolledLanguages([LANGUAGE_COURSES[0], LANGUAGE_COURSES[1], LANGUAGE_COURSES[2]]);
       setIsLoading(false);
     }, 500);
@@ -181,14 +179,6 @@ export function Dashboard() {
     course => !enrolledLanguages.some(l => l.id === course.id)
   );
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Spin size="large" />
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
       {contextHolder}
@@ -196,7 +186,7 @@ export function Dashboard() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-semibold text-gray-900">My Learning Journey</h1>
+            <h1 className="text-3xl font-semibold text-gray-900">Learning Journey</h1>
             <p className="text-sm text-gray-600 mt-1">Track your progress through programming languages</p>
           </div>
           <Button
@@ -210,56 +200,10 @@ export function Dashboard() {
           </Button>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card className="border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex flex-col">
-              <p className="text-xs uppercase tracking-wide text-gray-500 font-medium">Total Courses</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{totalLanguages}</p>
-            </div>
-          </Card>
-
-          <Card className="border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex flex-col">
-              <p className="text-xs uppercase tracking-wide text-gray-500 font-medium">In Progress</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{inProgressLanguages}</p>
-            </div>
-          </Card>
-
-          <Card className="border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex flex-col">
-              <p className="text-xs uppercase tracking-wide text-gray-500 font-medium">Completed</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{completedLanguages}</p>
-            </div>
-          </Card>
-
-          <Card className="border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex flex-col">
-              <p className="text-xs uppercase tracking-wide text-gray-500 font-medium">Hours Learned</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{totalHours}h</p>
-            </div>
-          </Card>
-        </div>
-
-        {/* Overall Progress */}
-        {enrolledLanguages.length > 0 && (
-          <Card className="border border-gray-200 rounded-lg shadow-sm mb-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">Overall Progress</h3>
-                <p className="text-sm text-gray-600 mt-1">Average completion across all courses</p>
-              </div>
-              <div className="text-right">
-                <p className="text-4xl font-bold text-gray-900">{averageProgress}%</p>
-              </div>
-            </div>
-            <Progress percent={averageProgress} strokeColor="#1890ff" className="mt-4" />
-          </Card>
-        )}
 
         {/* Courses List */}
         <div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">My Courses</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Courses</h2>
           {enrolledLanguages.length === 0 ? (
             <Card className="border border-gray-200 rounded-lg shadow-sm">
               <Empty

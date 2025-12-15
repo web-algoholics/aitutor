@@ -7,7 +7,7 @@ To test or develop (without docker):
 2. Install dependencies to .venv
 - `pip install -r requirements.txt`
 3. Run the server locally:
-- `Fill .env.local.template file and rename it to .env.local`
+- Fill `.env.local.template` file and rename it to `.env.local`
 - Get to `backend/src` directory
 - run `uvicorn main:app --reload`
 - Open http://localhost:8000/docs in browser to view endpoints

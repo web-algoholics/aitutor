@@ -4,6 +4,8 @@ import { EditOutlined, MailOutlined, GiftOutlined, CheckCircleOutlined, Exclamat
 import { useGetProfileQuery, useUpdateProfileMutation, useRequestVerifyTokenMutation, useUploadAvatarMutation, useGetAvatarQuery } from '../services/profileApi';
 import AuthLayout from '../components/AuthLayout';
 import { useNavigate } from 'react-router-dom';
+import Stats from '../components/Stats';
+
 
 const { Title, Text } = Typography;
 
@@ -251,6 +253,11 @@ export default function ProfilePage() {
           </Form.Item>
         </Form>
       </Modal>
+
+      {/* Stats Section */}
+      <Card title="Learning Statistics" className="shadow-sm mt-6">
+        <Stats />
+      </Card>
     </div>
   );
 }
