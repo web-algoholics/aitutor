@@ -7,14 +7,14 @@ import {
 } from 'antd';
 import {
   ArrowLeftOutlined, ClockCircleOutlined, BulbOutlined,
-  CheckCircleOutlined, LoadingOutlined
+  CheckCircleOutlined, LoadingOutlined, FormOutlined
 } from '@ant-design/icons';
 import {
   useGetLessonContentQuery,
   useGenerateLessonContentMutation,
   useGetTheoryCourseTreeQuery,
   useMarkLessonCompletedMutation
-} from '../services/theoryApi';
+} from '../../services/theoryApi';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -80,6 +80,10 @@ const TheoryLessonPage: React.FC = () => {
       message.error('Не удалось отметить урок как пройденный');
       console.error('Error marking lesson as completed:', error);
     }
+  };
+
+  const handleCreateQuiz = () => {
+    navigate(`/quizzes/create?lessonId=${lessonIdNum}`);
   };
 
   if (contentLoading || generating) {
@@ -153,11 +157,12 @@ const TheoryLessonPage: React.FC = () => {
                 h3: ({ children }) => <Typography.Title level={3}>{children}</Typography.Title>,
                 h4: ({ children }) => <Typography.Title level={4}>{children}</Typography.Title>,
                 h5: ({ children }) => <Typography.Title level={5}>{children}</Typography.Title>,
-                h6: ({ children }) => <Typography.Title level={6}>{children}</Typography.Title>,
+                h6: ({ children }) => <Typography.Title level={5}>{children}</Typography.Title>,
                 p: ({ children }) => <Typography.Paragraph>{children}</Typography.Paragraph>,
-                code: ({ node, inline, className, children, ...props }) => {
+                code: ({ node, className, children, ...props }: any) => {
                   const match = /language-(\w+)/.exec(className || '');
-                  return !inline && match ? (
+                  const isInline = !className?.includes('language-');
+                  return !isInline && match ? (
                     <pre style={{
                       backgroundColor: '#f6f8fa',
                       padding: '16px',
@@ -202,12 +207,18 @@ const TheoryLessonPage: React.FC = () => {
         </Card>
 
         {/* Footer */}
-        <Card size="small" style={{ backgroundColor: '#f9f9f9' }}>
-          <div style={{ textAlign: 'center' }}>
+        <Card size="small" className="bg-gray-50">
+          <div className="text-center">
             <Space direction="vertical" align="center">
               <Space>
                 <Button onClick={handleBackToCourse}>
                   Вернуться к курсу
+                </Button>
+                <Button
+                  icon={<FormOutlined />}
+                  onClick={handleCreateQuiz}
+                >
+                  Создать квиз
                 </Button>
                 <Button
                   type={(content.lesson_is_completed || optimisticallyCompleted) ? "default" : "primary"}

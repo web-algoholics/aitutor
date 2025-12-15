@@ -2,15 +2,17 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Card, Typography, Button, Space, Tag, Progress,
-  Skeleton, message, Empty, Alert, Row, Col
+  Skeleton, message, Empty, Alert, Row, Col,
+  Spin
 } from 'antd';
 import {
   BookOutlined, PlusOutlined, PlayCircleOutlined,
   CheckCircleOutlined, ClockCircleOutlined, BulbOutlined, FireOutlined
 } from '@ant-design/icons';
-import { useGetTheoryCoursesQuery, useGetStudyStreakQuery } from '../services/theoryApi';
 
-const { Title, Text, Paragraph, Meta } = Typography;
+import { useGetTheoryCoursesQuery, useGetStudyStreakQuery } from '../../services/theoryApi';
+
+const { Title, Text, Paragraph } = Typography;
 
 const TheoryCoursesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -27,10 +29,8 @@ const TheoryCoursesPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="p-5">
-        <Skeleton active />
-        <Skeleton active />
-        <Skeleton active />
+      <div className="flex items-center justify-center min-h-screen">
+        <Spin size="large" />
       </div>
     );
   }

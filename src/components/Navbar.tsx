@@ -30,6 +30,12 @@ export default function Navbar() {
         <Link to="/theory" className="text-black hover:text-gray-600 transition-colors">
           AI Курсы
         </Link>
+        <Link to="/quizzes" className="text-black hover:text-gray-600 transition-colors">
+          Квизы
+        </Link>
+        <Link to="/anki" className="text-black hover:text-gray-600 transition-colors">
+          Anki
+        </Link>
       </nav>
 
       {/* Right: Auth */}

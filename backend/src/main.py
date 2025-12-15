@@ -1,3 +1,4 @@
+import os
 import asyncio
 import logging
 from fastapi import FastAPI, Depends
@@ -7,6 +8,15 @@ from contextlib import asynccontextmanager
 
 from database import init_db
 from config import settings
+
+from auth.auth import fastapi_users, current_active_user, auth_backend
+from auth.models import User
+from auth.schemas import UserRead, UserCreate, UserUpdate
+from auth.routing import router as upload_router
+from theory.routing import router as theory_router
+from quizzes.routing import router as quizzes_router
+from anki.routing import router as anki_router
+
 
 # Configure logging
 logging.basicConfig(
@@ -20,15 +30,7 @@ logging.basicConfig(
 )
 
 # Create logs directory
-import os
 os.makedirs('logs', exist_ok=True)
-
-from auth.auth import fastapi_users, current_active_user, auth_backend
-from auth.models import User
-from auth.schemas import UserRead, UserCreate, UserUpdate
-from auth.routing import router as upload_router
-from theory.routing import router as theory_router
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -94,6 +96,12 @@ app.include_router(upload_router)
 
 # Theory router
 app.include_router(theory_router)
+
+# Quizzes router
+app.include_router(quizzes_router)
+
+# Anki router
+app.include_router(anki_router)
 
 # --- Example Protected Route ---
 @app.get("/protected")

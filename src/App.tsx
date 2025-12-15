@@ -19,10 +19,18 @@ import ChatTutorPage from './pages/ChatTutorPage';
 import CodeEditorPage from './pages/CodeEditorPage';
 
 // Theory pages
-import TheoryCoursesPage from './pages/TheoryCoursesPage';
-import CreateTheoryCoursePage from './pages/CreateTheoryCoursePage';
-import TheoryCourseTreePage from './pages/TheoryCourseTreePage';
-import TheoryLessonPage from './pages/TheoryLessonPage';
+import TheoryCoursesPage from './pages/Theory/TheoryCoursesPage';
+import CreateTheoryCoursePage from './pages/Theory/CreateTheoryCoursePage';
+import TheoryCourseTreePage from './pages/Theory/TheoryCourseTreePage';
+import TheoryLessonPage from './pages/Theory/TheoryLessonPage';
+
+// Quiz pages
+import QuizPage from './pages/Quizzes/QuizPage';
+import QuizzesListPage from './pages/Quizzes/QuizzesListPage';
+
+// Anki pages
+import AnkiDecksListPage from './pages/Anki/AnkiDecksListPage';
+import AnkiPracticePage from './pages/Anki/AnkiPracticePage';
 
 function App() {
   return (
@@ -57,6 +65,15 @@ function App() {
               <Route path="/theory/create" element={<CreateTheoryCoursePage />} />
               <Route path="/theory/courses/:courseId" element={<TheoryCourseTreePage />} />
               <Route path="/theory/lessons/:lessonId" element={<TheoryLessonPage />} />
+
+              {/* Quiz Routes */}
+              <Route path="/quizzes" element={<QuizzesListPage />} />
+              <Route path="/quizzes/create" element={<QuizPage />} />
+              <Route path="/quizzes/:quizId" element={<QuizPage />} />
+
+              {/* Anki Routes */}
+              <Route path="/anki" element={<AnkiDecksListPage />} />
+              <Route path="/anki/decks/:deckId/practice" element={<AnkiPracticePage />} />
             </Route>
 
           </Routes>

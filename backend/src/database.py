@@ -8,6 +8,8 @@ from config import settings
 # Import all models for table creation
 from auth.models import User
 from theory.models import TheoryCourse, TheoryModule, TheoryLesson, TheoryContent
+from quizzes.models import Quiz, Question, Answer
+from anki.models import AnkiDeck, AnkiCard
 
 # Async engine
 engine: AsyncEngine = create_async_engine(settings.DATABASE_URL, echo=True)
