@@ -132,6 +132,8 @@ export function Dashboard() {
 
   useEffect(() => {
       setEnrolledLanguages([LANGUAGE_COURSES[0], LANGUAGE_COURSES[1], LANGUAGE_COURSES[2]]);
+      setIsLoading(false);
+    }, 0);
   }, []);
 
   const handleAddLanguage = (values: AddCourseFormValues) => {

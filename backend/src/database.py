@@ -5,15 +5,11 @@ from sqlalchemy.orm import sessionmaker
 from typing import AsyncGenerator
 from config import settings
 
-# Import all models to ensure they are registered
-from auth.models import User  # noqa: F401
-from jobs.models import JobVacancy, JobAnalysis, MarketTrend  # noqa: F401
-
-# Import Course model if available
-try:
-    from courses.models import Course  # noqa: F401
-except ImportError:
-    pass  # Course model not available, skip
+# Import all models for table creation
+from auth.models import User
+from theory.models import TheoryCourse, TheoryModule, TheoryLesson, TheoryContent
+from quizzes.models import Quiz, Question, Answer
+from anki.models import AnkiDeck, AnkiCard
 
 # Async engine
 engine: AsyncEngine = create_async_engine(settings.DATABASE_URL, echo=True)
