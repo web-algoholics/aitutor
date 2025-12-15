@@ -13,8 +13,8 @@ import {
   useGetTheoryCourseTreeQuery,
   useGenerateNextModuleMutation,
   useGenerateLessonContentMutation
-} from '../services/theoryApi';
-import { useCreateDeckFromCourseMutation } from '../services/ankiApi';
+} from '../../services/theoryApi';
+import { useCreateDeckFromCourseMutation } from '../../services/ankiApi';
 
 const { Title, Text, Paragraph } = Typography;
 

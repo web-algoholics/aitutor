@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Button, Space, Typography, Progress, message, Spin } from 'antd';
 import { ArrowLeftOutlined, EyeOutlined, EyeInvisibleOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { useGetDeckQuery } from '../services/ankiApi';
+import { useGetDeckQuery } from '../../services/ankiApi';
 
 const { Title, Text } = Typography;
 

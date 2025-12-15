@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, Button, Space, Typography, Tag, Empty, Modal, Form, Input, message, Popconfirm, Spin } from 'antd';
 import { FileTextOutlined, PlusOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Row, Col } from 'antd';
-import { useGetDecksQuery, useCreateDeckFromMaterialMutation, useDeleteDeckMutation } from '../services/ankiApi';
+import { useGetDecksQuery, useCreateDeckFromMaterialMutation, useDeleteDeckMutation } from '../../services/ankiApi';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;

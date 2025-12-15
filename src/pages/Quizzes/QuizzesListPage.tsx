@@ -18,7 +18,7 @@ import {
   ClockCircleOutlined,
   FileTextOutlined,
 } from '@ant-design/icons';
-import { useGetQuizzesQuery, type QuizSummaryResponse } from '../services/quizzesApi';
+import { useGetQuizzesQuery, type QuizSummaryResponse } from '../../services/quizzesApi';
 const { Title, Text, Paragraph } = Typography;
 
 const QuizzesListPage: React.FC = () => {
@@ -182,7 +182,7 @@ const QuizzesListPage: React.FC = () => {
                     <div className="mt-auto pt-2">
                       <Space direction="vertical" size="small" className="w-full">
                         <Text type="secondary" className="text-sm">
-                          <FileTextOutlined /> {quiz.questions_count} вопросов
+                          <FileTextOutlined /> Вопросов: {quiz.questions_count}
                         </Text>
                         <Text type="secondary" className="text-sm">
                           <ClockCircleOutlined /> {formatDate(quiz.created_at)}

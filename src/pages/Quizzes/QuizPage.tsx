@@ -33,8 +33,8 @@ import {
   type QuizResultResponse,
   type AnswerResponse,
   type QuestionResponse,
-} from '../services/quizzesApi';
-import { useGetLessonContentQuery } from '../services/theoryApi';
+} from '../../services/quizzesApi';
+import { useGetLessonContentQuery } from '../../services/theoryApi';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;

@@ -14,7 +14,7 @@ import {
   useGenerateLessonContentMutation,
   useGetTheoryCourseTreeQuery,
   useMarkLessonCompletedMutation
-} from '../services/theoryApi';
+} from '../../services/theoryApi';
 
 const { Title, Text, Paragraph } = Typography;
 

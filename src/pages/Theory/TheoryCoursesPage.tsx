@@ -9,7 +9,7 @@ import {
   BookOutlined, PlusOutlined, PlayCircleOutlined,
   CheckCircleOutlined, ClockCircleOutlined, BulbOutlined
 } from '@ant-design/icons';
-import { useGetTheoryCoursesQuery } from '../services/theoryApi';
+import { useGetTheoryCoursesQuery } from '../../services/theoryApi';
 
 const { Title, Text, Paragraph, Meta } = Typography;
 

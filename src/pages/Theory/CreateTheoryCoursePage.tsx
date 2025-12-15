@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Select, Button, Card, Typography, Space, message, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { useCreateTheoryCourseMutation } from '../services/theoryApi';
+import { useCreateTheoryCourseMutation } from '../../services/theoryApi';
 import { BookOutlined, LoadingOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 
 const { Title, Text, Paragraph } = Typography;
@@ -19,7 +19,7 @@ const CreateTheoryCoursePage: React.FC = () => {
         difficulty: values.difficulty || 'intermediate',
       }).unwrap();
 
-      message.success('Курс создан! Структура готова, контент генерируется в фоне...');
+      message.success('Курс создан! Структура готова, контент генерируется...');
 
       // Navigate immediately with course data - structure is already created
       navigate(`/theory/courses/${result.course.id}`, {
@@ -108,7 +108,6 @@ const CreateTheoryCoursePage: React.FC = () => {
         </Card>
 
         <Card title="Примеры тем" size="small">
-          <Text>Популярные темы для изучения:</Text>
           <div style={{ marginTop: '12px' }}>
             <Space wrap>
               {exampleTopics.map((topic) => (
