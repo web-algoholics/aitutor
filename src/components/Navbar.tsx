@@ -36,6 +36,9 @@ export default function Navbar() {
         <Link to="/anki" className="text-black hover:text-gray-600 transition-colors">
           Anki
         </Link>
+        <Link to="/market-analysis" className="text-black hover:text-gray-600 transition-colors">
+          Market analysis
+        </Link>
       </nav>
 
       {/* Right: Auth */}

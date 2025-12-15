@@ -11,12 +11,14 @@ import ForgotPasswordPage from './pages/ForgotPassword';
 import ResetPasswordPage from './pages/ResetPassword';
 import Roadmap from './pages/Roadmap';
 import React from 'react';
-import Dashboard, { CoursePage } from './pages/Dashboard';
 import ProtectedLayout from './components/ProtectedLayout';
 import CoursesPage from './pages/CoursesPage';
 import CourseRoadmapPage from './pages/CourseRoadmapPage';
 import ChatTutorPage from './pages/ChatTutorPage';
 import CodeEditorPage from './pages/CodeEditorPage';
+
+// Market Analysis
+import MarketAnalysis from './pages/MarketAnalysis';
 
 // Theory pages
 import TheoryCoursesPage from './pages/Theory/TheoryCoursesPage';
@@ -48,18 +50,15 @@ function App() {
 
             {/* Protected Routes (with navbar) */}
             <Route element={<ProtectedLayout />}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              {/* <Route path="/courses/:language" element={<CoursePage />} /> */}
+              <Route path="/" element={<ProfilePage />} />
+    
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/roadmap" element={<Roadmap />} />
-              
-              {/* New Course Routes */}
-              <Route path="/courses" element={<CoursesPage />} />
-              <Route path="/courses/:courseId/roadmap" element={<CourseRoadmapPage />} />
-              <Route path="/courses/:courseId/modules/:moduleId/chat" element={<ChatTutorPage />} />
-              <Route path="/lessons/:lessonId/editor" element={<CodeEditorPage />} />
 
+
+              {/* Market Analysis  */}
+              <Route path="/market-analysis" element={<MarketAnalysis />} />
+              
               {/* Theory Courses Routes */}
               <Route path="/theory" element={<TheoryCoursesPage />} />
               <Route path="/theory/create" element={<CreateTheoryCoursePage />} />
