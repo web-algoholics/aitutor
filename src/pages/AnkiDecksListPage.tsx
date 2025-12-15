@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Button, Space, Typography, Tag, Empty, Modal, Form, Input, message, Popconfirm } from 'antd';
+import { Card, Button, Space, Typography, Tag, Empty, Modal, Form, Input, message, Popconfirm, Spin } from 'antd';
 import { FileTextOutlined, PlusOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Row, Col } from 'antd';
 import { useGetDecksQuery, useCreateDeckFromMaterialMutation, useDeleteDeckMutation } from '../services/ankiApi';
@@ -25,9 +25,10 @@ export default function AnkiDecksListPage() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
 
-  const handleCreateFromMaterial = async (values: { title: string; description?: string; material_content: string }) => {
+  const handleCreateFromMaterial = async (values: { description?: string; material_content: string }) => {
+    const payload = { title: 'Новая колода', ...values };
     try {
-      const result = await createDeckFromMaterial(values).unwrap();
+      const result = await createDeckFromMaterial(payload).unwrap();
       message.success('Колода успешно создана!');
       setIsModalVisible(false);
       form.resetFields();
@@ -52,8 +53,8 @@ export default function AnkiDecksListPage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-6xl mx-auto p-5">
-        <Card loading />
+      <div className="flex items-center justify-center min-h-screen">
+        <Spin size="large" />
       </div>
     );
   }
@@ -127,32 +128,6 @@ export default function AnkiDecksListPage() {
                         {deck.description}
                       </Text>
                     )}
-                    <div className="mt-auto">
-                      <Space direction="vertical" size="small" className="w-full">
-                        <Text type="secondary" className="block">
-                          Карточек: <strong>{deck.cards_count}</strong>
-                        </Text>
-                        <Text type="secondary" className="block text-xs">
-                          Создано: {formatDate(deck.created_at)}
-                        </Text>
-                        <Popconfirm
-                          title="Удалить колоду?"
-                          description="Это действие нельзя отменить"
-                          onConfirm={() => handleDeleteDeck(deck.id)}
-                          okText="Да"
-                          cancelText="Нет"
-                        >
-                          <Button
-                            danger
-                            size="small"
-                            icon={<DeleteOutlined />}
-                            className="w-full"
-                          >
-                            Удалить
-                          </Button>
-                        </Popconfirm>
-                      </Space>
-                    </div>
                   </div>
                 </Card>
               </Col>
@@ -192,14 +167,6 @@ export default function AnkiDecksListPage() {
           layout="vertical"
           onFinish={handleCreateFromMaterial}
         >
-          <Form.Item
-            name="title"
-            label="Название колоды"
-            rules={[{ required: true, message: 'Введите название колоды' }]}
-          >
-            <Input placeholder="Например: Конспект лекций по Python" />
-          </Form.Item>
-
           <Form.Item
             name="description"
             label="Описание (необязательно)"

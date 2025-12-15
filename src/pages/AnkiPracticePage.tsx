@@ -24,13 +24,18 @@ export default function AnkiPracticePage() {
   if (isLoading || !deck) {
     return (
       <div className="max-w-4xl mx-auto p-5">
-        <Spin size="large" />
+        <Card className="min-h-[300px] flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <Spin size="large" />
+            <Text type="secondary">Загружаем карточки...</Text>
+          </div>
+        </Card>
       </div>
     );
   }
 
   const currentCard = deck.cards[currentIndex];
-  const progress = ((currentIndex + 1) / deck.cards.length) * 100;
+  const progress = Math.round(((currentIndex + 1) / deck.cards.length) * 100);
   const knownCount = cardResults.filter(r => r === true).length;
   // totalReviewed should count cards that have been answered (not null)
   const totalReviewed = cardResults.filter(r => r !== null).length;
@@ -103,7 +108,7 @@ export default function AnkiPracticePage() {
                 Не знаю: <strong className="text-red-600">{totalReviewed - knownCount}</strong>
               </Text>
               <Text>
-                Точность: <strong>{Math.round(accuracyPercent)}%</strong>
+                Точность: <strong>{accuracyPercent}%</strong>
               </Text>
             </Space>
           </Card>
