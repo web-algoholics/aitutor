@@ -1,6 +1,7 @@
 from sqlmodel import Field, SQLModel
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, Date
 from typing import Optional
+from datetime import date
 from config import settings
 
 
@@ -19,6 +20,8 @@ class User(SQLModel, table=True):
     is_active: bool = Field(default=True, nullable=False)
     is_superuser: bool = Field(default=False, nullable=False)
     is_verified: bool = Field(default=False, nullable=False)
+    current_streak: int = Field(default=0, nullable=False)  # Days in a row studying
+    last_study_date: Optional[date] = Field(default=None, sa_column=Column(Date, nullable=True))  # Last day user studied
 
     @property
     def profile_icon_url(self):

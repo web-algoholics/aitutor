@@ -7,15 +7,17 @@ import {
 } from 'antd';
 import {
   BookOutlined, PlusOutlined, PlayCircleOutlined,
-  CheckCircleOutlined, ClockCircleOutlined, BulbOutlined
+  CheckCircleOutlined, ClockCircleOutlined, BulbOutlined, FireOutlined
 } from '@ant-design/icons';
-import { useGetTheoryCoursesQuery } from '../../services/theoryApi';
 
-const { Title, Text, Paragraph, Meta } = Typography;
+import { useGetTheoryCoursesQuery, useGetStudyStreakQuery } from '../../services/theoryApi';
+
+const { Title, Text, Paragraph } = Typography;
 
 const TheoryCoursesPage: React.FC = () => {
   const navigate = useNavigate();
   const { data: courses, isLoading, error, refetch } = useGetTheoryCoursesQuery();
+  const { data: streakData } = useGetStudyStreakQuery();
 
   const handleCreateCourse = () => {
     navigate('/theory/create');
@@ -72,40 +74,73 @@ const TheoryCoursesPage: React.FC = () => {
         </div>
 
         {/* Stats */}
-        {courses && courses.length > 0 && (
-          <div className="flex gap-6">
-            <Card size="small" className="flex-1">
-              <div className="text-center">
-                <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff' }}>
-                  {courses.length}
-                </Text>
-                <div>
-                  <Text type="secondary">Курсов</Text>
+        <div className="flex gap-6">
+          {courses && courses.length > 0 && (
+            <>
+              <Card size="small" className="flex-1">
+                <div className="text-center">
+                  <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff' }}>
+                    {courses.length}
+                  </Text>
+                  <div>
+                    <Text type="secondary">Курсов</Text>
+                  </div>
                 </div>
-              </div>
-            </Card>
-            <Card size="small" className="flex-1">
-              <div className="text-center">
-                <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#52c41a' }}>
-                  {courses.filter(c => c.is_completed).length}
-                </Text>
-                <div>
-                  <Text type="secondary">Завершено</Text>
+              </Card>
+              <Card size="small" className="flex-1">
+                <div className="text-center">
+                  <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#52c41a' }}>
+                    {courses.filter(c => c.is_completed).length}
+                  </Text>
+                  <div>
+                    <Text type="secondary">Завершено</Text>
+                  </div>
                 </div>
-              </div>
-            </Card>
-            <Card size="small" className="flex-1">
-              <div className="text-center">
-                <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#fa8c16' }}>
-                  {courses.reduce((sum, c) => sum + c.estimated_duration, 0)}
-                </Text>
-                <div>
-                  <Text type="secondary">Часов обучения</Text>
+              </Card>
+              <Card size="small" className="flex-1">
+                <div className="text-center">
+                  <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#fa8c16' }}>
+                    {courses.reduce((sum, c) => sum + c.estimated_duration, 0)}
+                  </Text>
+                  <div>
+                    <Text type="secondary">Часов обучения</Text>
+                  </div>
                 </div>
+              </Card>
+            </>
+          )}
+          <Card 
+            size="small" 
+            className="flex-1" 
+            style={{ 
+              background: streakData?.current_streak && streakData.current_streak > 0 
+                ? 'linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%)' 
+                : undefined,
+              border: streakData?.current_streak && streakData.current_streak > 0 
+                ? '2px solid #ff6b6b' 
+                : undefined
+            }}
+          >
+            <div className="text-center">
+              <Text style={{ 
+                fontSize: '24px', 
+                fontWeight: 'bold', 
+                color: streakData?.current_streak && streakData.current_streak > 0 ? '#fff' : '#ff4d4f' 
+              }}>
+                <FireOutlined style={{ marginRight: '4px' }} />
+                {streakData?.current_streak || 0}
+              </Text>
+              <div>
+                <Text 
+                  type={streakData?.current_streak && streakData.current_streak > 0 ? undefined : 'secondary'} 
+                  style={{ color: streakData?.current_streak && streakData.current_streak > 0 ? '#fff' : undefined }}
+                >
+                  Дней подряд
+                </Text>
               </div>
-            </Card>
-          </div>
-        )}
+            </div>
+          </Card>
+        </div>
 
         {/* Courses List */}
         {courses && courses.length > 0 ? (

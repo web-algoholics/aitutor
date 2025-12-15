@@ -1,0 +1,521 @@
+{
+  "title": "Веб-разработка с React",
+  "description": "Курс предназначен для разработчиков среднего уровня подготовки, желающих освоить веб-разработку с использованием библиотеки React.",
+  "estimated_duration": 40,
+  "modules": [
+    {
+      "title": "Основы React",
+      "description": "Изучение основ работы с библиотекой React.js.",
+      "order": 1,
+      "learning_objectives": [
+        "Понимать основные принципы построения компонентов в React",
+        "Использовать базовые элементы и атрибуты в компонентах",
+        "Освоить работу с состояниями компонентов",
+        "Применять жизненный цикл компонентов",
+        "Разбираться в концепции виртуального DOM"
+      ],
+      "key_concepts": [
+        "Компоненты в React",
+        "Свойства и состояние компонентов",
+        "Жизненный цикл компонентов",
+        "Виртуальный DOM"
+      ],
+      "lessons": [
+        {
+          "title": "Установка и настройка среды разработки",
+          "description": "Настройка окружения для разработки приложений на React.",
+          "order": 1,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Установить Node.js и npm",
+            "Настроить локальную среду разработки",
+            "Создать первый проект с помощью create-react-app"
+          ],
+          "key_concepts": []
+        },
+        {
+          "title": "Создание первого приложения",
+          "description": "Построение простого одностраничного приложения на React.",
+          "order": 2,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Создавать компоненты с помощью JSX",
+            "Передавать свойства между компонентами",
+            "Отображение динамических данных"
+          ],
+          "key_concepts": [
+            "JSX синтаксис",
+            "Компоненты верхнего уровня"
+          ]
+        },
+        {
+          "title": "Работа с состоянием компонентов",
+          "description": "Использование состояний и свойств компонентов.",
+          "order": 3,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Реализовывать изменение состояния через методы setState",
+            "Обновлять состояние внутри методов жизненного цикла",
+            "Работать с несколькими состояниями в одном компоненте"
+          ],
+          "key_concepts": [
+            "Объекты состояния",
+            "Методы жизненного цикла"
+          ]
+        },
+        {
+          "title": "Жизненный цикл компонентов",
+          "description": "Подробное изучение жизненного цикла компонентов.",
+          "order": 4,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Понимать порядок вызова методов жизненного цикла",
+            "Правильно использовать методы жизненного цикла",
+            "Поддерживать корректность поведения компонентов"
+          ],
+          "key_concepts": [
+            "Порядок вызова методов жизненного цикла",
+            "Рекомендации по использованию методов"
+          ]
+        },
+        {
+          "title": "Виртуальный DOM",
+          "description": "Изучение механизма работы виртуального DOM.",
+          "order": 5,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Понимать принцип работы виртуального DOM",
+            "Оценивать преимущества и недостатки виртуального DOM",
+            "Использовать встроенные инструменты разработчика браузера для отладки виртуального DOM"
+          ],
+          "key_concepts": [
+            "Алгоритм сравнения деревьев",
+            "Преимущества и недостатки"
+          ]
+        }
+    },
+    {
+      "title": "React Router",
+      "description": "Изучение маршрутизации в приложениях на основе React.",
+      "order": 2,
+      "learning_objectives": [
+        "Создавать маршруты и настраивать переходы между ними",
+        "Использовать параметры маршрутов и историю навигации",
+        "Настраивать защиту маршрутов"
+      ],
+      "key_concepts": [
+        "Маршрутизация в React",
+        "Параметры маршрутов",
+        "История навигации"
+      ],
+      "lessons": [
+        {
+          "title": "Основы маршрутизации",
+          "description": "Настройка базовой маршрутизации с помощью react-router-dom.",
+          "order": 1,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Настраивать базовую маршрутизацию",
+            "Создавать страницы с разными путями"
+          ],
+          "key_concepts": [
+            "Базовая маршрутизация",
+            "Route и Switch компоненты"
+          ]
+        },
+        {
+          "title": "Параметры маршрутов",
+          "description": "Использование параметров маршрутов и передача данных между страницами.",
+          "order": 2,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Получать параметры маршрута",
+            "Передавать данные между страницами"
+          ],
+          "key_concepts": [
+            "Параметры маршрутов",
+            "Использование props.match.params"
+          ]
+        },
+        {
+          "title": "История навигации",
+          "description": "Работа с историей навигации и обратная навигация.",
+          "order": 3,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Пользоваться history.push и history.goBack",
+            "Переходить между страницами вручную"
+          ],
+          "key_concepts": [
+            "History API",
+            "history.push и history.goBack"
+          ]
+        },
+        {
+          "title": "Защита маршрутов",
+          "description": "Настройка защиты маршрутов с использованием аутентификации.",
+          "order": 4,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Проверять авторизованность пользователей перед доступом к маршрутам",
+            "Запрещать доступ к определенным маршрутам"
+          ],
+          "key_concepts": [
+            "Авторизация и защита маршрутов",
+            "Private Route и Redirect"
+          ]
+        }
+    },
+    {
+      "title": "Формы и управление формами в React",
+      "description": "Изучение форм и управления ими в React.",
+      "order": 3,
+      "learning_objectives": [
+        "Создавать формы с использованием controlled components",
+        "Обрабатывать вводимые пользователем данные",
+        "Использовать validation и error handling"
+      ],
+      "key_concepts": [
+        "Controlled Components",
+        "Validation и Error Handling"
+      ],
+      "lessons": [
+        {
+          "title": "Контролируемые компоненты",
+          "description": "Создание контролируемых компонентов и обработка событий ввода.",
+          "order": 1,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Создавать контролируемые компоненты",
+            "Обрабатывать события onChange"
+          ],
+          "key_concepts": [
+            "Controlled Components",
+            "onChange событие"
+          ]
+        },
+        {
+          "title": "Управление формой",
+          "description": "Организация обработки данных формы.",
+          "order": 2,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Собирать введенные пользователем данные",
+            "Отправлять данные на сервер"
+          ],
+          "key_concepts": [
+            "Сбор данных формы",
+            "Отправка данных"
+          ]
+        },
+        {
+          "title": "Валидация и ошибки",
+          "description": "Добавление валидации и отображение ошибок.",
+          "order": 3,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Добавлять валидацию полей",
+            "Показывать ошибки пользователям"
+          ],
+          "key_concepts": [
+            "Регулярные выражения",
+            "validation libraries"
+          ]
+        }
+    },
+    {
+      "title": "Redux и Redux Toolkit",
+      "description": "Изучение хранилища состояний и инструментов для работы с ним.",
+      "order": 4,
+      "learning_objectives": [
+        "Создавать и управлять глобальным состоянием приложения",
+        "Использовать action creators и reducers",
+        "Редактировать состояние приложения с помощью dispatch"
+      ],
+      "key_concepts": [
+        "Global state management",
+        "Action creators and reducers",
+        "Dispatching actions"
+      ],
+      "lessons": [
+        {
+          "title": "Введение в Redux",
+          "description": "Основные понятия и архитектура Redux.",
+          "order": 1,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Понимать архитектуру Redux",
+            "Определять store, action, reducer"
+          ],
+          "key_concepts": [
+            "Архитектура Redux",
+            "Store, Action, Reducer"
+          ]
+        },
+        {
+          "title": "Action creators и reducers",
+          "description": "Создание action creators и написание reducers.",
+          "order": 2,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Создавать action creators",
+            "Написать простой reducer"
+          ],
+          "key_concepts": [
+            "Action creators",
+            "Reducers"
+          ]
+        },
+        {
+          "title": "Редактирование состояния с помощью dispatch",
+          "description": "Использование метода dispatch для изменения состояния.",
+          "order": 3,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Изменять состояние с помощью dispatch",
+            "Писать middleware для обработки действий"
+          ],
+          "key_concepts": [
+            "Метод dispatch",
+            "Middleware"
+          ]
+        },
+        {
+          "title": "Redux Toolkit",
+          "description": "Упрощенное создание Redux приложений с помощью Redux Toolkit.",
+          "order": 4,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Использовать createSlice и createReducer",
+            "Автоматизировать создание action creators и reducers"
+          ],
+          "key_concepts": [
+            "createSlice и createReducer",
+            "autogenerated action creators and reducers"
+          ]
+        }
+    },
+    {
+      "title": "Стилизация компонентов",
+      "description": "Изучаем стилизацию компонентов с помощью CSS Modules и Styled Components.",
+      "order": 5,
+      "learning_objectives": [
+        "Создавать стилизованные компоненты с помощью CSS Modules",
+        "Использовать Styled Components для упрощенной стилизации"
+      ],
+      "key_concepts": [
+        "CSS Modules",
+        "Styled Components"
+      ],
+      "lessons": [
+        {
+          "title": "CSS Modules",
+          "description": "Применение CSS Modules для стилизации компонентов.",
+          "order": 1,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Импортировать и применять стили с помощью CSS Modules",
+            "Решать конфликты стилей"
+          ],
+          "key_concepts": [
+            "CSS Modules",
+            "Import styles with CSS Modules"
+          ]
+        },
+        {
+          "title": "Styling с помощью Styled Components",
+          "description": "Использование Styled Components для упрощенной стилизации.",
+          "order": 2,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Создавать стилизованные компоненты с помощью Styled Components",
+            "Применять кастомные стили"
+          ],
+          "key_concepts": [
+            "Styled Components",
+            "Custom styling"
+          ]
+        }
+    },
+    {
+      "title": "Тестирование React-приложений",
+      "description": "Изучение тестирования React-приложений с помощью Jest и Enzyme.",
+      "order": 6,
+      "learning_objectives": [
+        "Создавать тесты для компонентов и функций",
+        "Проверять поведение компонентов и их состояний",
+        "Анализировать результаты тестов"
+      ],
+      "key_concepts": [
+        "Jest",
+        "Enzyme"
+      ],
+      "lessons": [
+        {
+          "title": "Введение в тестирование",
+          "description": "Основы тестирования и знакомство с инструментами.",
+          "order": 1,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Понимать важность тестирования",
+            "Выбирать подходящие инструменты"
+          ],
+          "key_concepts": [
+            "Важность тестирования",
+            "Выбор инструментов"
+          ]
+        },
+        {
+          "title": "Тестирование компонентов",
+          "description": "Создание тестов для компонентов с использованием Enzyme.",
+          "order": 2,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Создавать тесты для простых компонентов",
+            "Проверять рендеринг и поведение компонентов"
+          ],
+          "key_concepts": [
+            "Testing components",
+            "Enzyme API"
+          ]
+        },
+        {
+          "title": "Тестирование состояний и методов",
+          "description": "Проверка поведения компонентов и их состояний.",
+          "order": 3,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Тестировать изменения состояния",
+            "Проверять выполнение методов"
+          ],
+          "key_concepts": [
+            "State testing",
+            "Method testing"
+          ]
+        },
+        {
+          "title": "Интеграционные тесты",
+          "description": "Создание интеграционных тестов с использованием Jest.",
+          "order": 4,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Создавать интеграционные тесты",
+            "Проверять взаимодействие компонентов"
+          ],
+          "key_concepts": [
+            "Integration tests",
+            "Jest matchers"
+          ]
+        }
+    },
+    {
+      "title": "Производительность и оптимизация React-приложений",
+      "description": "Оптимизация производительности и улучшение скорости загрузки приложений.",
+      "order": 7,
+      "learning_objectives": [
+        "Повышение производительности React-приложений",
+        "Использование lazy loading и асинхронной загрузки компонентов",
+        "Минимизация размера бандлов"
+      ],
+      "key_concepts": [
+        "Performance optimization",
+        "Lazy loading",
+        "Minimizing bundle size"
+      ],
+      "lessons": [
+        {
+          "title": "Оптимизация производительности",
+          "description": "Принципы оптимизации производительности React-приложений.",
+          "order": 1,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Понимать причины низкой производительности",
+            "Применять лучшие практики оптимизации"
+          ],
+          "key_concepts": [
+            "Причины низкой производительности",
+            "Best practices for performance"
+          ]
+        },
+        {
+          "title": "Lazy loading и асинхронная загрузка",
+          "description": "Использование lazy loading для улучшения производительности.",
+          "order": 2,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Использовать Suspense и lazy для асинхронной загрузки",
+            "Предзагрузка ресурсов"
+          ],
+          "key_concepts": [
+            "Suspense and lazy",
+            "Preloading resources"
+          ]
+        },
+        {
+          "title": "Минимизация бандлов",
+          "description": "Способы уменьшения размера бандла и ускорения загрузки.",
+          "order": 3,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Использовать tree shaking и code splitting",
+            "Минимизировать размер бандла"
+          ],
+          "key_concepts": [
+            "Tree shaking",
+            "Code splitting"
+          ]
+        }
+    },
+    {
+      "title": "Проектирование и деплой React-приложений",
+      "description": "Практический проект и подготовка к деплою React-приложений.",
+      "order": 8,
+      "learning_objectives": [
+        "Создавать полноценное приложение с использованием изученных технологий",
+        "Готовить приложение к деплою",
+        "Развернуть приложение на удаленном сервере"
+      ],
+      "key_concepts": [],
+      "lessons": [
+        {
+          "title": "Создание проекта",
+          "description": "Разработка полноценного приложения с использованием всех изученных технологий.",
+          "order": 1,
+          "estimated_duration": 90,
+          "learning_objectives": [
+            "Создавать приложение с использованием всех изученных технологий",
+            "Разворачивать приложение локально"
+          ],
+          "key_concepts": []
+        },
+        {
+          "title": "Подготовка к деплою",
+          "description": "Подготовка приложения к развертыванию на удаленном сервере.",
+          "order": 2,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Настраивать сборку и оптимизацию приложения",
+            "Подготовить приложение к развертыванию"
+          ],
+          "key_concepts": [
+            "Build process",
+            "Deployment preparation"
+          ]
+        },
+        {
+          "title": "Деплой приложения",
+          "description": "Развертывание приложения на удаленном сервере.",
+          "order": 3,
+          "estimated_duration": 45,
+          "learning_objectives": [
+            "Развернуть приложение на Heroku или другом облачном сервисе",
+            "Настроить автоматические обновления"
+          ],
+          "key_concepts": [
+            "Heroku deployment",
+            "Automatic updates"
+          ]
+        }
+      ]
+  ]
+}
