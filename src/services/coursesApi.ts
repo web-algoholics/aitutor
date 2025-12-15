@@ -37,10 +37,98 @@ export interface UserProgress {
   }>;
 }
 
+export interface UserModuleProgress {
+  id: number;
+  module_id: number;
+  is_completed: boolean;
+  last_accessed: string;
+}
+
 export interface ChatResponse {
   session_id: number;
   user_message?: string;
   ai_response?: string;
+}
+
+// Custom Courses Types
+export interface CustomCourse {
+  id: number;
+  title: string;
+  description?: string;
+  difficulty: string;
+  sources?: string[];
+  custom_structure?: any;
+  creator_id: number;
+  is_completed: boolean;
+  created_at: string;
+  modules_count: number;
+}
+
+export interface CustomModule {
+  id: number;
+  course_id: number;
+  title: string;
+  description: string;
+  order: number;
+  learning_objectives: string[];
+  key_concepts: string[];
+  is_completed: boolean;
+  lessons_count: number;
+  has_quiz: boolean;
+  has_coding_tasks: boolean;
+  theory_content?: string;
+}
+
+export interface CustomLesson {
+  id: number;
+  module_id: number;
+  title: string;
+  content: string;
+  order: number;
+  code_examples: any[];
+  interactive_elements: any[];
+  is_completed: boolean;
+}
+
+export interface CustomQuiz {
+  id: number;
+  module_id: number;
+  title: string;
+  questions: any[];
+  is_completed: boolean;
+  score?: number;
+}
+
+export interface CustomCodingTask {
+  id: number;
+  module_id: number;
+  title: string;
+  description: string;
+  difficulty: string;
+  code_template: string;
+  test_cases: any[];
+  hints: string[];
+  is_completed: boolean;
+}
+
+export interface CreateCustomCourseRequest {
+  title: string;
+  difficulty?: string;
+  description?: string;
+  sources?: string[];
+  custom_structure?: any;
+}
+
+export interface CourseGenerationResponse {
+  course_id: number;
+  title: string;
+  message: string;
+  progress: {
+    stage: string;
+    progress: number;
+    message: string;
+    current_module?: string;
+  };
 }
 
 export interface ChatHistory {
@@ -138,7 +226,7 @@ export const coursesApi = createApi({
     baseUrl: (process.env as any).REACT_APP_API_URL || 'http://localhost:8000',
     credentials: 'include',
   }),
-  tagTypes: ['Courses', 'Modules', 'Chat', 'Submissions'],
+  tagTypes: ['Courses', 'Modules', 'Chat', 'Submissions', 'CustomCourses', 'CustomModules'],
   endpoints: (builder) => ({
     getCourses: builder.query<Course[], void>({
       query: () => ({ url: '/api/courses/' }),
@@ -201,6 +289,11 @@ export const coursesApi = createApi({
     getUserProgress: builder.query<UserProgress, number>({
       query: (userId) => ({ url: `/api/courses/user/${userId}/progress` }),
     }),
+    getUserModuleProgress: builder.query<UserModuleProgress[], number>({
+      query: (userId) => ({ url: `/api/courses/user/${userId}/modules/progress` }),
+      providesTags: (result, error, userId) =>
+        result ? result.map((p: any) => ({ type: 'Modules' as const, id: `progress-${p.module_id}` })) : [],
+    }),
     markModuleComplete: builder.mutation<unknown, { userId: number; moduleId: number }>({
       query: ({ userId, moduleId }) => ({ 
         url: `/api/courses/user/${userId}/module/${moduleId}/complete`, 
@@ -252,6 +345,53 @@ export const coursesApi = createApi({
       }),
       providesTags: (result, error, id) => [{ type: 'Chat', id }],
     }),
+
+    // Custom Courses
+    getCustomCourses: builder.query<CustomCourse[], void>({
+      query: () => ({ url: '/api/custom-courses/' }),
+      providesTags: ['CustomCourses'],
+    }),
+    createCustomCourse: builder.mutation<CourseGenerationResponse, CreateCustomCourseRequest>({
+      query: (courseData) => ({
+        url: '/api/custom-courses/',
+        method: 'POST',
+        body: courseData,
+      }),
+      invalidatesTags: ['CustomCourses'],
+    }),
+    getCustomCourse: builder.query<CustomCourse, number>({
+      query: (courseId) => ({ url: `/api/custom-courses/${courseId}` }),
+      providesTags: (result, error, id) => [{ type: 'CustomCourses', id }],
+    }),
+    getCustomCourseModules: builder.query<CustomModule[], number>({
+      query: (courseId) => ({ url: `/api/custom-courses/${courseId}/modules` }),
+      providesTags: (result, error, courseId) =>
+        result ? [...result.map((m: any) => ({ type: 'CustomModules' as const, id: m.id })), { type: 'CustomModules', id: `course-${courseId}` }] : [{ type: 'CustomModules', id: `course-${courseId}` }],
+    }),
+    getCustomModule: builder.query<CustomModule, number>({
+      query: (moduleId) => ({ url: `/api/custom-courses/modules/${moduleId}` }),
+      providesTags: (result, error, id) => [{ type: 'CustomModules', id }],
+    }),
+    getCustomModuleQuiz: builder.query<CustomQuiz, number>({
+      query: (moduleId) => ({ url: `/api/custom-courses/modules/${moduleId}/quiz` }),
+    }),
+    submitCustomQuiz: builder.mutation<any, { quizId: number; answers: any }>({
+      query: ({ quizId, answers }) => ({
+        url: `/api/custom-courses/quizzes/${quizId}/attempt`,
+        method: 'POST',
+        body: { answers },
+      }),
+    }),
+    getCustomModuleTasks: builder.query<CustomCodingTask[], number>({
+      query: (moduleId) => ({ url: `/api/custom-courses/modules/${moduleId}/coding-tasks` }),
+    }),
+    submitCustomTask: builder.mutation<any, { taskId: number; code: string }>({
+      query: ({ taskId, code }) => ({
+        url: `/api/custom-courses/coding-tasks/${taskId}/submit`,
+        method: 'POST',
+        body: { code },
+      }),
+    }),
   }),
 });
 
@@ -268,10 +408,21 @@ export const {
   useSubmitCodeMutation,
   useGetCodeHintMutation,
   useGetUserProgressQuery,
+  useGetUserModuleProgressQuery,
   useMarkModuleCompleteMutation,
   useInitSessionMutation,
   useConfirmTheoryMutation,
   useSubmitQuizMutation,
   useGetSessionHintMutation,
   useGetSessionStatusQuery,
+  // Custom Courses
+  useGetCustomCoursesQuery,
+  useCreateCustomCourseMutation,
+  useGetCustomCourseQuery,
+  useGetCustomCourseModulesQuery,
+  useGetCustomModuleQuery,
+  useGetCustomModuleQuizQuery,
+  useSubmitCustomQuizMutation,
+  useGetCustomModuleTasksQuery,
+  useSubmitCustomTaskMutation,
 } = coursesApi;

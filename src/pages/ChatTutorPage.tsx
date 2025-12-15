@@ -413,98 +413,98 @@ export default function ChatTutorPage() {
       {/* STAGE 3: CODING TASK */}
       {status?.stage === 'coding' && codingTask && (
         <div className="mb-8 space-y-6">
-          {/* Task Description */}
-          <Card>
-            <Title level={4}>💻 Практическое задание</Title>
+            {/* Task Description */}
+            <Card>
+              <Title level={4}>💻 Практическое задание</Title>
 
-            <div className="mb-6">
-              <Title level={5}>{codingTask.title}</Title>
-              <Paragraph className="whitespace-pre-wrap">{codingTask.description}</Paragraph>
+              <div className="mb-6">
+                <Title level={5}>{codingTask.title}</Title>
+                <Paragraph className="whitespace-pre-wrap">{codingTask.description}</Paragraph>
 
-              <Collapse
-                items={[
-                  {
-                    key: 'criteria',
-                    label: '✓ Критерии успеха',
-                    children: (
-                      <ul className="list-disc pl-5 space-y-1">
-                        {codingTask.success_criteria.map((criterion, idx) => (
-                          <li key={idx} className="text-sm">{criterion}</li>
+                <Collapse
+                  items={[
+                    {
+                      key: 'criteria',
+                      label: '✓ Критерии успеха',
+                      children: (
+                        <ul className="list-disc pl-5 space-y-1">
+                          {codingTask.success_criteria.map((criterion, idx) => (
+                            <li key={idx} className="text-sm">{criterion}</li>
+                          ))}
+                        </ul>
+                      ),
+                    },
+                    {
+                      key: 'concepts',
+                      label: '🎯 Концепции',
+                      children: (
+                        <ul className="list-disc pl-5 space-y-1">
+                          {(Array.isArray(codingTask.expected_concepts) 
+                            ? codingTask.expected_concepts 
+                            : typeof codingTask.expected_concepts === 'string' 
+                              ? JSON.parse(codingTask.expected_concepts) 
+                              : []
+                          ).map((concept: string, idx: number) => (
+                            <li key={idx} className="text-sm">{concept}</li>
+                          ))}
+                        </ul>
+                      ),
+                    },
+                  ]}
+                />
+              </div>
+
+              {evaluation && (
+                <Card className={`border-l-4 ${evaluation.passed ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}`}>
+                  <Title level={5}>{evaluation.passed ? '✅ Отлично!' : '⚠️ Требует доработки'}</Title>
+                  <Paragraph><strong>Результат:</strong> {evaluation.score}/100</Paragraph>
+                  <Paragraph><strong>Отзыв:</strong> {evaluation.feedback}</Paragraph>
+
+                  {evaluation.strengths && evaluation.strengths.length > 0 && (
+                    <div className="mt-3">
+                      <Text strong>✅ Что получилось:</Text>
+                      <ul className="list-disc pl-5 mt-2 text-sm">
+                        {evaluation.strengths.map((item: string, idx: number) => (
+                          <li key={idx}>{item}</li>
                         ))}
                       </ul>
-                    ),
-                  },
-                  {
-                    key: 'concepts',
-                    label: '🎯 Концепции',
-                    children: (
-                      <ul className="list-disc pl-5 space-y-1">
-                        {(Array.isArray(codingTask.expected_concepts)
-                          ? codingTask.expected_concepts
-                          : typeof codingTask.expected_concepts === 'string'
-                            ? JSON.parse(codingTask.expected_concepts)
-                            : []
-                        ).map((concept: string, idx: number) => (
-                          <li key={idx} className="text-sm">{concept}</li>
+                    </div>
+                  )}
+
+                  {evaluation.improvements && evaluation.improvements.length > 0 && (
+                    <div className="mt-3">
+                      <Text strong>💡 Что улучшить:</Text>
+                      <ul className="list-disc pl-5 mt-2 text-sm">
+                        {evaluation.improvements.map((item: string, idx: number) => (
+                          <li key={idx}>{item}</li>
                         ))}
                       </ul>
-                    ),
-                  },
-                ]}
-              />
-            </div>
-
-            {evaluation && (
-              <Card className={`border-l-4 ${evaluation.passed ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}`}>
-                <Title level={5}>{evaluation.passed ? '✅ Отлично!' : '⚠️ Требует доработки'}</Title>
-                <Paragraph><strong>Результат:</strong> {evaluation.score}/100</Paragraph>
-                <Paragraph><strong>Отзыв:</strong> {evaluation.feedback}</Paragraph>
-
-                {evaluation.strengths && evaluation.strengths.length > 0 && (
-                  <div className="mt-3">
-                    <Text strong>✅ Что получилось:</Text>
-                    <ul className="list-disc pl-5 mt-2 text-sm">
-                      {evaluation.strengths.map((item: string, idx: number) => (
-                        <li key={idx}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {evaluation.improvements && evaluation.improvements.length > 0 && (
-                  <div className="mt-3">
-                    <Text strong>💡 Что улучшить:</Text>
-                    <ul className="list-disc pl-5 mt-2 text-sm">
-                      {evaluation.improvements.map((item: string, idx: number) => (
-                        <li key={idx}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </Card>
-            )}
-          </Card>
+                    </div>
+                  )}
+                </Card>
+              )}
+            </Card>
 
           {/* Code Editor - Full Width */}
           <Card title="✏️ Редактор кода - введите ваше решение" className="flex flex-col">
             <div className="flex-grow border rounded-lg overflow-hidden bg-gray-900 min-h-[500px]">
               <CodeMirrorEditorComponent
-                value={code}
-                onChange={(value) => setCode(value || '')}
-              />
-            </div>
+                  value={code}
+                  onChange={(value) => setCode(value || '')}
+                />
+              </div>
 
-            <Space className="mt-4 w-full justify-between">
-              <Space>
-                <Button type="primary" size="large" onClick={handleSubmitCode} loading={codeLoading}>
+              <Space className="mt-4 w-full justify-between">
+                <Space>
+                  <Button type="primary" size="large" onClick={handleSubmitCode} loading={codeLoading}>
                   🚀 Отправить решение
-                </Button>
-                <Button onClick={handleGetHint} loading={hintLoading}>
-                  💡 Подсказка
-                </Button>
+                  </Button>
+                  <Button onClick={handleGetHint} loading={hintLoading}>
+                    💡 Подсказка
+                  </Button>
+                </Space>
               </Space>
-            </Space>
-          </Card>
+            </Card>
         </div>
       )}
 

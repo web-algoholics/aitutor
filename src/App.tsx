@@ -12,9 +12,25 @@ import ResetPasswordPage from './pages/ResetPassword';
 import Roadmap from './pages/Roadmap';
 import LandingPage from './pages/LandingPage';
 import React from 'react';
-import Dashboard, { CoursePage } from './pages/Dashboard';
 import ProtectedLayout from './components/ProtectedLayout';
 import PublicLayout from './components/PublicLayout';
+
+// Market Analysis
+import MarketAnalysis from './pages/MarketAnalysis';
+
+// Theory pages
+import TheoryCoursesPage from './pages/Theory/TheoryCoursesPage';
+import CreateTheoryCoursePage from './pages/Theory/CreateTheoryCoursePage';
+import TheoryCourseTreePage from './pages/Theory/TheoryCourseTreePage';
+import TheoryLessonPage from './pages/Theory/TheoryLessonPage';
+
+// Quiz pages
+import QuizPage from './pages/Quizzes/QuizPage';
+import QuizzesListPage from './pages/Quizzes/QuizzesListPage';
+
+// Anki pages
+import AnkiDecksListPage from './pages/Anki/AnkiDecksListPage';
+import AnkiPracticePage from './pages/Anki/AnkiPracticePage';
 
 function App() {
   return (
@@ -37,10 +53,29 @@ function App() {
 
             {/* Protected Routes (with navbar) */}
             <Route element={<ProtectedLayout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/courses/:language" element={<CoursePage />} />
+              <Route path="/" element={<ProfilePage />} />
+    
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/roadmap" element={<Roadmap />} />
+
+
+              {/* Market Analysis  */}
+              <Route path="/market-analysis" element={<MarketAnalysis />} />
+              
+              {/* Theory Courses Routes */}
+              <Route path="/theory" element={<TheoryCoursesPage />} />
+              <Route path="/theory/create" element={<CreateTheoryCoursePage />} />
+              <Route path="/theory/courses/:courseId" element={<TheoryCourseTreePage />} />
+              <Route path="/theory/lessons/:lessonId" element={<TheoryLessonPage />} />
+
+              {/* Quiz Routes */}
+              <Route path="/quizzes" element={<QuizzesListPage />} />
+              <Route path="/quizzes/create" element={<QuizPage />} />
+              <Route path="/quizzes/:quizId" element={<QuizPage />} />
+
+              {/* Anki Routes */}
+              <Route path="/anki" element={<AnkiDecksListPage />} />
+              <Route path="/anki/decks/:deckId/practice" element={<AnkiPracticePage />} />
             </Route>
 
           </Routes>
