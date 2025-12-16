@@ -16,7 +16,7 @@ import ProtectedLayout from './components/ProtectedLayout';
 import PublicLayout from './components/PublicLayout';
 
 // Market Analysis
-import MarketAnalysis from './pages/MarketAnalysis';
+import MarketAnalysis from './pages/MarketAnalysis/MarketAnalysis';
 
 // Theory pages
 import TheoryCoursesPage from './pages/Theory/TheoryCoursesPage';

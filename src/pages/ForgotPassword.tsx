@@ -3,7 +3,7 @@ import { Form, Input, Button, message, Card, Typography } from 'antd';
 import { MailOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForgotPasswordMutation } from '../services/authApi';
-import AuthLayout from '../components/AuthLayout';
+import AuthLayout, { useCircleAnimation } from '../components/AuthLayout';
 
 const { Title, Text } = Typography;
 
@@ -16,6 +16,33 @@ export default function ForgotPasswordPage() {
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm<ForgotPasswordValues>();
   const navigate = useNavigate();
+
+  const CollapseLink = ({
+    to,
+    className,
+    children,
+  }: {
+    to: string;
+    className?: string;
+    children: React.ReactNode;
+  }) => {
+    const { collapse } = useCircleAnimation();
+    const innerNavigate = useNavigate();
+
+    return (
+      <Link
+        to={to}
+        className={className}
+        onClick={(e) => {
+          e.preventDefault();
+          collapse();
+          setTimeout(() => innerNavigate(to), 320);
+        }}
+      >
+        {children}
+      </Link>
+    );
+  };
 
   const onFinish = async (values: ForgotPasswordValues) => {
     try {
@@ -53,9 +80,6 @@ export default function ForgotPasswordPage() {
             </Button>
           </Form.Item>
 
-          <div className="text-center">
-            <Link to="/login" className='hover:text-black'>Back to Sign In</Link>
-          </div>
         </Form>
       </div>
     </AuthLayout>

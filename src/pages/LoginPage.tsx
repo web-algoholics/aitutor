@@ -3,8 +3,7 @@ import { Form, Input, Button, Checkbox, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLoginMutation, useGetCurrentUserQuery } from '../services/authApi';
-import AuthLayout from '../components/AuthLayout';
-import type { FormInstance } from 'antd';
+import AuthLayout, { useCircleAnimation } from '../components/AuthLayout';
 
 interface LoginValues {
   email: string;
@@ -18,6 +17,33 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [form] = Form.useForm<LoginValues>();
   const [messageApi, contextHolder] = message.useMessage();
+
+  const CollapseLink = ({
+    to,
+    className,
+    children,
+  }: {
+    to: string;
+    className?: string;
+    children: React.ReactNode;
+  }) => {
+    const { collapse } = useCircleAnimation();
+    const innerNavigate = useNavigate();
+
+    return (
+      <Link
+        to={to}
+        className={className}
+        onClick={(e) => {
+          e.preventDefault();
+          collapse();
+          setTimeout(() => innerNavigate(to), 320);
+        }}
+      >
+        {children}
+      </Link>
+    );
+  };
 
   // HANDLE 422 + FIELD ERRORS
   useEffect(() => {
@@ -62,7 +88,13 @@ export default function LoginPage() {
   return (
     <AuthLayout title="Sign In">
       {contextHolder}
-      <Form<LoginValues> form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
+      <Form<LoginValues>
+        form={form}
+        layout="vertical"
+        onFinish={onFinish}
+        autoComplete="off"
+        style={{ width: 'min(320px, 100%)', margin: '0 auto' }}
+      >
         <Form.Item
           label="Email or Username"
           name="email"
@@ -86,9 +118,9 @@ export default function LoginPage() {
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox>Remember me</Checkbox>
             </Form.Item>
-            <Link to="/forgot-password" className="text-sm hover:text-black hover:underline">
+            <CollapseLink to="/forgot-password" className="text-sm hover:text-black hover:underline">
               Forgot password?
-            </Link>
+            </CollapseLink>
           </div>
         </Form.Item>
 
@@ -99,7 +131,7 @@ export default function LoginPage() {
         </Form.Item>
 
         <div className="text-center text-sm">
-          Don't have an account? <Link to="/register" className="hover:text-black hover:underline">Sign up</Link>
+          Don't have an account? <CollapseLink to="/register" className="hover:text-black hover:underline">Sign up</CollapseLink>
         </div>
       </Form>
     </AuthLayout>

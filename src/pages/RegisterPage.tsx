@@ -1,17 +1,14 @@
 import React, { useEffect } from 'react';
-import { Form, Input, Button, Checkbox, message } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import { UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRegisterMutation } from '../services/authApi';
-import AuthLayout from '../components/AuthLayout';
-import type { FormInstance } from 'antd';
+import AuthLayout, { useCircleAnimation } from '../components/AuthLayout';
 
 interface RegisterValues {
   username: string;
   email: string;
   password: string;
-  confirm: string;
-  agree: boolean;
 }
 
 export default function RegisterPage() {
@@ -19,6 +16,33 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const [form] = Form.useForm<RegisterValues>();
   const [messageApi, contextHolder] = message.useMessage();
+
+  const CollapseLink = ({
+    to,
+    className,
+    children,
+  }: {
+    to: string;
+    className?: string;
+    children: React.ReactNode;
+  }) => {
+    const { collapse } = useCircleAnimation();
+    const innerNavigate = useNavigate();
+
+    return (
+      <Link
+        to={to}
+        className={className}
+        onClick={(e) => {
+          e.preventDefault();
+          collapse();
+          setTimeout(() => innerNavigate(to), 320);
+        }}
+      >
+        {children}
+      </Link>
+    );
+  };
 
   // HANDLE 422 + FIELD ERRORS
   useEffect(() => {
@@ -68,6 +92,7 @@ export default function RegisterPage() {
         layout="vertical"
         onFinish={onFinish}
         autoComplete="off"
+        style={{ width: 'min(320px, 100%)', margin: '0 auto' }}
       >
         {/* Username */}
         <Form.Item
@@ -102,49 +127,6 @@ export default function RegisterPage() {
           <Input.Password prefix={<LockOutlined />} placeholder="At least 8 characters" />
         </Form.Item>
 
-        {/* Confirm Password */}
-        <Form.Item
-          label="Confirm Password"
-          name="confirm"
-          dependencies={['password']}
-          rules={[
-            { required: true, message: 'Please confirm your password' },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error('Passwords do not match'));
-              },
-            }),
-          ]}
-        >
-          <Input.Password prefix={<LockOutlined />} placeholder="Repeat password" />
-        </Form.Item>
-
-        {/* Terms */}
-        <Form.Item
-          name="agree"
-          valuePropName="checked"
-          rules={[
-            {
-              validator: (_, value) =>
-                value ? Promise.resolve() : Promise.reject(new Error('You must accept the terms')),
-            },
-          ]}
-        >
-          <Checkbox>
-            I accept the{' '}
-            <Link to="/terms" target="_blank" rel="noopener noreferrer">
-              Terms of Service
-            </Link>{' '}
-            and{' '}
-            <Link to="/privacy" target="_blank" rel="noopener noreferrer">
-              Privacy Policy
-            </Link>
-          </Checkbox>
-        </Form.Item>
-
         {/* Submit */}
         <Form.Item>
           <Button type="primary" htmlType="submit" loading={isLoading} block>
@@ -154,7 +136,7 @@ export default function RegisterPage() {
 
         {/* Login Link */}
         <div className="text-center text-sm">
-          Already have an account? <Link to="/login" className="text-sm hover:text-black hover:underline">Sign in</Link>
+          Already have an account? <CollapseLink to="/login" className="text-sm hover:text-black hover:underline">Sign in</CollapseLink>
         </div>
       </Form>
     </AuthLayout>

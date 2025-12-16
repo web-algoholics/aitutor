@@ -90,7 +90,7 @@ export default function FeaturesSection() {
                 hoverable
                 className={`h-full text-center shadow-sm hover:shadow-lg transition-shadow fade-in-up ${isVisible ? 'visible' : ''}`}
                 bordered={false}
-                style={{ animationDelay: `${(index + 1) * 0.1}s` }}
+                style={{ animationDelay: `${(index + 1) * 0.1}s`, cursor: 'default' }}
               >
                 <div className="mb-4">{feature.icon}</div>
                 <Title level={4} className="mb-3">{feature.title}</Title>

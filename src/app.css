@@ -5,6 +5,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
 }
 
 body {
@@ -16,6 +18,34 @@ body {
 html, body, #root {
   height: 100%;
   width: 100%;
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  position: absolute;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  position: absolute;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  position: absolute;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
 }
 
 /* Link Styles */
@@ -428,6 +458,46 @@ a:hover {
   font-size: 2.25rem;
 }
 
+.text-5xl {
+  font-size: 3rem;
+}
+
+.text-6xl {
+  font-size: 3.75rem;
+}
+
+.text-7xl {
+  font-size: 4.5rem;
+}
+
+.text-8xl {
+  font-size: 6rem;
+}
+
+.text-9xl {
+  font-size: 8rem;
+}
+
+.text-hero-lg {
+  font-size: 12rem;
+}
+
+.text-hero-xl {
+  font-size: 14rem;
+}
+
+@media (min-width: 1024px) {
+  .text-hero-lg {
+    font-size: 12rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .text-hero-xl {
+    font-size: 14rem;
+  }
+}
+
 .font-medium {
   font-weight: 500;
 }
@@ -471,6 +541,7 @@ a:hover {
 }
 
 .starting-point-dot {
+  --circle-size: clamp(320px, min(800px, 90vw, 90vh), 800px);
   width: 20px;
   height: 20px;
   background-color: #000000;
@@ -479,23 +550,14 @@ a:hover {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  cursor: pointer;
+  cursor: default;
   z-index: 20;
-  transition: transform 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   animation: pulseDot 2s ease-in-out infinite;
-}
-
-.starting-point-dot:hover:not(.show-content) {
-  transform: translate(-50%, -50%) scale(1.2);
-  animation: none;
-}
-
-.starting-point-dot.show-content:hover {
-  transform: translate(-50%, -50%);
+  opacity: 1;
 }
 
 .starting-point-dot.expanding {
@@ -512,8 +574,8 @@ a:hover {
 }
 
 .starting-point-dot.show-content {
-  width: min(800px, 90vw, 90vh);
-  height: min(800px, 90vw, 90vh);
+  width: var(--circle-size);
+  height: var(--circle-size);
   cursor: default;
 }
 
@@ -524,16 +586,37 @@ a:hover {
     opacity: 1;
   }
   to {
-    width: min(800px, 90vw, 90vh);
-    height: min(800px, 90vw, 90vh);
+    width: var(--circle-size);
+    height: var(--circle-size);
+    opacity: 1;
+  }
+}
+
+.starting-point-dot.collapsing {
+  animation: collapseDot 0.3s ease-in-out forwards;
+}
+
+@keyframes collapseDot {
+  from {
+    width: var(--circle-size);
+    height: var(--circle-size);
+    opacity: 1;
+  }
+  to {
+    width: 20px;
+    height: 20px;
     opacity: 1;
   }
 }
 
 @media (max-width: 768px) {
+  .starting-point-dot {
+    --circle-size: clamp(280px, min(600px, 95vw, 95vh), 600px);
+  }
+
   .starting-point-dot.show-content {
-    width: min(600px, 95vw, 95vh);
-    height: min(600px, 95vw, 95vh);
+    width: var(--circle-size);
+    height: var(--circle-size);
   }
   
   .starting-point-dot.show-content .ant-typography-h1 {
@@ -549,12 +632,25 @@ a:hover {
     min-height: 32px !important;
     padding: 8px 16px !important;
   }
+
+  .starting-point-dot.show-content .ant-form-item {
+    margin-bottom: 1rem !important;
+  }
+
+  .starting-point-dot.show-content .ant-input,
+  .starting-point-dot.show-content .ant-input-password {
+    font-size: 0.875rem !important;
+  }
 }
 
 @media (max-width: 480px) {
+  .starting-point-dot {
+    --circle-size: clamp(260px, min(500px, 98vw, 98vh), 500px);
+  }
+
   .starting-point-dot.show-content {
-    width: min(500px, 98vw, 98vh);
-    height: min(500px, 98vw, 98vh);
+    width: var(--circle-size);
+    height: var(--circle-size);
   }
   
   .starting-point-dot.show-content .ant-typography-h1 {
@@ -577,6 +673,72 @@ a:hover {
   .starting-point-dot.show-content .ant-space {
     gap: 8px !important;
   }
+
+  .starting-point-dot.show-content .ant-form-item {
+    margin-bottom: 0.75rem !important;
+  }
+
+  .starting-point-dot.show-content .ant-input,
+  .starting-point-dot.show-content .ant-input-password {
+    font-size: 0.8125rem !important;
+    padding: 6px 11px !important;
+  }
+
+  .starting-point-dot.show-content .ant-form-item-label > label {
+    font-size: 0.8125rem !important;
+  }
+
+  .starting-point-dot.show-content .ant-form-item-label {
+    padding-bottom: 0.25rem !important;
+  }
+
+  .starting-point-dot.show-content .ant-btn-primary {
+    width: 100% !important;
+    margin-top: 0.5rem !important;
+  }
+}
+
+/* Better responsiveness for short viewports (e.g., mobile landscape) */
+@media (max-height: 700px) {
+  .starting-point-dot {
+    --circle-size: clamp(260px, min(650px, 94vw, 94vh), 650px);
+  }
+
+  .starting-point-dot.show-content {
+    width: var(--circle-size);
+    height: var(--circle-size);
+  }
+
+  .starting-point-dot.show-content .ant-typography-h1 {
+    font-size: 1.75rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .starting-point-dot.show-content .ant-typography {
+    font-size: 0.95rem !important;
+    margin-bottom: 1rem !important;
+  }
+}
+
+@media (max-height: 520px) {
+  .starting-point-dot {
+    --circle-size: clamp(240px, min(560px, 96vw, 96vh), 560px);
+  }
+
+  .starting-point-dot.show-content {
+    width: var(--circle-size);
+    height: var(--circle-size);
+  }
+
+  .starting-point-dot.show-content .ant-typography-h1 {
+    font-size: 1.5rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .starting-point-dot.show-content .ant-typography {
+    font-size: 0.875rem !important;
+    margin-bottom: 0.75rem !important;
+  }
 }
 
 @keyframes fadeInTitle {
@@ -592,7 +754,7 @@ a:hover {
 
 .title-fade-in {
   opacity: 0;
-  animation: fadeInTitle 1s ease-out forwards;
+  animation: fadeInTitle 0.3s ease-out forwards;
 }
 
 @keyframes fadeInCircle {
@@ -620,6 +782,130 @@ a:hover {
   animation: textColorTransition 0.3s linear 0.4s forwards;
 }
 
+/* Styles for forms inside expanding circle */
+.starting-point-dot.show-content .ant-form-item-label > label {
+  color: #ffffff !important;
+}
+
+.starting-point-dot.show-content .ant-input,
+.starting-point-dot.show-content .ant-input-password input,
+.starting-point-dot.show-content .ant-input-affix-wrapper input {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: #000000 !important;
+}
+
+.starting-point-dot.show-content .ant-input input,
+.starting-point-dot.show-content .ant-input-password input,
+.starting-point-dot.show-content .ant-input-affix-wrapper input,
+.starting-point-dot.show-content input[type="text"],
+.starting-point-dot.show-content input[type="password"],
+.starting-point-dot.show-content input[type="email"] {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+.starting-point-dot.show-content input {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+.starting-point-dot.show-content .ant-input::placeholder,
+.starting-point-dot.show-content .ant-input-password input::placeholder,
+.starting-point-dot.show-content .ant-input::-webkit-input-placeholder,
+.starting-point-dot.show-content .ant-input-password input::-webkit-input-placeholder,
+.starting-point-dot.show-content .ant-input::-moz-placeholder,
+.starting-point-dot.show-content .ant-input-password input::-moz-placeholder,
+.starting-point-dot.show-content .ant-input:-ms-input-placeholder,
+.starting-point-dot.show-content .ant-input-password input:-ms-input-placeholder,
+.starting-point-dot.show-content input::placeholder,
+.starting-point-dot.show-content input::-webkit-input-placeholder,
+.starting-point-dot.show-content input::-moz-placeholder,
+.starting-point-dot.show-content input:-ms-input-placeholder {
+  color: #808080 !important;
+  opacity: 1 !important;
+}
+
+.starting-point-dot.show-content .ant-input:focus,
+.starting-point-dot.show-content .ant-input-password input:focus,
+.starting-point-dot.show-content .ant-input-focused,
+.starting-point-dot.show-content .ant-input-password.ant-input-affix-wrapper-focused {
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2) !important;
+}
+
+.starting-point-dot.show-content .ant-checkbox-wrapper {
+  color: #ffffff !important;
+}
+
+.starting-point-dot.show-content .ant-checkbox-inner {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.starting-point-dot.show-content .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+.starting-point-dot.show-content .ant-checkbox-checked .ant-checkbox-inner::after {
+  border-color: #000000 !important;
+}
+
+.starting-point-dot.show-content a {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.starting-point-dot.show-content a:hover {
+  color: #ffffff !important;
+  text-decoration: underline;
+}
+
+.starting-point-dot.show-content .ant-btn-primary {
+  background-color: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+.starting-point-dot.show-content .ant-btn-primary:hover,
+.starting-point-dot.show-content .ant-btn-primary:focus {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
+  color: #000000 !important;
+}
+
+.starting-point-dot.show-content .ant-btn-primary:active {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  color: #000000 !important;
+}
+
+.starting-point-dot.show-content .ant-btn-default {
+  background-color: transparent !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  color: #ffffff !important;
+}
+
+.starting-point-dot.show-content .ant-btn-default:hover {
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+.starting-point-dot.show-content .anticon {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.starting-point-dot.show-content .ant-btn-text {
+  background-color: transparent !important;
+  border: none !important;
+  color: #ffffff !important;
+}
+
+.starting-point-dot.show-content .ant-btn-text:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -636,7 +922,34 @@ a:hover {
 }
 
 .fade-in-up.visible {
-  animation: fadeInUp 0.6s ease-out forwards;
+  animation: fadeInUp 0.3s ease-out forwards;
+}
+
+.logo-slow-fade {
+  animation: fadeInPlace 1.2s ease forwards;
+}
+
+@keyframes fadeInPlace {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slowFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.slow-fade-in {
+  opacity: 0;
+  animation: slowFadeIn 0.3s ease-in-out forwards;
 }
 
 /* Position */
@@ -778,13 +1091,13 @@ a:hover {
 .transition-colors {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  transition-duration: 0.3s;
 }
 
 .transition-shadow {
   transition-property: box-shadow;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  transition-duration: 0.3s;
 }
 
 /* Grid */

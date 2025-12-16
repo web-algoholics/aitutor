@@ -22,8 +22,8 @@ import {
   BookOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
-import { useAnalyzeMarketMutation } from '../services/jobsApi';
-import type { MarketAnalysisResponse } from '../services/jobsApi';
+import { useAnalyzeMarketMutation } from '../../services/jobsApi';
+import type { MarketAnalysisResponse } from '../../services/jobsApi';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;

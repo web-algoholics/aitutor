@@ -1,10 +1,11 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar, Button } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import { useGetCurrentUserQuery, useLogoutMutation, authApi } from "../services/authApi";
 import { useGetAvatarQuery } from "../services/profileApi";
+import Logo from "./Logo";
 
 export default function Navbar() {
   const dispatch = useDispatch();
@@ -28,9 +29,7 @@ export default function Navbar() {
   return (
     <header className="bg-white border-b border-gray-200 flex items-center justify-between px-8 h-16 sticky top-0 z-50">
       {/* Logo */}
-      <div className="font-bold text-2xl font-source-sans">
-        <Link to="/theory" className="text-black hover:text-gray-500">EdGen.</Link>
-      </div>
+      <Logo />
 
       {/* Middle Links */}
       {
@@ -74,7 +73,10 @@ export default function Navbar() {
           </>
         ) : (
           <Button type="primary">
-            <Link to="/login">Sign In</Link>
+            <Link to="/login">
+              Sign In
+              <ArrowRightOutlined className="ml-2" />
+            </Link>
           </Button>
         )}
       </div>
