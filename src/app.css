@@ -596,6 +596,13 @@ a:hover {
   animation: collapseDot 0.3s ease-in-out forwards;
 }
 
+.starting-point-dot.collapsing .text-fade-to-white,
+.starting-point-dot.collapsing .ant-typography,
+.starting-point-dot.collapsing .ant-btn {
+  opacity: 0 !important;
+  transition: opacity 0.1s ease !important;
+}
+
 @keyframes collapseDot {
   from {
     width: var(--circle-size);
@@ -1179,5 +1186,31 @@ a:hover {
 .anki-btn-dont-know {
   min-width: 120px;
   font-weight: 500;
+}
+
+/* Deck Card Effect */
+.deck-card-container:hover .deck-card-back-2 {
+  transform: translate(4px, 6px) rotate(-2deg);
+}
+
+/* Deck Card Hover Animation */
+.deck-card-container:hover .deck-card-front {
+  transform: translateY(-35px) rotate(-2deg) translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+
+.deck-card-container:hover .deck-card-practice-text {
+  opacity: 1 !important;
+}
+
+/* Ensure message notifications appear above navbar */
+.ant-message {
+  z-index: 1000 !important;
+  top: 80px !important; /* Navbar height (64px) + some spacing */
+}
+
+.ant-message-notice {
+  z-index: 1000 !important;
 }
 

@@ -112,7 +112,7 @@ export default function HeroSection() {
         className={`starting-point-dot ${dotExpanding ? 'expanding' : ''} ${animationStarted ? 'show-content' : ''} ${collapsing ? 'collapsing' : ''}`}
         style={{ pointerEvents: animationStarted ? 'auto' : 'none' }}
       >
-        {animationStarted && (
+        {animationStarted && !collapsing && (
           <div className="max-w-6xl mx-auto text-center z-10 px-6" style={{ position: 'relative', zIndex: 10 }}>
             <Title level={1} className="text-5xl md:text-6xl font-bold mb-6 text-fade-to-white">
               <span className="text-fade-to-white">

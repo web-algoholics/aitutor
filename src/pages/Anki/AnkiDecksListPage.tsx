@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Button, Space, Typography, Tag, Empty, Modal, Form, Input, message, Popconfirm, Spin } from 'antd';
-import { FileTextOutlined, PlusOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Button, Space, Typography, Empty, Modal, Form, Input, message, Popconfirm, Spin } from 'antd';
+import { PlusOutlined, FileTextOutlined, ArrowUpOutlined, EyeOutlined } from '@ant-design/icons';
 import { Row, Col } from 'antd';
 import { useGetDecksQuery, useCreateDeckFromMaterialMutation, useDeleteDeckMutation } from '../../services/ankiApi';
 import PageContainer from '../../components/PageContainer';
@@ -18,6 +18,216 @@ const formatDate = (dateString: string) => {
   });
 };
 
+interface DeckCardProps {
+  deck: any;
+  isFlipped: boolean;
+  onFlip: (e: React.MouseEvent) => void;
+  onPractice: () => void;
+}
+
+const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice }) => {
+  const [dragY, setDragY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const startY = useRef(0);
+  const hasMoved = useRef(false);
+  const SWIPE_UP_THRESHOLD = 100;
+
+  const handleSwipeStart = (clientY: number) => {
+    startY.current = clientY;
+    setIsDragging(true);
+    hasMoved.current = false;
+  };
+
+  const handleSwipeMove = (clientY: number) => {
+    if (!isDragging) return;
+    const diff = startY.current - clientY; // Negative for upward swipe
+    if (Math.abs(diff) > 5) {
+      hasMoved.current = true;
+    }
+    setDragY(diff);
+  };
+
+  const handleSwipeEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+
+    if (dragY > SWIPE_UP_THRESHOLD && !isFlipped) {
+      // Swipe up detected - go to practice
+      onPractice();
+    }
+
+    setDragY(0);
+  };
+
+  // Mouse events
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    handleSwipeStart(e.clientY);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    handleSwipeMove(e.clientY);
+  };
+
+  const handleMouseUp = () => {
+    handleSwipeEnd();
+  };
+
+  const handleMouseLeave = () => {
+    if (isDragging) {
+      handleSwipeEnd();
+    }
+  };
+
+  // Touch events
+  const handleTouchStart = (e: React.TouchEvent) => {
+    handleSwipeStart(e.touches[0].clientY);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    handleSwipeMove(e.touches[0].clientY);
+  };
+
+  const handleTouchEnd = () => {
+    handleSwipeEnd();
+  };
+
+  return (
+    <div className="deck-card-wrapper" style={{ width: '100%' }}>
+      <div
+        className="deck-card-container"
+        style={{
+          width: '100%',
+          aspectRatio: '1',
+          position: 'relative',
+          marginBottom: '16px',
+        }}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Deck effect layers - only show when not flipped */}
+        {!isFlipped && (
+          <div
+            className="deck-card-layer deck-card-back-2"
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              border: '2px solid #666666',
+              borderRadius: '12px',
+              backgroundColor: '#fff',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+              transform: 'translate(4px, 4px)',
+              transition: 'transform 0.3s ease',
+              zIndex: 1,
+            }}
+          />
+        )}
+        {/* Flip container */}
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+            transformStyle: 'preserve-3d',
+            transition: 'transform 0.6s ease',
+            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+            zIndex: 3,
+            willChange: 'transform',
+          }}
+        >
+          {/* Front side - Title with card count */}
+          <div
+            className="deck-card-front"
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '32px',
+              border: '2px solid #666666',
+              borderRadius: '12px',
+              backgroundColor: '#fff',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              transition: isDragging ? 'none' : 'transform 0.3s ease, box-shadow 0.3s ease',
+              transform: `translateY(${-dragY * 0.2}px)`,
+              cursor: 'pointer',
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!hasMoved.current) {
+                onFlip(e);
+              }
+            }}
+          >
+            {/* Card count in top right corner */}
+            <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <FileTextOutlined style={{ fontSize: '18px', color: '#000' }} />
+              <Text style={{ fontSize: '16px', color: '#000', fontWeight: 500 }}>
+                {deck.cards_count}
+              </Text>
+            </div>
+            
+            <Title level={3} style={{ margin: 0, color: '#000', textAlign: 'center' }}>
+              {deck.title}
+            </Title>
+          </div>
+
+          {/* Back side - Description only */}
+          <div
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '32px',
+              border: '2px solid #666666',
+              borderRadius: '12px',
+              backgroundColor: '#fff',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              transform: 'rotateY(180deg)',
+              cursor: 'pointer',
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!hasMoved.current) {
+                onFlip(e);
+              }
+            }}
+          >
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', width: '100%', justifyContent: 'center' }}>
+              {deck.description ? (
+                <Text style={{ display: 'block', color: '#000', opacity: 0.7, textAlign: 'center' }}>
+                  {deck.description.length > 200 ? `${deck.description.slice(0, 200)}...` : deck.description}
+                </Text>
+              ) : (
+                <Text style={{ display: 'block', color: '#000', opacity: 0.5, textAlign: 'center', fontStyle: 'italic' }}>
+                  Описание отсутствует
+                </Text>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function AnkiDecksListPage() {
   const navigate = useNavigate();
   const { data: decks, isLoading } = useGetDecksQuery();
@@ -25,6 +235,7 @@ export default function AnkiDecksListPage() {
   const [deleteDeck] = useDeleteDeckMutation();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [flippedDecks, setFlippedDecks] = useState<Set<number>>(new Set());
 
   const handleCreateFromMaterial = async (values: { description?: string; material_content: string }) => {
     const payload = { title: 'Новая колода', ...values };
@@ -50,6 +261,19 @@ export default function AnkiDecksListPage() {
 
   const handlePracticeClick = (deckId: number) => {
     navigate(`/anki/decks/${deckId}/practice`);
+  };
+
+  const handleCardFlip = (deckId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFlippedDecks(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(deckId)) {
+        newSet.delete(deckId);
+      } else {
+        newSet.add(deckId);
+      }
+      return newSet;
+    });
   };
 
   if (isLoading) {
@@ -91,15 +315,29 @@ export default function AnkiDecksListPage() {
         {/* Statistics */}
         <Row gutter={16}>
           <Col xs={24} sm={12} md={8}>
-            <Card className="text-center h-full">
+            <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <Title level={3} className="mb-2">{totalDecks}</Title>
               <Text type="secondary">Всего колод</Text>
             </Card>
           </Col>
           <Col xs={24} sm={12} md={8}>
-            <Card className="text-center h-full">
-              <Title level={3} className="mb-2">{totalCards}</Title>
-              <Text type="secondary">Всего карточек</Text>
+            <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Title level={3} className="mb-2">
+                <ArrowUpOutlined style={{ fontSize: '24px' }} />
+              </Title>
+              <Text type="secondary" style={{ display: 'block', marginBottom: '4px' }}>
+                Свайпай вверх — перейди к карточкам
+              </Text>
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Title level={3} className="mb-2">
+                <EyeOutlined style={{ fontSize: '24px' }} />
+              </Title>
+              <Text type="secondary" style={{ display: 'block', marginBottom: '4px' }}>
+                Нажми — посмотри описание
+              </Text>
             </Card>
           </Col>
         </Row>
@@ -107,41 +345,19 @@ export default function AnkiDecksListPage() {
         {/* Decks List */}
         {decks && decks.length > 0 ? (
           <Row gutter={[16, 16]} style={{ display: 'flex' }}>
-            {decks.map((deck) => (
-              <Col xs={24} sm={12} md={8} key={deck.id} style={{ display: 'flex' }}>
-                <Card
-                  hoverable
-                  className="w-full shadow-sm hover:shadow-md transition-shadow flex flex-col h-full border-2 border-black"
-                  bodyStyle={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '16px' }}
-                  actions={[
-                    <div key="practice" className="text-center py-2">
-                      <Button
-                        type="primary"
-                        icon={<PlayCircleOutlined />}
-                        onClick={() => handlePracticeClick(deck.id)}
-                      >
-                        Упражняться
-                      </Button>
-                    </div>,
-                  ]}
-                >
-                  <div className="flex flex-col flex-1">
-                    <div className="flex items-start justify-between mb-3">
-                      <FileTextOutlined className="text-2xl text-blue-500 mr-2 flex-shrink-0" />
-                      <Tag color={deck.source_type === 'course' ? 'blue' : 'green'}>
-                        {deck.source_type === 'course' ? 'Курс' : 'Материал'}
-                      </Tag>
-                    </div>
-                    <Title level={4} className="mb-2">{deck.title}</Title>
-                    {deck.description && (
-                      <Text type="secondary" className="block mb-3">
-                        {deck.description}
-                      </Text>
-                    )}
-                  </div>
-                </Card>
-              </Col>
-            ))}
+            {decks.map((deck) => {
+              const isFlipped = flippedDecks.has(deck.id);
+              return (
+                <Col xs={24} sm={12} md={8} key={deck.id} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <DeckCard
+                    deck={deck}
+                    isFlipped={isFlipped}
+                    onFlip={(e) => handleCardFlip(deck.id, e)}
+                    onPractice={() => handlePracticeClick(deck.id)}
+                  />
+                </Col>
+              );
+            })}
           </Row>
         ) : (
           <Card bordered={false}>

@@ -8,7 +8,7 @@ export default function Footer() {
     <div className="w-6 h-6 bg-gray-800 rounded flex items-center justify-center text-sm">
       📖
     </div>
-    <span>© 2025 Web-algoholics — Все права защищены</span>
+    <span>© 2025 Web-algoholics</span>
   </div>
   <div className="flex items-center gap-6 text-sm text-gray-600">
     <a href="#" className="hover:text-gray-900">О проекте</a>

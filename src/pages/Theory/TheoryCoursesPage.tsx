@@ -184,16 +184,7 @@ const TheoryCoursesPage: React.FC = () => {
                 </Paragraph>
               </div>
             }
-          >
-            <Button
-              type="primary"
-              size="large"
-              icon={<PlusOutlined />}
-              onClick={handleCreateCourse}
-            >
-              Создать первый курс
-            </Button>
-          </Empty>
+          />
         )}
       </Space>
     </PageContainer>

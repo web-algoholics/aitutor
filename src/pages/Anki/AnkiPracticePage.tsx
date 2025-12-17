@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Button, Space, Typography, Progress, message, Spin } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
+import Confetti from 'react-confetti';
 import { useGetDeckQuery } from '../../services/ankiApi';
 import PageContainer from '../../components/PageContainer';
 import AnkiCard from '../../components/AnkiCard';
@@ -78,13 +79,6 @@ export default function AnkiPracticePage() {
     setShowResults(false);
   };
 
-  const handleNext = () => {
-    if (currentIndex < deck.cards.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setShowBack(false);
-    }
-  };
-
   const handlePrevious = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
@@ -94,13 +88,28 @@ export default function AnkiPracticePage() {
 
   const isLastCard = currentIndex === deck.cards.length - 1;
   const allCardsReviewed = showResults;
+  const allCorrect = allCardsReviewed && knownCount === deck.cards.length;
 
   return (
     <PageContainer>
+      {/* Confetti when all answers are correct */}
+      {allCorrect && (
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          recycle={false}
+          numberOfPieces={200}
+          gravity={0.3}
+        />
+      )}
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         {/* Navigation */}
         <div className="mb-4">
-          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/anki')}>
+          <Button 
+            icon={<ArrowLeftOutlined />} 
+            onClick={() => navigate('/anki')}
+            style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
+          >
             К списку колод
           </Button>
         </div>
@@ -116,29 +125,12 @@ export default function AnkiPracticePage() {
           <Progress percent={progress} strokeColor="#000" />
         </Card>
 
-        {/* Statistics */}
-        {totalReviewed > 0 && (
-          <Card bordered={false}>
-            <Space size="large">
-              <Text>
-                Знаю: <strong>{knownCount}</strong>
-              </Text>
-              <Text>
-                Не знаю: <strong>{totalReviewed - knownCount}</strong>
-              </Text>
-              <Text>
-                Точность: <strong>{accuracyPercent}%</strong>
-              </Text>
-            </Space>
-          </Card>
-        )}
-
         {/* Card */}
         <div className="flex justify-center">
           <AnkiCard
             front={showResults ? deck.cards[deck.cards.length - 1].front : currentCard.front}
             back={showResults 
-              ? `Поздравляем!\n\nВы прошли все карточки.\n\nЗнаю: ${knownCount} из ${deck.cards.length}\n\n${Math.round((knownCount / deck.cards.length) * 100)}%`
+              ? `Поздравляем!\n\nВы прошли все карточки.\n\nВерно: ${knownCount} из ${deck.cards.length}\n\n${Math.round((knownCount / deck.cards.length) * 100)}%`
               : currentCard.back
             }
             isFlipped={showBack}
@@ -148,12 +140,32 @@ export default function AnkiPracticePage() {
           />
         </div>
 
+        {/* Statistics - right under the card */}
+        {totalReviewed > 0 && (
+          <Card bordered={false}>
+            <div className="text-center">
+              <Space size="large" className="w-full justify-center" style={{ marginBottom: '8px' }}>
+                <Text>
+                  Знаю: <strong>{knownCount}</strong>
+                </Text>
+                <Text>
+                  Не знаю: <strong>{totalReviewed - knownCount}</strong>
+                </Text>
+              </Space>
+              <Text>
+                Точность: <strong>{accuracyPercent}%</strong>
+              </Text>
+            </div>
+          </Card>
+        )}
+
         {/* Restart button - only show when completed */}
         {allCardsReviewed && (
           <div className="text-center">
             <Button
               size="large"
               onClick={handleRestart}
+              style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
             >
               Ещё раз
             </Button>
@@ -176,18 +188,10 @@ export default function AnkiPracticePage() {
               <Button
                 disabled={currentIndex === 0}
                 onClick={handlePrevious}
+                style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
               >
-                Назад
+                Предыдущая карточка
               </Button>
-              
-              {showBack && (
-                <Button
-                  type="default"
-                  onClick={handleNext}
-                >
-                  Следующая карточка
-                </Button>
-              )}
             </Space>
           </Card>
         )}

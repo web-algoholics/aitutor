@@ -143,7 +143,7 @@ export default function ProfilePage() {
       {contextHolder}
 
       {/* Header */}
-      <Card className="mb-6 shadow-sm">
+      <Card bordered={false} className="mb-6 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Upload
@@ -174,7 +174,7 @@ export default function ProfilePage() {
       </Card>
 
       {/* Profile Form */}
-      <Card title="Информация профиля" className="shadow-sm">
+      <Card bordered={false} title="Информация профиля" className="shadow-sm">
         <Form<ProfileFormValues> form={form} layout="vertical" onFinish={onFinish} disabled={!editMode}>
           <Row gutter={16}>
             <Col span={12}>
@@ -201,22 +201,34 @@ export default function ProfilePage() {
 
         {/* Email Verification */}
         {profile && 'is_verified' in profile && !profile.is_verified ? (
-          <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <Space>
-              <ExclamationCircleOutlined className="text-yellow-600" />
-              <Text className="text-yellow-800">
-                Email не подтверждён.{' '}
-                <Button type="link" onClick={handleVerify} className="p-0 h-auto">
-                  Подтвердить
+          <div className="mt-6 p-4 bg-yellow-50 border-2 border-yellow-300 rounded-lg">
+            <Space size="middle" style={{ width: '100%', alignItems: 'flex-start' }}>
+              <ExclamationCircleOutlined className="text-yellow-600" style={{ fontSize: '18px', marginTop: '2px' }} />
+              <div style={{ flex: 1 }}>
+                <Text className="text-yellow-900" style={{ fontSize: '14px', display: 'block', marginBottom: '8px' }}>
+                  Email не подтверждён
+                </Text>
+                <Button 
+                  type="link" 
+                  onClick={handleVerify} 
+                  style={{ 
+                    padding: 0, 
+                    height: 'auto', 
+                    color: '#d97706',
+                    fontWeight: 500,
+                    fontSize: '14px'
+                  }}
+                >
+                  Отправить письмо для подтверждения
                 </Button>
-              </Text>
+              </div>
             </Space>
           </div>
         ) : (
-          <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-            <Space>
-              <CheckCircleOutlined className="text-green-600" />
-              <Text className="text-green-800">Email подтверждён</Text>
+          <div className="mt-6 p-4 bg-green-50 border-2 border-green-300 rounded-lg">
+            <Space size="middle" style={{ width: '100%' }}>
+              <CheckCircleOutlined className="text-green-600" style={{ fontSize: '18px' }} />
+              <Text className="text-green-900" style={{ fontSize: '14px', fontWeight: 500 }}>Email подтверждён</Text>
             </Space>
           </div>
         )}
@@ -262,7 +274,7 @@ export default function ProfilePage() {
       </Modal>
 
       {/* Stats Section */}
-      <Card title="Статистика обучения" className="shadow-sm mt-6">
+      <Card bordered={false} title="Статистика обучения" className="shadow-sm mt-6">
         <Stats />
       </Card>
     </PageContainer>

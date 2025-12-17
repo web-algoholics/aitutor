@@ -17,6 +17,8 @@ import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   FileTextOutlined,
+  QuestionCircleOutlined,
+  ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import { useGetQuizzesQuery, type QuizSummaryResponse } from '../../services/quizzesApi';
 import PageContainer from '../../components/PageContainer';
@@ -108,26 +110,20 @@ const QuizzesListPage: React.FC = () => {
         {totalQuizzes > 0 && (
           <Row gutter={16}>
             <Col xs={24} sm={12} md={8}>
-              <Card className="text-center">
-                <div className="text-3xl font-bold text-blue-600 mb-1">
-                  {totalQuizzes}
-                </div>
+              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Title level={3} className="mb-2">{totalQuizzes}</Title>
                 <Text type="secondary">Всего квизов</Text>
               </Card>
             </Col>
             <Col xs={24} sm={12} md={8}>
-              <Card className="text-center">
-                <div className="text-3xl font-bold text-green-600 mb-1">
-                  {completedQuizzes.length}
-                </div>
+              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Title level={3} className="mb-2">{completedQuizzes.length}</Title>
                 <Text type="secondary">Пройдено</Text>
               </Card>
             </Col>
             <Col xs={24} sm={12} md={8}>
-              <Card className="text-center">
-                <div className="text-3xl font-bold text-orange-600 mb-1">
-                  {totalQuizzes - completedQuizzes.length}
-                </div>
+              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Title level={3} className="mb-2">{totalQuizzes - completedQuizzes.length}</Title>
                 <Text type="secondary">Не начато</Text>
               </Card>
             </Col>
@@ -136,7 +132,7 @@ const QuizzesListPage: React.FC = () => {
 
         {/* Quizzes List */}
         {!quizzes || quizzes.length === 0 ? (
-          <Card>
+          <Card bordered={false}>
             <Empty
               description="У вас пока нет квизов"
               image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -150,49 +146,67 @@ const QuizzesListPage: React.FC = () => {
           <Row gutter={[16, 16]} style={{ display: 'flex' }}>
             {quizzes.map((quiz) => (
               <Col xs={24} sm={12} lg={8} key={quiz.id} style={{ display: 'flex' }}>
-                <Card
-                  hoverable
-                  className="w-full shadow-sm hover:shadow-md transition-shadow flex flex-col"
-                  actions={[
-                    <div key="start" className="text-center py-2">
-                      <Button
-                        type={quiz.is_completed ? "default" : "primary"}
-                        icon={<PlayCircleOutlined />}
-                        onClick={() => handleQuizClick(quiz.id)}
-                      >
-                        {quiz.is_completed ? 'Перепройти' : 'Пройти квиз'}
-                      </Button>
-                    </div>,
-                  ]}
+                <div
+                  style={{
+                    width: '100%',
+                    border: '2px solid #666666',
+                    borderRadius: '12px',
+                    backgroundColor: '#fff',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '32px',
+                    cursor: 'pointer',
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    position: 'relative',
+                  }}
+                  onClick={() => handleQuizClick(quiz.id)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                  }}
                 >
-                  <div className="flex flex-col h-full">
-                    <div className="flex items-start justify-between mb-3">
-                      <FileTextOutlined className="text-2xl text-blue-500 mr-2 flex-shrink-0" />
-                      <Tag
-                        color={quiz.is_completed ? 'success' : 'default'}
-                        icon={quiz.is_completed ? <CheckCircleOutlined /> : <ClockCircleOutlined />}
-                        className="flex-shrink-0"
-                      >
-                        {quiz.is_completed ? 'Пройден' : 'Не начат'}
-                      </Tag>
+                  {/* Question count in top right corner */}
+                  <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <FileTextOutlined style={{ fontSize: '18px', color: '#000' }} />
+                    <Text style={{ fontSize: '16px', color: '#000', fontWeight: 500 }}>
+                      {quiz.questions_count}
+                    </Text>
+                  </div>
+
+                  <div className="flex flex-col h-full" style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    {/* Large icon */}
+                    <div style={{ marginBottom: '16px' }}>
+                      {quiz.is_completed ? (
+                        <ExclamationCircleOutlined style={{ fontSize: '64px', color: '#000' }} />
+                      ) : (
+                        <QuestionCircleOutlined style={{ fontSize: '64px', color: '#000' }} />
+                      )}
                     </div>
                     
-                    <Title level={4} className="mb-4 flex-grow" style={{ minHeight: '64px' }} ellipsis={{ rows: 2 }}>
+                    <Title level={3} style={{ margin: 0, textAlign: 'center', color: '#000' }} ellipsis={{ rows: 2 }}>
                       {quiz.title}
                     </Title>
                     
-                    <div className="mt-auto pt-2">
-                      <Space direction="vertical" size="small" className="w-full">
-                        <Text type="secondary" className="text-sm">
-                          <FileTextOutlined /> Вопросов: {quiz.questions_count}
-                        </Text>
-                        <Text type="secondary" className="text-sm">
-                          <ClockCircleOutlined /> {formatDate(quiz.created_at)}
-                        </Text>
-                      </Space>
+                    <div className="mt-4" style={{ width: '100%' }}>
+                      <Button
+                        type={quiz.is_completed ? "default" : "primary"}
+                        icon={<PlayCircleOutlined />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleQuizClick(quiz.id);
+                        }}
+                        block
+                      >
+                        {quiz.is_completed ? 'Перепройти' : 'Пройти квиз'}
+                      </Button>
                     </div>
                   </div>
-                </Card>
+                </div>
               </Col>
             ))}
           </Row>
