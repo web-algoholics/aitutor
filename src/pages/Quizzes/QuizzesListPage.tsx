@@ -19,6 +19,7 @@ import {
   FileTextOutlined,
 } from '@ant-design/icons';
 import { useGetQuizzesQuery, type QuizSummaryResponse } from '../../services/quizzesApi';
+import PageContainer from '../../components/PageContainer';
 const { Title, Text, Paragraph } = Typography;
 
 const QuizzesListPage: React.FC = () => {
@@ -51,15 +52,17 @@ const QuizzesListPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Spin size="large" />
-      </div>
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Spin size="large" />
+        </div>
+      </PageContainer>
     );
   }
 
   if (error) {
     return (
-      <div className="max-w-6xl mx-auto p-5">
+      <PageContainer>
         <Card>
           <Empty
             description="Ошибка загрузки квизов"
@@ -70,7 +73,7 @@ const QuizzesListPage: React.FC = () => {
             </Button>
           </Empty>
         </Card>
-      </div>
+      </PageContainer>
     );
   }
 
@@ -78,13 +81,12 @@ const QuizzesListPage: React.FC = () => {
   const totalQuizzes = quizzes?.length || 0;
 
   return (
-    <div className="max-w-6xl mx-auto p-5">
+    <PageContainer>
       <Space direction="vertical" size="large" className="w-full">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <Title level={1} className="mb-2">
-              <FormOutlined style={{ marginRight: '16px' }} />
+            <Title level={2} className="mb-2">
               Мои квизы
             </Title>
             <Paragraph className="text-base text-gray-600 mb-0">
@@ -196,7 +198,7 @@ const QuizzesListPage: React.FC = () => {
           </Row>
         )}
       </Space>
-    </div>
+    </PageContainer>
   );
 };
 

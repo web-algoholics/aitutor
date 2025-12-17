@@ -58,7 +58,7 @@ export default function LoginPage() {
       });
       form.setFields(fieldErrors);
     } else if (error) {
-      messageApi.error('Invalid username or password');
+      messageApi.error('Неверный логин или пароль');
     }
   }, [error, form, messageApi]);
 
@@ -66,7 +66,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (isSuccess && !isFetching && user) {
       if (!('is_verified' in user) || !user.is_verified) {
-        messageApi.info('Please verify your email.');
+        messageApi.info('Пожалуйста, подтвердите email.');
         navigate('/theory');
       } else {
         navigate('/theory');
@@ -86,7 +86,7 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthLayout title="Sign In">
+    <AuthLayout title="Вход">
       {contextHolder}
       <Form<LoginValues>
         form={form}
@@ -96,19 +96,19 @@ export default function LoginPage() {
         style={{ width: 'min(320px, 100%)', margin: '0 auto' }}
       >
         <Form.Item
-          label="Email or Username"
+          label="Email или имя пользователя"
           name="email"
           rules={[
-            { required: true, message: 'Please enter your email or username' },
+            { required: true, message: 'Введите email или имя пользователя' },
           ]}
         >
           <Input prefix={<UserOutlined />} placeholder="you@example.com" />
         </Form.Item>
 
         <Form.Item
-          label="Password"
+          label="Пароль"
           name="password"
-          rules={[{ required: true, message: 'Please enter your password' }]}
+          rules={[{ required: true, message: 'Введите пароль' }]}
         >
           <Input.Password prefix={<LockOutlined />} placeholder="••••••••" />
         </Form.Item>
@@ -116,22 +116,22 @@ export default function LoginPage() {
         <Form.Item>
           <div className="flex justify-between items-center">
             <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>Remember me</Checkbox>
+              <Checkbox>Запомнить меня</Checkbox>
             </Form.Item>
             <CollapseLink to="/forgot-password" className="text-sm hover:text-black hover:underline">
-              Forgot password?
+              Забыли пароль?
             </CollapseLink>
           </div>
         </Form.Item>
 
         <Form.Item>
           <Button type="primary" htmlType="submit" loading={isLoading} block>
-            Sign In
+            Войти
           </Button>
         </Form.Item>
 
         <div className="text-center text-sm">
-          Don't have an account? <CollapseLink to="/register" className="hover:text-black hover:underline">Sign up</CollapseLink>
+          Нет аккаунта? <CollapseLink to="/register" className="hover:text-black hover:underline">Зарегистрироваться</CollapseLink>
         </div>
       </Form>
     </AuthLayout>

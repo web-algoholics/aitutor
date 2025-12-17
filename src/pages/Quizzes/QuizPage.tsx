@@ -35,6 +35,7 @@ import {
   type QuestionResponse,
 } from '../../services/quizzesApi';
 import { useGetLessonContentQuery } from '../../services/theoryApi';
+import PageContainer from '../../components/PageContainer';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -164,14 +165,16 @@ const QuizPage: React.FC = () => {
     // Show loading while lesson content is being fetched
     if (lessonId && lessonLoading) {
       return (
-        <div className="flex items-center justify-center min-h-screen">
-          <Spin size="large" />
-        </div>
+        <PageContainer>
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <Spin size="large" />
+          </div>
+        </PageContainer>
       );
     }
 
     return (
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <PageContainer>
         <Space direction="vertical" size="large" className="w-full">
           <div className="flex items-center gap-4 mb-2">
             <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
@@ -226,23 +229,25 @@ const QuizPage: React.FC = () => {
             </Form>
           </Card>
         </Space>
-      </div>
+      </PageContainer>
     );
   }
 
   // Loading state
   if (quizLoading || !quiz) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Spin size="large" />
-      </div>
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Spin size="large" />
+        </div>
+      </PageContainer>
     );
   }
 
   // Render quiz taking form
   if (quizState === 'taking') {
     return (
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <PageContainer>
         <Space direction="vertical" size="large" className="w-full">
           <div className="flex items-center justify-between">
             <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
@@ -316,7 +321,7 @@ const QuizPage: React.FC = () => {
             </Space>
           </Card>
         </Space>
-      </div>
+      </PageContainer>
     );
   }
 
@@ -333,7 +338,7 @@ const QuizPage: React.FC = () => {
     );
 
     return (
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <PageContainer>
         <Space direction="vertical" size="large" className="w-full">
           <Card>
             <Space direction="vertical" size="large" className="w-full" align="center">
@@ -452,7 +457,7 @@ const QuizPage: React.FC = () => {
             </Space>
           </Card>
         </Space>
-      </div>
+      </PageContainer>
     );
   }
 

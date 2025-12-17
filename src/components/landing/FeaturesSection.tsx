@@ -14,33 +14,33 @@ const { Title, Paragraph } = Typography;
 const features = [
   {
     icon: <ThunderboltOutlined className="text-4xl text-blue-500" />,
-    title: 'AI Course Generation',
-    description: 'Create personalized courses on any topic in minutes with the power of artificial intelligence'
+    title: 'Генерация курса с ИИ',
+    description: 'Создавайте персонализированные курсы по любой теме за минуты с помощью искусственного интеллекта'
   },
   {
     icon: <BookOutlined className="text-4xl text-green-500" />,
-    title: 'Structured Learning',
-    description: 'Get well-structured learning programs with lessons, assignments, and projects'
+    title: 'Структурированное обучение',
+    description: 'Получайте продуманную программу обучения с уроками, заданиями и проектами'
   },
   {
     icon: <CodeOutlined className="text-4xl text-purple-500" />,
-    title: 'Practical Exercises',
-    description: 'Reinforce your knowledge through hands-on exercises and real-world projects'
+    title: 'Практика',
+    description: 'Закрепляйте знания на практических заданиях и проектах из реального мира'
   },
   {
     icon: <UserOutlined className="text-4xl text-orange-500" />,
-    title: 'Personal Tutor',
-    description: 'Chat with an AI tutor that will help you learn and answer your questions'
+    title: 'Персональный тьютор',
+    description: 'Общайтесь с ИИ‑тьютором: он поможет учиться и ответит на ваши вопросы'
   },
   {
     icon: <GlobalOutlined className="text-4xl text-red-500" />,
-    title: 'Any Topic',
-    description: 'Learn programming, languages, sciences, and any other topics of your choice'
+    title: 'Любая тема',
+    description: 'Изучайте программирование, языки, науки и любые другие темы по вашему выбору'
   },
   {
     icon: <CheckCircleOutlined className="text-4xl text-teal-500" />,
-    title: 'Progress Tracking',
-    description: 'Track your learning progress and achieve your goals'
+    title: 'Прогресс',
+    description: 'Отслеживайте прогресс обучения и достигайте своих целей'
   }
 ];
 
@@ -76,10 +76,10 @@ export default function FeaturesSection() {
       <div className="max-w-6xl mx-auto">
         <div className={`text-center mb-20 fade-in-up ${isVisible ? 'visible' : ''}`} style={{ animationDelay: '0s' }}>
           <Title level={2} className="text-4xl font-bold mb-4">
-            Why Choose EdGen?
+            Почему выбирают EdGen?
           </Title>
           <Paragraph className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Powerful tools for creating and taking learning courses
+            Мощные инструменты для создания и прохождения учебных курсов
           </Paragraph>
         </div>
         

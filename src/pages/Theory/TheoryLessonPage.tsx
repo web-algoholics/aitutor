@@ -15,6 +15,7 @@ import {
   useGetTheoryCourseTreeQuery,
   useMarkLessonCompletedMutation
 } from '../../services/theoryApi';
+import PageContainer from '../../components/PageContainer';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -88,19 +89,21 @@ const TheoryLessonPage: React.FC = () => {
 
   if (contentLoading || generating) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
-        <Space direction="vertical" align="center">
-          <Spin size="large" />
-          <Text>Загрузка...</Text>
-          <Progress percent={75} status="active" showInfo={false} style={{ width: '200px' }} />
-        </Space>
-      </div>
+      <PageContainer>
+        <div className="flex justify-center items-center min-h-[400px]">
+          <Space direction="vertical" align="center">
+            <Spin size="large" />
+            <Text>Загрузка...</Text>
+            <Progress percent={75} status="active" showInfo={false} style={{ width: '200px' }} />
+          </Space>
+        </div>
+      </PageContainer>
     );
   }
 
   if (contentError || !content) {
     return (
-      <div style={{ maxWidth: 800, margin: '0 auto', padding: '20px' }}>
+      <PageContainer>
         <Alert
           message="Теория не найдена"
           description="Теория для этого урока еще не была сгенерирована."
@@ -117,14 +120,14 @@ const TheoryLessonPage: React.FC = () => {
             Вернуться к курсу
           </Button>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
 
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', padding: '20px' }}>
+    <PageContainer>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -234,7 +237,7 @@ const TheoryLessonPage: React.FC = () => {
           </div>
         </Card>
       </Space>
-    </div>
+    </PageContainer>
   );
 };
 

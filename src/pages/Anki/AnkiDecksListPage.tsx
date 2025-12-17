@@ -4,8 +4,9 @@ import { Card, Button, Space, Typography, Tag, Empty, Modal, Form, Input, messag
 import { FileTextOutlined, PlusOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Row, Col } from 'antd';
 import { useGetDecksQuery, useCreateDeckFromMaterialMutation, useDeleteDeckMutation } from '../../services/ankiApi';
+import PageContainer from '../../components/PageContainer';
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
 
 const formatDate = (dateString: string) => {
@@ -53,9 +54,11 @@ export default function AnkiDecksListPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Spin size="large" />
-      </div>
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Spin size="large" />
+        </div>
+      </PageContainer>
     );
   }
 
@@ -63,11 +66,18 @@ export default function AnkiDecksListPage() {
   const totalCards = decks?.reduce((sum, deck) => sum + deck.cards_count, 0) || 0;
 
   return (
-    <div className="max-w-6xl mx-auto p-5">
+    <PageContainer>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <Title level={2}>Колоды Anki</Title>
+        <div className="flex justify-between items-center">
+          <div>
+            <Title level={2} className="mb-2">
+              Колоды Anki
+            </Title>
+            <Paragraph className="text-base text-gray-600 mb-0">
+              Карточки для запоминания и повторения материала
+            </Paragraph>
+          </div>
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -101,7 +111,7 @@ export default function AnkiDecksListPage() {
               <Col xs={24} sm={12} md={8} key={deck.id} style={{ display: 'flex' }}>
                 <Card
                   hoverable
-                  className="w-full shadow-sm hover:shadow-md transition-shadow flex flex-col h-full"
+                  className="w-full shadow-sm hover:shadow-md transition-shadow flex flex-col h-full border-2 border-black"
                   bodyStyle={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '16px' }}
                   actions={[
                     <div key="practice" className="text-center py-2">
@@ -134,7 +144,7 @@ export default function AnkiDecksListPage() {
             ))}
           </Row>
         ) : (
-          <Card>
+          <Card bordered={false}>
             <Empty
               description="У вас пока нет колод"
               image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -204,7 +214,7 @@ export default function AnkiDecksListPage() {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </PageContainer>
   );
 }
 

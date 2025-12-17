@@ -3,6 +3,7 @@ import HeroSection from '../components/landing/HeroSection';
 import FeaturesSection from '../components/landing/FeaturesSection';
 import HowItWorksSection from '../components/landing/HowItWorksSection';
 import BenefitsSection from '../components/landing/BenefitsSection';
+import Footer from '../components/Footer';
 import { useGetCurrentUserQuery } from '../services/authApi';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,6 +24,7 @@ export default function LandingPage() {
       <FeaturesSection />
       <HowItWorksSection />
       <BenefitsSection />
+      <Footer />
     </div>
   );
 }

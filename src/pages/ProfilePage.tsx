@@ -5,6 +5,7 @@ import { useGetProfileQuery, useUpdateProfileMutation, useRequestVerifyTokenMuta
 import AuthLayout from '../components/AuthLayout';
 import { useNavigate } from 'react-router-dom';
 import Stats from '../components/Stats';
+import PageContainer from '../components/PageContainer';
 
 
 const { Title, Text } = Typography;
@@ -56,14 +57,14 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (isSuccess) {
-      messageApi.success('Profile updated successfully');
+      messageApi.success('Профиль успешно обновлён');
       setEditMode(false);
       refetch();
     }
     if (isError) {
       const msg = updateError && 'data' in updateError && updateError.data && typeof updateError.data === 'object' && 'detail' in updateError.data
-        ? (updateError.data as any).detail?.[0]?.msg || 'Failed to update profile'
-        : 'Failed to update profile';
+        ? (updateError.data as any).detail?.[0]?.msg || 'Не удалось обновить профиль'
+        : 'Не удалось обновить профиль';
       messageApi.error(msg);
     }
   }, [isSuccess, isError, updateError, messageApi, refetch]);
@@ -78,29 +79,29 @@ export default function ProfilePage() {
 
   const onPasswordChange = async (values: PasswordChangeValues) => {
     if (values.new_password !== values.confirm_password) {
-      pwdForm.setFields([{ name: 'confirm_password', errors: ['Passwords do not match'] }]);
+      pwdForm.setFields([{ name: 'confirm_password', errors: ['Пароли не совпадают'] }]);
       return;
     }
     try {
       await updateProfile({ password: values.new_password }).unwrap();
-      messageApi.success('Password changed');
+      messageApi.success('Пароль изменён');
       setPwdModal(false);
       pwdForm.resetFields();
     } catch (err: any) {
-      messageApi.error(err?.data?.detail?.[0]?.msg || 'Password change failed');
+      messageApi.error(err?.data?.detail?.[0]?.msg || 'Не удалось изменить пароль');
     }
   };
 
   const handleVerify = async () => {
     if (!profile || !('email' in profile) || !profile.email) {
-      messageApi.error('Email not found');
+      messageApi.error('Email не найден');
       return;
     }
     try {
-      messageApi.success('Verification email sent!');
+      messageApi.success('Письмо для подтверждения отправлено!');
       await requestVerifyToken(profile.email as string).unwrap();
     } catch (err: any) {
-      messageApi.error(err?.data?.detail?.[0]?.msg || 'Failed to send email');
+      messageApi.error(err?.data?.detail?.[0]?.msg || 'Не удалось отправить письмо');
     }
   };
 
@@ -110,10 +111,10 @@ export default function ProfilePage() {
     formData.append('file', file);
     try {
       await uploadAvatar(formData).unwrap();
-      messageApi.success('Avatar updated');
+      messageApi.success('Аватар обновлён');
       refetch();
     } catch {
-      messageApi.error('Upload failed');
+      messageApi.error('Не удалось загрузить файл');
     }
   };
 
@@ -128,11 +129,17 @@ export default function ProfilePage() {
     setEditMode(false);
   };
 
-  if (isLoading) return <div className="p-8 text-center">Loading...</div>;
+  if (isLoading) {
+    return (
+      <PageContainer>
+        <div className="p-8 text-center">Загрузка...</div>
+      </PageContainer>
+    );
+  }
   if (!profile) navigate("/login");
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8 w-full">
+    <PageContainer>
       {contextHolder}
 
       {/* Header */}
@@ -153,30 +160,30 @@ export default function ProfilePage() {
               />
             </Upload>
             <div>
-              <Title level={4} className="m-0">{profile && 'username' in profile ? profile.username : 'User'}</Title>
+              <Title level={4} className="m-0">{profile && 'username' in profile ? profile.username : 'Пользователь'}</Title>
               <Space size={4} className="text-gray-600">
                 <MailOutlined />
-                <Text>{profile && 'email' in profile ? profile.email : 'Loading...'}</Text>
+                <Text>{profile && 'email' in profile ? profile.email : 'Загрузка...'}</Text>
               </Space>
             </div>
           </div>
           <Button type="primary" icon={<EditOutlined />} onClick={enterEditMode} disabled={editMode}>
-            Edit Profile
+            Редактировать
           </Button>
         </div>
       </Card>
 
       {/* Profile Form */}
-      <Card title="Profile Information" className="shadow-sm">
+      <Card title="Информация профиля" className="shadow-sm">
         <Form<ProfileFormValues> form={form} layout="vertical" onFinish={onFinish} disabled={!editMode}>
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label="Username" name="username">
+              <Form.Item label="Имя пользователя" name="username">
                 <Input prefix={<EditOutlined className="text-gray-400" />} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Email Address" name="email">
+              <Form.Item label="Email" name="email">
                 <Input prefix={<MailOutlined className="text-gray-400" />} />
               </Form.Item>
             </Col>
@@ -185,8 +192,8 @@ export default function ProfilePage() {
           {editMode && (
             <Form.Item className="text-right mb-0">
               <Space>
-                <Button onClick={cancelEdit}>Cancel</Button>
-                <Button type="primary" htmlType="submit" loading={isUpdating}>Save Changes</Button>
+                <Button onClick={cancelEdit}>Отмена</Button>
+                <Button type="primary" htmlType="submit" loading={isUpdating}>Сохранить</Button>
               </Space>
             </Form.Item>
           )}
@@ -198,9 +205,9 @@ export default function ProfilePage() {
             <Space>
               <ExclamationCircleOutlined className="text-yellow-600" />
               <Text className="text-yellow-800">
-                Your email is not verified.{' '}
+                Email не подтверждён.{' '}
                 <Button type="link" onClick={handleVerify} className="p-0 h-auto">
-                  Verify Email
+                  Подтвердить
                 </Button>
               </Text>
             </Space>
@@ -209,7 +216,7 @@ export default function ProfilePage() {
           <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
             <Space>
               <CheckCircleOutlined className="text-green-600" />
-              <Text className="text-green-800">Email verified</Text>
+              <Text className="text-green-800">Email подтверждён</Text>
             </Space>
           </div>
         )}
@@ -217,14 +224,14 @@ export default function ProfilePage() {
         {/* Change Password */}
         <div className="mt-8">
           <Button type="default" onClick={() => setPwdModal(true)}>
-            Change Password
+            Сменить пароль
           </Button>
         </div>
       </Card>
 
       {/* Password Modal */}
       <Modal
-        title="Change Password"
+        title="Смена пароля"
         open={pwdModal}
         onCancel={() => { setPwdModal(false); pwdForm.resetFields(); }}
         footer={null}
@@ -233,31 +240,31 @@ export default function ProfilePage() {
           <Form.Item
             name="new_password"
             rules={[
-              { required: true, message: 'Enter new password' },
-              { min: 8, message: 'Minimum 8 characters' },
+              { required: true, message: 'Введите новый пароль' },
+              { min: 8, message: 'Минимум 8 символов' },
             ]}
           >
-            <Input.Password placeholder="New password" />
+            <Input.Password placeholder="Новый пароль" />
           </Form.Item>
           <Form.Item
             name="confirm_password"
-            rules={[{ required: true, message: 'Confirm new password' }]}
+            rules={[{ required: true, message: 'Повторите новый пароль' }]}
           >
-            <Input.Password placeholder="Confirm new password" />
+            <Input.Password placeholder="Повторите новый пароль" />
           </Form.Item>
           <Form.Item className="mb-0 text-right">
             <Space>
-              <Button onClick={() => { setPwdModal(false); pwdForm.resetFields(); }}>Cancel</Button>
-              <Button type="primary" htmlType="submit">Update Password</Button>
+              <Button onClick={() => { setPwdModal(false); pwdForm.resetFields(); }}>Отмена</Button>
+              <Button type="primary" htmlType="submit">Обновить пароль</Button>
             </Space>
           </Form.Item>
         </Form>
       </Modal>
 
       {/* Stats Section */}
-      <Card title="Learning Statistics" className="shadow-sm mt-6">
+      <Card title="Статистика обучения" className="shadow-sm mt-6">
         <Stats />
       </Card>
-    </div>
+    </PageContainer>
   );
 }

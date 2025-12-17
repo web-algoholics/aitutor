@@ -10,6 +10,7 @@ import {
   CheckCircleOutlined, ClockCircleOutlined, BulbOutlined
 } from '@ant-design/icons';
 import { useGetTheoryCoursesQuery } from '../../services/theoryApi';
+import PageContainer from '../../components/PageContainer';
 
 const { Title, Text, Paragraph, Meta } = Typography;
 
@@ -27,33 +28,34 @@ const TheoryCoursesPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Spin size="large" />
-      </div>
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Spin size="large" />
+        </div>
+      </PageContainer>
     );
   }
 
   if (error) {
     return (
-      <div className="p-5">
+      <PageContainer>
         <Alert
           title="Ошибка загрузки курсов"
           description="Не удалось загрузить список курсов. Попробуйте обновить страницу."
           type="error"
           showIcon
         />
-      </div>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-5">
+    <PageContainer>
       <Space orientation="vertical" size="large" style={{ width: '100%' }}>
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <Title level={1} className="mb-2">
-              <BookOutlined style={{ marginRight: '16px' }} />
+            <Title level={2} className="mb-2">
               AI Курсы
             </Title>
             <Paragraph className="text-base text-gray-600 mb-0">
@@ -194,7 +196,7 @@ const TheoryCoursesPage: React.FC = () => {
           </Empty>
         )}
       </Space>
-    </div>
+    </PageContainer>
   );
 };
 

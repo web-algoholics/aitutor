@@ -22,7 +22,7 @@ export default function HeroSection() {
   useEffect(() => {
     setLogoFadeIn(true); // fade-up on initial appearance
 
-    const START_DELAY = 900;      // задержка перед автозапуском круга
+    const START_DELAY = 1000;      // задержка перед автозапуском круга
     const EXPAND_DURATION = 300;  // длительность расширения точки
     const CONTENT_ANIMATION_TOTAL = 900; // дождаться появления текста внутри круга
     const COLOR_START_DELAY = 80; // чтобы цвет менялся на глазах после появления
@@ -104,7 +104,7 @@ export default function HeroSection() {
             padding: 0
           }}
         >
-          Your AI education starting point
+          Точка старта в обучении с ИИ
         </Title>
       )}
       
@@ -116,22 +116,22 @@ export default function HeroSection() {
           <div className="max-w-6xl mx-auto text-center z-10 px-6" style={{ position: 'relative', zIndex: 10 }}>
             <Title level={1} className="text-5xl md:text-6xl font-bold mb-6 text-fade-to-white">
               <span className="text-fade-to-white">
-              Create courses on any topic
+              Создавайте курсы по любой теме
               </span>
               <br />
-              <span className="text-fade-to-white">with AI</span>
+              <span className="text-fade-to-white">с помощью ИИ</span>
             </Title>
             <Paragraph className="text-xl text-fade-to-white mb-8 max-w-2xl mx-auto">
-              EdGen is a platform for generating personalized learning courses. 
-              Simply specify a topic, and our AI will create a complete learning program 
-              with lessons, assignments, and projects for you.
+              EdGen — платформа для генерации персонализированных учебных курсов.
+              Просто задайте тему, и наш ИИ соберёт для вас полноценную программу
+              с уроками, заданиями и проектами.
             </Paragraph>
             <Space size="large" className="flex-wrap justify-center text-fade-to-white">
               <Button type="primary" size="large" className="h-12 px-8" onClick={() => handleNavigate('/register')}>
-                Get Started Free
+                Начать бесплатно
               </Button>
               <Button size="large" className="h-12 px-8" onClick={() => handleNavigate('/login')}>
-                Sign In
+                Войти
               </Button>
             </Space>
           </div>

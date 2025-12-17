@@ -67,7 +67,7 @@ export default function RegisterPage() {
   // SUCCESS REDIRECT
   useEffect(() => {
     if (isSuccess) {
-      messageApi.success('Check your email to verify your account.');
+      messageApi.success('Проверьте почту: мы отправили письмо для подтверждения аккаунта.');
       navigate('/login');
     }
   }, [isSuccess, navigate, messageApi]);
@@ -85,7 +85,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <AuthLayout title="Create Account">
+    <AuthLayout title="Регистрация">
       {contextHolder}
       <Form<RegisterValues>
         form={form}
@@ -96,9 +96,9 @@ export default function RegisterPage() {
       >
         {/* Username */}
         <Form.Item
-          label="Username"
+          label="Имя пользователя"
           name="username"
-          rules={[{ required: true, message: 'Please enter a username' }]}
+          rules={[{ required: true, message: 'Введите имя пользователя' }]}
         >
           <Input prefix={<UserOutlined />} placeholder="john_doe" />
         </Form.Item>
@@ -108,8 +108,8 @@ export default function RegisterPage() {
           label="Email"
           name="email"
           rules={[
-            { required: true, message: 'Please enter your email' },
-            { type: 'email', message: 'Invalid email format' },
+            { required: true, message: 'Введите email' },
+            { type: 'email', message: 'Некорректный формат email' },
           ]}
         >
           <Input prefix={<MailOutlined />} placeholder="you@example.com" />
@@ -117,26 +117,26 @@ export default function RegisterPage() {
 
         {/* Password */}
         <Form.Item
-          label="Password"
+          label="Пароль"
           name="password"
           rules={[
-            { required: true, message: 'Please enter a password' },
-            { min: 8, message: 'Password must be at least 8 characters' },
+            { required: true, message: 'Введите пароль' },
+            { min: 8, message: 'Пароль должен быть не короче 8 символов' },
           ]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder="At least 8 characters" />
+          <Input.Password prefix={<LockOutlined />} placeholder="Минимум 8 символов" />
         </Form.Item>
 
         {/* Submit */}
         <Form.Item>
           <Button type="primary" htmlType="submit" loading={isLoading} block>
-            Sign Up
+            Зарегистрироваться
           </Button>
         </Form.Item>
 
         {/* Login Link */}
         <div className="text-center text-sm">
-          Already have an account? <CollapseLink to="/login" className="text-sm hover:text-black hover:underline">Sign in</CollapseLink>
+          Уже есть аккаунт? <CollapseLink to="/login" className="text-sm hover:text-black hover:underline">Войти</CollapseLink>
         </div>
       </Form>
     </AuthLayout>

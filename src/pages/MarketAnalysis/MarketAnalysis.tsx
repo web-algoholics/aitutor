@@ -24,6 +24,7 @@ import {
 } from '@ant-design/icons';
 import { useAnalyzeMarketMutation } from '../../services/jobsApi';
 import type { MarketAnalysisResponse } from '../../services/jobsApi';
+import PageContainer from '../../components/PageContainer';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -67,7 +68,7 @@ export default function MarketAnalysis() {
     if (!skills || skills.length === 0) return null;
 
     return (
-      <Card title={title} className="mb-4">
+      <Card title={title} className="mb-4" bordered={false}>
         <List
           dataSource={skills}
           renderItem={(item) => (
@@ -95,79 +96,77 @@ export default function MarketAnalysis() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <Title level={2} className="mb-6">
-          Анализ рынка вакансий
-        </Title>
-        <Paragraph className="text-gray-600 mb-6">
-          Узнайте, какие навыки востребованы на рынке труда, и получите рекомендации по обучению
-        </Paragraph>
+    <PageContainer>
+      <Title level={2} className="mb-6">
+        Анализ рынка вакансий
+      </Title>
+      <Paragraph className="text-gray-600 mb-6">
+        Узнайте, какие навыки востребованы на рынке труда, и получите рекомендации по обучению
+      </Paragraph>
 
-        {/* Search Form */}
-        <Card className="mb-6">
-          <Space direction="vertical" size="middle" className="w-full">
-            <div>
-              <Text strong>Поисковый запрос</Text>
-              <Input
-                size="large"
-                placeholder="Например: Python разработчик, Frontend разработчик"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onPressEnter={handleAnalyze}
-                prefix={<SearchOutlined />}
-              />
-            </div>
-
-            <Row gutter={16}>
-              <Col span={12}>
-                <Text strong>Регион (опционально)</Text>
-                <Select
-                  size="large"
-                  className="w-full mt-2"
-                  placeholder="Выберите регион"
-                  allowClear
-                  value={area}
-                  onChange={setArea}
-                >
-                  {AREAS.map((a) => (
-                    <Option key={a.value} value={a.value}>
-                      {a.label}
-                    </Option>
-                  ))}
-                </Select>
-              </Col>
-              <Col span={12}>
-                <Text strong>Опыт работы (опционально)</Text>
-                <Select
-                  size="large"
-                  className="w-full mt-2"
-                  placeholder="Выберите уровень опыта"
-                  allowClear
-                  value={experience}
-                  onChange={setExperience}
-                >
-                  {EXPERIENCE_LEVELS.map((e) => (
-                    <Option key={e.value} value={e.value}>
-                      {e.label}
-                    </Option>
-                  ))}
-                </Select>
-              </Col>
-            </Row>
-
-            <Button
-              type="primary"
+      {/* Search Form */}
+      <Card className="mb-6" bordered={false}>
+        <Space direction="vertical" size="middle" className="w-full">
+          <div>
+            <Text strong>Поисковый запрос</Text>
+            <Input
               size="large"
-              icon={<SearchOutlined />}
-              onClick={handleAnalyze}
-              loading={isLoading}
-              block
-            >
-              Анализировать рынок
-            </Button>
-          </Space>
-        </Card>
+              placeholder="Например: Python разработчик, Frontend разработчик"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onPressEnter={handleAnalyze}
+              prefix={<SearchOutlined />}
+            />
+          </div>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <Text strong>Регион (опционально)</Text>
+              <Select
+                size="large"
+                className="w-full mt-2"
+                placeholder="Выберите регион"
+                allowClear
+                value={area}
+                onChange={setArea}
+              >
+                {AREAS.map((a) => (
+                  <Option key={a.value} value={a.value}>
+                    {a.label}
+                  </Option>
+                ))}
+              </Select>
+            </Col>
+            <Col span={12}>
+              <Text strong>Опыт работы (опционально)</Text>
+              <Select
+                size="large"
+                className="w-full mt-2"
+                placeholder="Выберите уровень опыта"
+                allowClear
+                value={experience}
+                onChange={setExperience}
+              >
+                {EXPERIENCE_LEVELS.map((e) => (
+                  <Option key={e.value} value={e.value}>
+                    {e.label}
+                  </Option>
+                ))}
+              </Select>
+            </Col>
+          </Row>
+
+          <Button
+            type="primary"
+            size="large"
+            onClick={handleAnalyze}
+            loading={isLoading}
+            block
+          >
+            Анализировать рынок
+          </Button>
+        </Space>
+      </Card>
 
         {/* Error */}
         {error && (
@@ -196,7 +195,7 @@ export default function MarketAnalysis() {
             {/* Summary Stats */}
             <Row gutter={16} className="mb-6">
               <Col span={8}>
-                <Card>
+                <Card bordered={false}>
                   <Statistic
                     title="Найдено вакансий"
                     value={data.total_vacancies}
@@ -205,7 +204,7 @@ export default function MarketAnalysis() {
                 </Card>
               </Col>
               <Col span={8}>
-                <Card>
+                <Card bordered={false}>
                   <Statistic
                     title="Средняя зарплата"
                     value={formatSalary(data.salary_stats.average_mid)}
@@ -214,7 +213,7 @@ export default function MarketAnalysis() {
                 </Card>
               </Col>
               <Col span={8}>
-                <Card>
+                <Card bordered={false}>
                   <Statistic
                     title="Рекомендуемых курсов"
                     value={data.recommended_courses.length}
@@ -234,6 +233,7 @@ export default function MarketAnalysis() {
                   </span>
                 }
                 className="mb-6"
+                bordered={false}
               >
                 <Space wrap>
                   {data.recommended_courses.map((course) => (
@@ -284,7 +284,7 @@ export default function MarketAnalysis() {
 
             {/* Experience Distribution */}
             {Object.keys(data.experience_distribution).length > 0 && (
-              <Card title="Распределение по опыту работы" className="mb-6">
+              <Card title="Распределение по опыту работы" className="mb-6" bordered={false}>
                 <Row gutter={16}>
                   {Object.entries(data.experience_distribution).map(([exp, count]) => (
                     <Col span={6} key={exp}>
@@ -297,7 +297,7 @@ export default function MarketAnalysis() {
 
             {/* Salary Details */}
             {data.salary_stats && (
-              <Card title="Детальная статистика зарплат">
+              <Card title="Детальная статистика зарплат" bordered={false}>
                 <Row gutter={16}>
                   <Col span={8}>
                     <Statistic
@@ -325,7 +325,7 @@ export default function MarketAnalysis() {
 
         {/* Empty State */}
         {!data && !isLoading && !error && (
-          <Card>
+          <Card bordered={false}>
             <div className="text-center py-12">
               <SearchOutlined style={{ fontSize: '48px', color: '#d9d9d9' }} />
               <Title level={4} className="mt-4 text-gray-400">
@@ -337,8 +337,7 @@ export default function MarketAnalysis() {
             </div>
           </Card>
         )}
-      </div>
-    </div>
+    </PageContainer>
   );
 }
 

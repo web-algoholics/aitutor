@@ -15,6 +15,7 @@ import {
   useGenerateLessonContentMutation
 } from '../../services/theoryApi';
 import { useCreateDeckFromCourseMutation } from '../../services/ankiApi';
+import PageContainer from '../../components/PageContainer';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -153,24 +154,24 @@ const TheoryCourseTreePage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="p-5">
+      <PageContainer>
         <Skeleton active />
         <Skeleton active />
         <Skeleton active />
-      </div>
+      </PageContainer>
     );
   }
 
   if (error && !initialCourseTree) {
     return (
-      <div className="p-5">
+      <PageContainer>
         <Alert
           message="Ошибка загрузки курса"
           description="Не удалось загрузить информацию о курсе. Попробуйте обновить страницу."
           type="error"
           showIcon
         />
-      </div>
+      </PageContainer>
     );
   }
 
@@ -201,7 +202,7 @@ const TheoryCourseTreePage: React.FC = () => {
   const currentModulesCompleted = modules.every(module => module.is_completed);
 
   return (
-    <div className="max-w-6xl mx-auto p-5">
+    <PageContainer>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         {/* Navigation */}
         <div className="mb-4">
@@ -408,7 +409,7 @@ const TheoryCourseTreePage: React.FC = () => {
           </Card>
         )}
       </Space>
-    </div>
+    </PageContainer>
   );
 };
 

@@ -3,6 +3,7 @@ import { Form, Input, Select, Button, Card, Typography, Space, message, Spin } f
 import { useNavigate } from 'react-router-dom';
 import { useCreateTheoryCourseMutation } from '../../services/theoryApi';
 import { BookOutlined, LoadingOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import PageContainer from '../../components/PageContainer';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -43,7 +44,7 @@ const CreateTheoryCoursePage: React.FC = () => {
   ];
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '20px' }}>
+    <PageContainer>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <div>
           <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/theory')}>
@@ -123,7 +124,7 @@ const CreateTheoryCoursePage: React.FC = () => {
           </div>
         </Card>
       </Space>
-    </div>
+    </PageContainer>
   );
 };
 
