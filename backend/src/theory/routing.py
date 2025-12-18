@@ -1,11 +1,13 @@
 import logging
 from typing import List, Optional
+from datetime import date, datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_, update
 from sqlalchemy.orm import selectinload
 
 from auth.auth import current_active_user as get_current_active_user
+from auth.models import User
 from database import get_session as get_db
 from .models import TheoryCourse, TheoryModule, TheoryLesson, TheoryContent
 from .schemas import (
@@ -26,6 +28,30 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/theory", tags=["theory"])
 ai_generator = TheoryAIGenerator()
+
+
+async def update_study_streak(user: User, db: AsyncSession):
+    """Update user's study streak when they complete a lesson"""
+    today = date.today()
+    
+    if user.last_study_date is None:
+        # First time studying
+        user.current_streak = 1
+        user.last_study_date = today
+    elif user.last_study_date == today:
+        # Already studied today, don't increment
+        pass
+    elif user.last_study_date == today - timedelta(days=1):
+        # Consecutive day, increment streak
+        user.current_streak += 1
+        user.last_study_date = today
+    else:
+        # Streak broken, reset to 1
+        user.current_streak = 1
+        user.last_study_date = today
+    
+    await db.commit()
+    logger.info(f"Updated streak for user {user.id}: {user.current_streak} days")
 
 @router.post("/courses", response_model=TheoryCourseTreeResponse)
 async def create_theory_course(
@@ -450,6 +476,21 @@ async def retry_module_lesson_generation(
     return {"message": "Retry generation started for failed lessons"}
 
 
+@router.get("/streak")
+async def get_study_streak(
+    current_user=Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Get current user's study streak"""
+    # Refresh user to get latest streak data
+    await db.refresh(current_user)
+    
+    return {
+        "current_streak": current_user.current_streak,
+        "last_study_date": current_user.last_study_date.isoformat() if current_user.last_study_date else None
+    }
+
+
 @router.post("/lessons/{lesson_id}/mark-completed")
 async def mark_lesson_completed(
     lesson_id: int,
@@ -472,6 +513,9 @@ async def mark_lesson_completed(
     # Mark lesson as completed
     lesson.is_completed = True
     await db.commit()
+
+    # Update study streak
+    await update_study_streak(current_user, db)
 
     # Check if all lessons in module are completed
     result = await db.execute(

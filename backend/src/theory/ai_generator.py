@@ -142,10 +142,16 @@ JSON ДОЛЖЕН БЫТЬ ПОЛНОСТЬЮ ВАЛИДНЫМ И ПАРСИТЬ
 
         response_content = str(response.content)
 
-        # Save AI response to file for debugging
-        debug_file_path = '/home/bakamol/Desktop/code/WebProjects/aitutor/ai_response_debug.txt'
-        with open(debug_file_path, 'w', encoding='utf-8') as f:
-            f.write(response_content)
+        # Save AI response to file for debugging (optional, don't fail if it doesn't work)
+        try:
+            import os
+            # Use relative path from project root
+            debug_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'ai_response_debug.txt')
+            with open(debug_file_path, 'w', encoding='utf-8') as f:
+                f.write(response_content)
+        except Exception as e:
+            # Don't fail the whole operation if debug file writing fails
+            logger.warning(f"Could not write debug file: {e}")
 
         # Try to parse JSON, if it fails, ask AI to fix it in a loop
         max_fix_attempts = 3

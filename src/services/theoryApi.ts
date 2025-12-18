@@ -167,6 +167,22 @@ export const theoryApi = createApi({
         // Invalidate entire course tree to refresh lesson/module/course completion status
         { type: 'TheoryCourses', id: 'ALL' },
       ],
+      // Also invalidate streak when lesson is completed
+      onQueryStarted: async (lessonId, { dispatch, queryFulfilled }) => {
+        try {
+          await queryFulfilled;
+          // Invalidate streak query to refresh it
+          dispatch(theoryApi.util.invalidateTags(['TheoryCourses']));
+        } catch {
+          // Ignore errors
+        }
+      },
+    }),
+
+    // Get study streak
+    getStudyStreak: builder.query<{ current_streak: number; last_study_date: string | null }, void>({
+      query: () => '/api/theory/streak',
+      providesTags: ['TheoryCourses'],
     }),
   }),
 });
@@ -182,4 +198,5 @@ export const {
   useGenerateNextModuleMutation,
   useRetryModuleGenerationMutation,
   useMarkLessonCompletedMutation,
+  useGetStudyStreakQuery,
 } = theoryApi;
