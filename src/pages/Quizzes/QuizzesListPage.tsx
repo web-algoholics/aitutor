@@ -18,7 +18,6 @@ import {
   ClockCircleOutlined,
   FileTextOutlined,
   QuestionCircleOutlined,
-  ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import { useGetQuizzesQuery, type QuizSummaryResponse } from '../../services/quizzesApi';
 import PageContainer from '../../components/PageContainer';
@@ -86,21 +85,29 @@ const QuizzesListPage: React.FC = () => {
     <PageContainer>
       <Space direction="vertical" size="large" className="w-full">
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <Title level={2} className="mb-2">
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{
+            width: '200px',
+            height: '200px',
+            borderRadius: '50%',
+            backgroundColor: '#000',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '16px'
+          }}>
+            <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
               Мои квизы
             </Title>
-            <Paragraph className="text-base text-gray-600 mb-0">
-              Созданные и пройденные квизы для проверки знаний
-            </Paragraph>
           </div>
+          <Paragraph className="text-base text-gray-600 mb-4" style={{ textAlign: 'center' }}>
+            Созданные и пройденные квизы для проверки знаний
+          </Paragraph>
           <Button
-            type="primary"
             size="large"
             icon={<FormOutlined />}
             onClick={handleCreateQuiz}
-            className="h-12 text-base"
+            style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
           >
             Создать квиз
           </Button>
@@ -137,7 +144,11 @@ const QuizzesListPage: React.FC = () => {
               description="У вас пока нет квизов"
               image={Empty.PRESENTED_IMAGE_SIMPLE}
             >
-              <Button type="primary" icon={<FormOutlined />} onClick={handleCreateQuiz}>
+              <Button 
+                icon={<FormOutlined />} 
+                onClick={handleCreateQuiz}
+                style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
+              >
                 Создать первый квиз
               </Button>
             </Empty>
@@ -182,15 +193,15 @@ const QuizzesListPage: React.FC = () => {
                     {/* Large icon */}
                     <div style={{ marginBottom: '16px' }}>
                       {quiz.is_completed ? (
-                        <ExclamationCircleOutlined style={{ fontSize: '64px', color: '#000' }} />
+                        <CheckCircleOutlined style={{ fontSize: '64px', color: '#000' }} />
                       ) : (
                         <QuestionCircleOutlined style={{ fontSize: '64px', color: '#000' }} />
                       )}
                     </div>
                     
-                    <Title level={3} style={{ margin: 0, textAlign: 'center', color: '#000' }} ellipsis={{ rows: 2 }}>
+                    <Text style={{ margin: 0, textAlign: 'center', color: '#000', fontSize: '20px', fontWeight: 400, display: 'block' }}>
                       {quiz.title}
-                    </Title>
+                    </Text>
                     
                     <div className="mt-4" style={{ width: '100%' }}>
                       <Button

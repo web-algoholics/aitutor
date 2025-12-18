@@ -1,13 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Button, Space, Typography, Empty, Modal, Form, Input, message, Popconfirm, Spin } from 'antd';
+import { Card, Button, Space, Typography, Empty, Spin } from 'antd';
 import { PlusOutlined, FileTextOutlined, ArrowUpOutlined, EyeOutlined } from '@ant-design/icons';
 import { Row, Col } from 'antd';
-import { useGetDecksQuery, useCreateDeckFromMaterialMutation, useDeleteDeckMutation } from '../../services/ankiApi';
+import { useGetDecksQuery } from '../../services/ankiApi';
 import PageContainer from '../../components/PageContainer';
 
 const { Title, Text, Paragraph } = Typography;
-const { TextArea } = Input;
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -178,9 +177,9 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice
               </Text>
             </div>
             
-            <Title level={3} style={{ margin: 0, color: '#000', textAlign: 'center' }}>
+            <Text style={{ margin: 0, color: '#000', textAlign: 'center', fontSize: '20px', fontWeight: 400, display: 'block' }}>
               {deck.title}
-            </Title>
+            </Text>
           </div>
 
           {/* Back side - Description only */}
@@ -231,33 +230,7 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice
 export default function AnkiDecksListPage() {
   const navigate = useNavigate();
   const { data: decks, isLoading } = useGetDecksQuery();
-  const [createDeckFromMaterial, { isLoading: isCreating }] = useCreateDeckFromMaterialMutation();
-  const [deleteDeck] = useDeleteDeckMutation();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [form] = Form.useForm();
   const [flippedDecks, setFlippedDecks] = useState<Set<number>>(new Set());
-
-  const handleCreateFromMaterial = async (values: { description?: string; material_content: string }) => {
-    const payload = { title: 'Новая колода', ...values };
-    try {
-      const result = await createDeckFromMaterial(payload).unwrap();
-      message.success('Колода успешно создана!');
-      setIsModalVisible(false);
-      form.resetFields();
-      navigate(`/anki/decks/${result.id}/practice`);
-    } catch (error: any) {
-      message.error(error?.data?.detail || 'Ошибка при создании колоды');
-    }
-  };
-
-  const handleDeleteDeck = async (deckId: number) => {
-    try {
-      await deleteDeck(deckId).unwrap();
-      message.success('Колода удалена');
-    } catch (error: any) {
-      message.error(error?.data?.detail || 'Ошибка при удалении колоды');
-    }
-  };
 
   const handlePracticeClick = (deckId: number) => {
     navigate(`/anki/decks/${deckId}/practice`);
@@ -293,22 +266,31 @@ export default function AnkiDecksListPage() {
     <PageContainer>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <Title level={2} className="mb-2">
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{
+            width: '200px',
+            height: '200px',
+            borderRadius: '50%',
+            backgroundColor: '#000',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '16px'
+          }}>
+            <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
               Колоды Anki
             </Title>
-            <Paragraph className="text-base text-gray-600 mb-0">
-              Карточки для запоминания и повторения материала
-            </Paragraph>
           </div>
+          <Paragraph className="text-base text-gray-600 mb-4" style={{ textAlign: 'center' }}>
+            Карточки для запоминания и повторения материала
+          </Paragraph>
           <Button
-            type="primary"
             icon={<PlusOutlined />}
             size="large"
-            onClick={() => setIsModalVisible(true)}
+            onClick={() => navigate('/anki/create')}
+            style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
           >
-            Создать колоду из материала
+            Создать колоду
           </Button>
         </div>
 
@@ -366,9 +348,9 @@ export default function AnkiDecksListPage() {
               image={Empty.PRESENTED_IMAGE_SIMPLE}
             >
               <Button
-                type="primary"
                 icon={<PlusOutlined />}
-                onClick={() => setIsModalVisible(true)}
+                onClick={() => navigate('/anki/create')}
+                style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
               >
                 Создать первую колоду
               </Button>
@@ -377,59 +359,6 @@ export default function AnkiDecksListPage() {
         )}
       </Space>
 
-      {/* Create Deck from Material Modal */}
-      <Modal
-        title="Создать колоду из материала"
-        open={isModalVisible}
-        onCancel={() => {
-          setIsModalVisible(false);
-          form.resetFields();
-        }}
-        footer={null}
-        width={600}
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleCreateFromMaterial}
-        >
-          <Form.Item
-            name="description"
-            label="Описание (необязательно)"
-          >
-            <Input placeholder="Краткое описание колоды" />
-          </Form.Item>
-
-          <Form.Item
-            name="material_content"
-            label="Материал"
-            rules={[
-              { required: true, message: 'Введите материал' },
-              { min: 100, message: 'Материал должен содержать минимум 100 символов' }
-            ]}
-            extra="Вставьте текст лекций, статей, конспектов или других материалов для создания карточек"
-          >
-            <TextArea
-              rows={10}
-              placeholder="Вставьте текст материала здесь..."
-            />
-          </Form.Item>
-
-          <Form.Item>
-            <Space>
-              <Button type="primary" htmlType="submit" loading={isCreating}>
-                Создать колоду
-              </Button>
-              <Button onClick={() => {
-                setIsModalVisible(false);
-                form.resetFields();
-              }}>
-                Отмена
-              </Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      </Modal>
     </PageContainer>
   );
 }

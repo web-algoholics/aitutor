@@ -172,6 +172,10 @@ a:hover {
   justify-content: space-between;
 }
 
+.justify-end {
+  justify-content: flex-end;
+}
+
 .gap-2 {
   gap: 0.5rem;
 }
@@ -1178,6 +1182,33 @@ a:hover {
 @media (min-width: 768px) {
   .md\:flex {
     display: flex;
+  }
+  
+  .md\:hidden {
+    display: none;
+  }
+  
+  .md\:inline-flex {
+    display: inline-flex;
+  }
+}
+
+/* Mobile only (below 768px) */
+.md\:hidden {
+  display: block;
+}
+
+.md\:inline-flex {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .md\:hidden {
+    display: none !important;
+  }
+  
+  .md\:inline-flex {
+    display: inline-flex !important;
   }
 }
 

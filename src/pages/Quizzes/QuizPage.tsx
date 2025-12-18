@@ -180,12 +180,24 @@ const QuizPage: React.FC = () => {
             <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
               Назад
             </Button>
-            <Title level={2} className="mb-0">
-              <FormOutlined /> Создать квиз
-            </Title>
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+              <div style={{
+                width: '200px',
+                height: '200px',
+                borderRadius: '50%',
+                backgroundColor: '#000',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
+                  <FormOutlined /> Создать квиз
+                </Title>
+              </div>
+            </div>
           </div>
 
-          <Card bordered={false} className="shadow-md">
+          <Card bordered={false}>
             <Form
               form={form}
               layout="vertical"
@@ -215,13 +227,12 @@ const QuizPage: React.FC = () => {
 
               <Form.Item className="mb-0 mt-6">
                 <Button
-                  type="primary"
                   htmlType="submit"
                   size="large"
                   loading={creatingQuiz}
                   icon={<PlayCircleOutlined />}
                   block
-                  className="h-12 text-base font-medium"
+                  style={{ height: '48px', backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
                 >
                   {creatingQuiz ? 'Создание квиза...' : 'Создать квиз'}
                 </Button>
@@ -342,8 +353,21 @@ const QuizPage: React.FC = () => {
         <Space direction="vertical" size="large" className="w-full">
           <Card bordered={false}>
             <Space direction="vertical" size="large" className="w-full" align="center">
+              <div style={{
+                width: '200px',
+                height: '200px',
+                borderRadius: '50%',
+                backgroundColor: '#000',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '16px'
+              }}>
+                <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
+                  Результаты квиза
+                </Title>
+              </div>
               <TrophyOutlined style={{ fontSize: 64, color: isPassed ? '#52c41a' : '#ff4d4f' }} />
-              <Title level={2}>Результаты квиза</Title>
               <Text className="text-2xl font-bold" style={{ color: isPassed ? '#52c41a' : '#ff4d4f' }}>
                 {score.toFixed(1)}%
               </Text>

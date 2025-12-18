@@ -1,6 +1,7 @@
 import os
 import asyncio
 import logging
+from pathlib import Path
 from fastapi import FastAPI, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,19 +20,21 @@ from quizzes.routing import router as quizzes_router
 from anki.routing import router as anki_router
 
 
+# Create logs directory relative to backend root (one level above src)
+BASE_DIR = Path(__file__).resolve().parent.parent
+LOGS_DIR = BASE_DIR / "logs"
+LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,  # Show INFO level and above
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
         logging.StreamHandler(),  # Output to console
-        logging.FileHandler('logs/app.log'),  # Save to file
-        logging.FileHandler('logs/errors.log', mode='a')  # Error logs
-    ]
+        logging.FileHandler(LOGS_DIR / "app.log"),  # Save to file
+        logging.FileHandler(LOGS_DIR / "errors.log", mode="a"),  # Error logs
+    ],
 )
-
-# Create logs directory
-os.makedirs('logs', exist_ok=True)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

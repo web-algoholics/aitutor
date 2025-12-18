@@ -53,15 +53,24 @@ const TheoryCoursesPage: React.FC = () => {
     <PageContainer>
       <Space orientation="vertical" size="large" style={{ width: '100%' }}>
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <Title level={2} className="mb-2">
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{
+            width: '200px',
+            height: '200px',
+            borderRadius: '50%',
+            backgroundColor: '#000',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '16px'
+          }}>
+            <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
               AI Курсы
             </Title>
-            <Paragraph className="text-base text-gray-600 mb-0">
-              Персонализированные курсы, созданные ИИ специально для вас
-            </Paragraph>
           </div>
+          <Paragraph className="text-base text-gray-600 mb-4" style={{ textAlign: 'center' }}>
+            Персонализированные курсы, созданные ИИ специально для вас
+          </Paragraph>
           <Button
             type="primary"
             size="large"

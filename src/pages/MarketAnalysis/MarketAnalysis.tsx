@@ -97,12 +97,25 @@ export default function MarketAnalysis() {
 
   return (
     <PageContainer>
-      <Title level={2} className="mb-6">
-        Анализ рынка вакансий
-      </Title>
-      <Paragraph className="text-gray-600 mb-6">
-        Узнайте, какие навыки востребованы на рынке труда, и получите рекомендации по обучению
-      </Paragraph>
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px' }}>
+        <div style={{
+          width: '200px',
+          height: '200px',
+          borderRadius: '50%',
+          backgroundColor: '#000',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: '16px'
+        }}>
+          <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
+            Анализ рынка вакансий
+          </Title>
+        </div>
+        <Paragraph className="text-gray-600 mb-6" style={{ textAlign: 'center' }}>
+          Узнайте, какие навыки востребованы на рынке труда, и получите рекомендации по обучению
+        </Paragraph>
+      </div>
 
       {/* Search Form */}
       <Card className="mb-6" bordered={false}>
