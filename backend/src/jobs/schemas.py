@@ -1,4 +1,4 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 
@@ -48,11 +48,18 @@ class MarketTrendRead(BaseModel):
     created_at: datetime
 
 class AnalysisRequest(BaseModel):
-    """Запрос на анализ вакансий"""
+    """Запрос на анализ вакансий (основные + расширенные фильтры HH API)"""
     query: str  # Поисковый запрос (например, "Python разработчик")
-    area: Optional[str] = None  # Регион (например, "Москва")
-    experience: Optional[str] = None  # Уровень опыта
+    area: Optional[str] = None  # Код региона HH (например, "1" для Москвы)
+    experience: Optional[str] = None  # Уровень опыта (noExperience, between1And3, ...)
     limit: int = 100  # Количество вакансий для анализа
+
+    # Расширенные фильтры HH API (все опциональные)
+    only_with_salary: bool = False  # Только вакансии с указанной зарплатой
+    employment: Optional[str] = None  # Формат занятости (full, part, project, volunteer, probation)
+    schedule: Optional[str] = None  # График работы (fullDay, remote, flexible и т.п.)
+    date_from: Optional[str] = None  # Дата публикации c (YYYY-MM-DD)
+    date_to: Optional[str] = None  # Дата публикации по (YYYY-MM-DD)
 
 class SkillRecommendation(BaseModel):
     """Рекомендация по навыку"""
