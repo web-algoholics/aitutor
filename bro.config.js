@@ -2,11 +2,6 @@ const pkg = require('./package')
 const webpack = require('webpack')
 
 module.exports = {
-  apps: {
-    '/': {
-      version: '1.1.0',
-      mount: '#root'
-    }
   apiPath: 'stubs/api',
   webpackConfig: {
     output: {
