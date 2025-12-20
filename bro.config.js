@@ -2,6 +2,11 @@ const pkg = require('./package')
 const webpack = require('webpack')
 
 module.exports = {
+  apps: {
+    '/': { 
+      version: '0.1.0',
+      mount: '#root'
+    }
   apiPath: 'stubs/api',
   webpackConfig: {
     output: {
@@ -27,4 +32,5 @@ module.exports = {
   config: {
     'career-up.api': '/api'
   }
+
 }
