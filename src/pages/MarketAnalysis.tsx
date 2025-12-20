@@ -14,6 +14,10 @@ import {
   Typography,
   Alert,
   Divider,
+  InputNumber,
+  Slider,
+  Modal,
+  message,
 } from 'antd';
 import {
   SearchOutlined,
@@ -23,15 +27,36 @@ import {
   WarningOutlined,
 } from '@ant-design/icons';
 import { useAnalyzeMarketMutation } from '../services/jobsApi';
-import type { MarketAnalysisResponse } from '../services/jobsApi';
+import type { MarketAnalysisResponse, AnalysisRequest } from '../services/jobsApi';
+import { useGetTheoryCoursesQuery } from '../services/theoryApi';
+import { useNavigate } from 'react-router-dom';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
 
+// Список городов / регионов для фильтрации (значение уходит как часть запроса или area-код HH)
 const AREAS = [
-  { value: '1', label: 'Москва' },
-  { value: '2', label: 'Санкт-Петербург' },
-  { value: '113', label: 'Россия' },
+  { value: 'Москва', label: 'Москва' },
+  { value: 'Санкт-Петербург', label: 'Санкт-Петербург' },
+  { value: 'Россия', label: 'Россия (вся страна)' },
+  { value: 'Екатеринбург', label: 'Екатеринбург' },
+  { value: 'Новосибирск', label: 'Новосибирск' },
+  { value: 'Казань', label: 'Казань' },
+  { value: 'Нижний Новгород', label: 'Нижний Новгород' },
+  { value: 'Воронеж', label: 'Воронеж' },
+  { value: 'Самара', label: 'Самара' },
+  { value: 'Уфа', label: 'Уфа' },
+  { value: 'Краснодар', label: 'Краснодар' },
+  { value: 'Челябинск', label: 'Челябинск' },
+  { value: 'Омск', label: 'Омск' },
+  { value: 'Ростов-на-Дону', label: 'Ростов-на-Дону' },
+  { value: 'Пермь', label: 'Пермь' },
+  { value: 'Волгоград', label: 'Волгоград' },
+  { value: 'Красноярск', label: 'Красноярск' },
+  { value: 'Тюмень', label: 'Тюмень' },
+  { value: 'Саратов', label: 'Саратов' },
+  { value: 'Ярославль', label: 'Ярославль' },
+  { value: 'Минск', label: 'Минск' },
 ];
 
 const EXPERIENCE_LEVELS = [
@@ -41,21 +66,55 @@ const EXPERIENCE_LEVELS = [
   { value: 'moreThan6', label: 'Более 6 лет' },
 ];
 
+const EMPLOYMENTS = [
+  { value: 'full', label: 'Полная занятость' },
+  { value: 'part', label: 'Частичная занятость' },
+  { value: 'project', label: 'Проектная работа' },
+  { value: 'volunteer', label: 'Волонтёрство' },
+  { value: 'probation', label: 'Стажировка' },
+];
+
+const SCHEDULES = [
+  { value: 'fullDay', label: 'Полный день' },
+  { value: 'shift', label: 'Сменный график' },
+  { value: 'flexible', label: 'Гибкий график' },
+  { value: 'remote', label: 'Удалённая работа' },
+  { value: 'flyInFlyOut', label: 'Вахтовый метод' },
+];
+
 export default function MarketAnalysis() {
   const [query, setQuery] = useState('Python разработчик');
   const [area, setArea] = useState<string | undefined>(undefined);
   const [experience, setExperience] = useState<string | undefined>(undefined);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [limit, setLimit] = useState<number>(100);
+  const [employment, setEmployment] = useState<string | undefined>(undefined);
+  const [schedule, setSchedule] = useState<string | undefined>(undefined);
+  const [dateFrom, setDateFrom] = useState<string | undefined>(undefined);
+  const [dateTo, setDateTo] = useState<string | undefined>(undefined);
+  const [techMinPercent, setTechMinPercent] = useState<number>(0);
   const [analyze, { data, isLoading, error }] = useAnalyzeMarketMutation();
+
+  // Theory courses / generation
+  const { data: theoryCourses } = useGetTheoryCoursesQuery();
+  const navigate = useNavigate();
 
   const handleAnalyze = async () => {
     if (!query.trim()) return;
-    
-    await analyze({
+
+    const payload: AnalysisRequest = {
       query: query.trim(),
-      area,
-      experience,
-      limit: 100,
-    });
+      limit,
+    };
+
+    if (area) payload.area = area;
+    if (experience) payload.experience = experience;
+    if (employment) payload.employment = employment;
+    if (schedule) payload.schedule = schedule;
+    if (dateFrom) payload.date_from = dateFrom;
+    if (dateTo) payload.date_to = dateTo;
+
+    await analyze(payload);
   };
 
   const formatSalary = (amount?: number) => {
@@ -63,18 +122,116 @@ export default function MarketAnalysis() {
     return new Intl.NumberFormat('ru-RU').format(Math.round(amount)) + ' ₽';
   };
 
-  const renderSkillList = (skills: MarketAnalysisResponse['technologies'], title: string) => {
+  const handleSkillClick = async (skill: string) => {
+    const skillLower = skill.toLowerCase().trim();
+
+    // Если курсы ещё не подгрузились
+    const courses = theoryCourses || [];
+
+    const matches = courses.filter((course) => {
+      const inTitle = course.title.toLowerCase().includes(skillLower);
+      const inTopic = course.topic.toLowerCase().includes(skillLower);
+      return inTitle || inTopic;
+    });
+
+    // Если есть подходящие курсы – даём выбрать
+    if (matches.length > 0) {
+      Modal.info({
+        title: `Курсы по "${skill}"`,
+        icon: <WarningOutlined style={{ color: '#000' }} />,
+        content: (
+          <div style={{ color: '#000' }}>
+            <p>Выберите курс, к которому перейти:</p>
+            <Space
+              direction="vertical"
+              style={{ marginTop: 8, width: '100%' }}
+            >
+              {matches.map((course) => (
+                <Button
+                  key={course.id}
+                  type="default"
+                  block
+                  style={{
+                    color: '#000',
+                    borderColor: '#000',
+                    textAlign: 'left',
+                  }}
+                  onClick={() => {
+                    Modal.destroyAll();
+                    navigate(`/theory/courses/${course.id}`);
+                  }}
+                >
+                  <span
+                    style={{
+                      display: 'block',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {course.title}
+                  </span>
+                </Button>
+              ))}
+            </Space>
+          </div>
+        ),
+        okText: 'Закрыть',
+        okButtonProps: {
+          style: { backgroundColor: '#000', borderColor: '#000', color: '#fff' },
+        },
+      });
+      return;
+    }
+
+    // Курс не найден – предложить перейти на страницу создания курса
+    Modal.confirm({
+      title: `Сгенерировать курс по "${skill}"?`,
+      okText: 'Да',
+      cancelText: 'Нет',
+      icon: <WarningOutlined style={{ color: '#000' }} />,
+      okButtonProps: {
+        style: { backgroundColor: '#000', borderColor: '#000', color: '#fff' },
+      },
+      cancelButtonProps: {
+        style: { backgroundColor: '#fff', borderColor: '#000', color: '#000' },
+      },
+      onOk: () => {
+        Modal.destroyAll();
+        // Переходим на страницу создания курса с предзаполненной темой
+        navigate(`/theory/create?topic=${encodeURIComponent(skill)}`);
+      },
+    });
+  };
+
+  const renderSkillList = (
+    skills: MarketAnalysisResponse['technologies'],
+    title: string,
+    minPercent?: number
+  ) => {
     if (!skills || skills.length === 0) return null;
+
+    const filtered = typeof minPercent === 'number'
+      ? skills.filter((s) => s.percentage >= minPercent)
+      : skills;
+
+    if (filtered.length === 0) {
+      return null;
+    }
 
     return (
       <Card title={title} className="mb-4">
         <List
-          dataSource={skills}
+          dataSource={filtered}
           renderItem={(item) => (
             <List.Item>
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-3">
-                  <Tag color="blue" style={{ fontSize: '14px', padding: '4px 12px' }}>
+                  <Tag
+                    color="blue"
+                    style={{ fontSize: '14px', padding: '4px 12px', cursor: 'pointer' }}
+                    onClick={() => handleSkillClick(item.skill)}
+                  >
                     {item.skill}
                   </Tag>
                   <Text type="secondary">
@@ -120,7 +277,7 @@ export default function MarketAnalysis() {
             </div>
 
             <Row gutter={16}>
-              <Col span={12}>
+              <Col span={8}>
                 <Text strong>Регион (опционально)</Text>
                 <Select
                   size="large"
@@ -129,6 +286,8 @@ export default function MarketAnalysis() {
                   allowClear
                   value={area}
                   onChange={setArea}
+                  showSearch
+                  optionFilterProp="children"
                 >
                   {AREAS.map((a) => (
                     <Option key={a.value} value={a.value}>
@@ -137,12 +296,12 @@ export default function MarketAnalysis() {
                   ))}
                 </Select>
               </Col>
-              <Col span={12}>
-                <Text strong>Опыт работы (опционально)</Text>
+              <Col span={8}>
+                <Text strong>Опыт</Text>
                 <Select
                   size="large"
                   className="w-full mt-2"
-                  placeholder="Выберите уровень опыта"
+                  placeholder="Уровень опыта"
                   allowClear
                   value={experience}
                   onChange={setExperience}
@@ -154,7 +313,107 @@ export default function MarketAnalysis() {
                   ))}
                 </Select>
               </Col>
+              <Col span={8}>
+                <Text strong>Количество вакансий для анализа</Text>
+                <InputNumber
+                  min={1}
+                  max={1000}
+                  size="large"
+                  className="w-full mt-2"
+                  value={limit}
+                  onChange={(value) => setLimit(value || 1)}
+                />
+              </Col>
             </Row>
+
+            {/* Переключатель расширенных фильтров */}
+            <Button
+              type="default"
+              onClick={() => setShowAdvanced((prev) => !prev)}
+              style={{ borderColor: '#000', color: '#000' }}
+            >
+              {showAdvanced ? 'Скрыть расширенные фильтры' : 'Показать расширенные фильтры'}
+            </Button>
+
+            {showAdvanced && (
+              <>
+                <Divider />
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Text strong>Формат занятости</Text>
+                    <Select
+                      size="large"
+                      className="w-full mt-2"
+                      placeholder="Выберите формат занятости"
+                      allowClear
+                      value={employment}
+                      onChange={(value) => {
+                        if (value === 'any') {
+                          setEmployment(undefined);
+                        } else {
+                          setEmployment(value);
+                        }
+                      }}
+                    >
+                      <Option value="any">Любой формат</Option>
+                      {EMPLOYMENTS.map((e) => (
+                        <Option key={e.value} value={e.value}>
+                          {e.label}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Col>
+                  <Col span={12}>
+                    <Text strong>График работы</Text>
+                    <Select
+                      size="large"
+                      className="w-full mt-2"
+                      placeholder="Выберите график работы"
+                      allowClear
+                      value={schedule}
+                      onChange={(value) => {
+                        if (value === 'any') {
+                          setSchedule(undefined);
+                        } else {
+                          setSchedule(value);
+                        }
+                      }}
+                    >
+                      <Option value="any">Любой график</Option>
+                      {SCHEDULES.map((s) => (
+                        <Option key={s.value} value={s.value}>
+                          {s.label}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Col>
+                </Row>
+
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Text strong>Дата публикации с</Text>
+                    <Input
+                      type="date"
+                      size="large"
+                      className="w-full mt-2"
+                      value={dateFrom}
+                      onChange={(e) => setDateFrom(e.target.value || undefined)}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <Text strong>Дата публикации по</Text>
+                    <Input
+                      type="date"
+                      size="large"
+                      className="w-full mt-2"
+                      value={dateTo}
+                      onChange={(e) => setDateTo(e.target.value || undefined)}
+                    />
+                  </Col>
+                </Row>
+
+              </>
+            )}
 
             <Button
               type="primary"
@@ -174,9 +433,10 @@ export default function MarketAnalysis() {
           <Alert
             message="Ошибка анализа"
             description="Не удалось проанализировать вакансии. Попробуйте позже."
-            type="error"
             showIcon
+            icon={<WarningOutlined style={{ color: '#000' }} />}
             className="mb-6"
+            style={{ backgroundColor: '#fff', borderColor: '#000', color: '#000' }}
           />
         )}
 
@@ -193,18 +453,23 @@ export default function MarketAnalysis() {
         {/* Results */}
         {data && !isLoading && (
           <div>
+            {/* No data case */}
+            {data.total_vacancies === 0 && (
+              <Card className="mb-6" style={{ backgroundColor: '#fff', borderColor: '#000' }}>
+                <div className="text-center py-6">
+                  <Title level={4} className="mb-2">
+                    По данному запросу вакансий не найдено
+                  </Title>
+                  <Text>
+                    Попробуйте изменить запрос, регион или ослабить фильтры.
+                  </Text>
+                </div>
+              </Card>
+            )}
+
             {/* Summary Stats */}
             <Row gutter={16} className="mb-6">
-              <Col span={8}>
-                <Card>
-                  <Statistic
-                    title="Найдено вакансий"
-                    value={data.total_vacancies}
-                    prefix={<SearchOutlined />}
-                  />
-                </Card>
-              </Col>
-              <Col span={8}>
+              <Col span={12}>
                 <Card>
                   <Statistic
                     title="Средняя зарплата"
@@ -213,7 +478,7 @@ export default function MarketAnalysis() {
                   />
                 </Card>
               </Col>
-              <Col span={8}>
+              <Col span={12}>
                 <Card>
                   <Statistic
                     title="Рекомендуемых курсов"
@@ -237,7 +502,12 @@ export default function MarketAnalysis() {
               >
                 <Space wrap>
                   {data.recommended_courses.map((course) => (
-                    <Tag key={course} color="green" style={{ fontSize: '14px', padding: '4px 12px' }}>
+                    <Tag
+                      key={course}
+                      color="green"
+                      style={{ fontSize: '14px', padding: '4px 12px', cursor: 'pointer' }}
+                      onClick={() => handleSkillClick(course)}
+                    >
                       {course}
                     </Tag>
                   ))}
@@ -257,21 +527,53 @@ export default function MarketAnalysis() {
                     <Text>Рассмотрите изучение этих навыков для повышения конкурентоспособности:</Text>
                     <div className="mt-2">
                       {data.skill_gaps.map((gap) => (
-                        <Tag key={gap} color="orange" className="mb-2">
+                        <Tag
+                          key={gap}
+                          color="orange"
+                          className="mb-2"
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => handleSkillClick(gap)}
+                        >
                           {gap}
                         </Tag>
                       ))}
                     </div>
                   </div>
                 }
-                type="warning"
-                icon={<WarningOutlined />}
+                showIcon
+                icon={<WarningOutlined style={{ color: '#000' }} />}
                 className="mb-6"
+                style={{ backgroundColor: '#fff', borderColor: '#000', color: '#000' }}
               />
             )}
 
+            {/* Technology filter controls */}
+            <Card className="mb-6">
+              <Text strong>Фильтр по технологиям</Text>
+              <Paragraph type="secondary" className="mt-1 mb-3">
+                Показывать только те технологии, которые встречаются не реже указанного процента вакансий.
+              </Paragraph>
+              <Row align="middle" gutter={16}>
+                <Col span={18}>
+                  <Slider
+                    min={0}
+                    max={20}
+                    step={1}
+                    value={techMinPercent}
+                    onChange={(value) => setTechMinPercent(value as number)}
+                  />
+                </Col>
+                <Col span={6}>
+                  <Statistic
+                    title="Минимальный процент"
+                    value={`${techMinPercent} %`}
+                  />
+                </Col>
+              </Row>
+            </Card>
+
             {/* Technologies */}
-            {renderSkillList(data.technologies, 'Популярные технологии')}
+            {renderSkillList(data.technologies, 'Популярные технологии', techMinPercent)}
 
             {/* Frameworks */}
             {renderSkillList(data.frameworks, 'Фреймворки и библиотеки')}

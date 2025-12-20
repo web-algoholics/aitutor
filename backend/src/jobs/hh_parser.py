@@ -30,7 +30,13 @@ class HHParser:
         area: Optional[str] = None,
         experience: Optional[str] = None,
         per_page: int = 100,
-        page: int = 0
+        page: int = 0,
+        *,
+        employment: Optional[str] = None,
+        schedule: Optional[str] = None,
+        only_with_salary: bool = False,
+        date_from: Optional[str] = None,
+        date_to: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Поиск вакансий через hh.ru API
@@ -49,14 +55,33 @@ class HHParser:
             "text": query,
             "per_page": min(per_page, 100),
             "page": page,
-            "only_with_salary": False,
+            # флаг only_with_salary позволяет фильтровать вакансии с указанной зарплатой
+            "only_with_salary": only_with_salary,
         }
         
         if area:
-            params["area"] = area
+            # если передан числовой код региона HH – используем как area
+            if isinstance(area, str) and area.strip().isdigit():
+                params["area"] = area.strip()
+            else:
+                # иначе добавляем регион в текст запроса, чтобы искать по названию города
+                params["text"] = f"{query} {area}".strip()
         
         if experience:
             params["experience"] = experience
+
+        # Дополнительные фильтры HH API
+        if employment:
+            params["employment"] = employment
+
+        if schedule:
+            params["schedule"] = schedule
+
+        if date_from:
+            params["date_from"] = date_from
+
+        if date_to:
+            params["date_to"] = date_to
         
         try:
             response = await self.client.get("/vacancies", params=params)
@@ -213,7 +238,13 @@ class HHParser:
         query: str,
         area: Optional[str] = None,
         experience: Optional[str] = None,
-        limit: int = 100
+        limit: int = 100,
+        *,
+        employment: Optional[str] = None,
+        schedule: Optional[str] = None,
+        only_with_salary: bool = False,
+        date_from: Optional[str] = None,
+        date_to: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """
         Получить и нормализовать вакансии
@@ -231,7 +262,12 @@ class HHParser:
                 area=area,
                 experience=experience,
                 per_page=per_page,
-                page=page
+                page=page,
+                employment=employment,
+                schedule=schedule,
+                only_with_salary=only_with_salary,
+                date_from=date_from,
+                date_to=date_to,
             )
             
             items = result.get("items", [])
