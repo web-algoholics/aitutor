@@ -54,10 +54,12 @@ export interface AnalysisRequest {
   date_to?: string;
 }
 
+import { getApiUrl } from '../utils/config';
+
 export const jobsApi = createApi({
   reducerPath: 'jobsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: (process.env as any).REACT_APP_API_URL || 'http://localhost:8000',
+    baseUrl: getApiUrl(),
     credentials: 'include',
   }),
   tagTypes: ['MarketAnalysis'],
