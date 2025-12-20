@@ -1,9 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { getApiUrl } from '../utils/config';
 
 export const profileApi = createApi({
   reducerPath: 'profileApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: (process.env as any).REACT_APP_API_URL || 'http://localhost:8000',
+    baseUrl: getApiUrl(),
     credentials: 'include',
   }),
   tagTypes: ['Profile'],
