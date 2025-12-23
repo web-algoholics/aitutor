@@ -34,6 +34,10 @@ import QuizzesListPage from './pages/Quizzes/QuizzesListPage';
 import AnkiDecksListPage from './pages/Anki/AnkiDecksListPage';
 import AnkiPracticePage from './pages/Anki/AnkiPracticePage';
 
+// Help Center & AI Assistant
+import HelpCenterPage from './pages/HelpCenterPage';
+import GigaChatAssistantPage from './pages/GigaChatAssistantPage';
+
 function App() {
   return (
     <Provider store={store}>
@@ -75,6 +79,10 @@ function App() {
               {/* Anki Routes */}
               <Route path="/anki" element={<AnkiDecksListPage />} />
               <Route path="/anki/decks/:deckId/practice" element={<AnkiPracticePage />} />
+
+              {/* Help Center */}
+              <Route path="/help" element={<HelpCenterPage />} />
+              <Route path="/help/chat" element={<GigaChatAssistantPage />} />
             </Route>
 
           </Routes>

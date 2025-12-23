@@ -17,6 +17,7 @@ from jobs.routing import router as jobs_router
 from theory.routing import router as theory_router
 from quizzes.routing import router as quizzes_router
 from anki.routing import router as anki_router
+from chat.routing import router as chat_router
 
 
 # Configure logging
@@ -104,6 +105,7 @@ app.include_router(quizzes_router)
 
 # Anki router
 app.include_router(anki_router)
+app.include_router(chat_router)
 
 # --- Example Protected Route ---
 @app.get("/protected")
