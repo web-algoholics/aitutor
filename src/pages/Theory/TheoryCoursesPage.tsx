@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../../contexts/ThemeContext';
 import {
   Card, Typography, Button, Space, Tag, Progress,
   Skeleton, message, Empty, Alert, Row, Col,
@@ -17,6 +18,7 @@ const { Title, Text, Paragraph } = Typography;
 const TheoryCoursesPage: React.FC = () => {
   const navigate = useNavigate();
   const { data: courses, isLoading, error, refetch } = useGetTheoryCoursesQuery();
+  const { theme } = useTheme();
 
   const handleCreateCourse = () => {
     navigate('/theory/create');
@@ -77,7 +79,7 @@ const TheoryCoursesPage: React.FC = () => {
             size="large"
             icon={<PlusOutlined />}
             onClick={handleCreateCourse}
-            style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
+            style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
           >
             Создать курс
           </Button>
@@ -117,7 +119,7 @@ const TheoryCoursesPage: React.FC = () => {
                     width: '100%',
                     border: '2px solid #666666',
                     borderRadius: '12px',
-                    backgroundColor: '#fff',
+                    backgroundColor: theme === 'dark' ? '#1f1f1f' : '#fff',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                     display: 'flex',
                     flexDirection: 'column',
@@ -138,8 +140,8 @@ const TheoryCoursesPage: React.FC = () => {
                 >
                   {/* Module count in top right corner */}
                   <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <AppstoreOutlined style={{ fontSize: '18px', color: '#000' }} />
-                    <Text style={{ fontSize: '16px', color: '#000', fontWeight: 500 }}>
+                        <AppstoreOutlined style={{ fontSize: '18px', color: '#2B5797' }} />
+                    <Text style={{ fontSize: '16px', color: '#2B5797', fontWeight: 500 }}>
                       {course.modules_count}
                     </Text>
                   </div>
@@ -148,14 +150,14 @@ const TheoryCoursesPage: React.FC = () => {
                     {/* Large icon */}
                     <div style={{ marginBottom: '16px' }}>
                       {course.is_completed ? (
-                        <CheckCircleOutlined style={{ fontSize: '64px', color: '#000' }} />
+                        <CheckCircleOutlined style={{ fontSize: '64px', color: '#2B5797' }} />
                       ) : (
-                        <BookOutlined style={{ fontSize: '64px', color: '#000' }} />
+                        <BookOutlined style={{ fontSize: '64px', color: '#2B5797' }} />
                       )}
                     </div>
                     
                     <div style={{ minHeight: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', width: '100%' }}>
-                      <Text style={{ margin: 0, textAlign: 'center', color: '#000', fontSize: '20px', fontWeight: 400, display: 'block' }}>
+                      <Text style={{ margin: 0, textAlign: 'center', color: theme === 'dark' ? '#fafafa' : '#000', fontSize: '20px', fontWeight: 400, display: 'block' }}>
                         {course.title}
                       </Text>
                     </div>
@@ -187,7 +189,7 @@ const TheoryCoursesPage: React.FC = () => {
               <Button 
                 icon={<PlusOutlined />} 
                 onClick={handleCreateCourse}
-                style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
+                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
               >
                 Создать первый курс
               </Button>

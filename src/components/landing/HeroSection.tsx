@@ -80,10 +80,11 @@ export default function HeroSection() {
           <Logo
             to={undefined}
             className="text-4xl md:text-5xl"
+            genColor={logoWhite ? '#ffffff' : '#000'}
+            dotColor={logoWhite ? '#ffffff' : '#000'}
             style={{
-              color: logoWhite ? '#ffffff' : '#000000',
               textShadow: logoWhite ? '0 0 14px rgba(0,0,0,0.25)' : 'none',
-              transition: 'color 1.2s ease, text-shadow 1.2s ease',
+              transition: 'text-shadow 1.2s ease',
               pointerEvents: 'none',
               cursor: 'default',
             }}
@@ -122,12 +123,18 @@ export default function HeroSection() {
               <span className="text-fade-to-white">с помощью ИИ</span>
             </Title>
             <Paragraph className="text-xl text-fade-to-white mb-8 max-w-2xl mx-auto">
-              EdGen — платформа для генерации персонализированных учебных курсов.
+              EdGen - платформа для генерации персонализированных учебных курсов.
               Просто задайте тему, и наш ИИ соберёт для вас полноценную программу
               с уроками, заданиями и проектами.
             </Paragraph>
             <Space size="large" className="flex-wrap justify-center text-fade-to-white">
-              <Button type="primary" size="large" className="h-12 px-8" onClick={() => handleNavigate('/register')}>
+              <Button 
+                type="primary" 
+                size="large" 
+                className="h-12 px-8" 
+                onClick={() => handleNavigate('/register')}
+                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+              >
                 Начать бесплатно
               </Button>
               <Button size="large" className="h-12 px-8" onClick={() => handleNavigate('/login')}>

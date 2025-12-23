@@ -2,7 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ConfigProvider } from 'antd';
 import { store } from './app/store';
-import { designTheme } from './theme/antd-theme';
+import { getTheme } from './theme/antd-theme';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
@@ -34,11 +35,12 @@ import AnkiDecksListPage from './pages/Anki/AnkiDecksListPage';
 import AnkiPracticePage from './pages/Anki/AnkiPracticePage';
 import CreateAnkiDeckPage from './pages/Anki/CreateAnkiDeckPage';
 
-function App() {
+function AppContent() {
+  const { theme } = useTheme();
+  
   return (
-    <Provider store={store}>
-      <ConfigProvider theme={designTheme}>
-        <BrowserRouter basename='/aitutor'>
+    <ConfigProvider theme={getTheme(theme)}>
+      <BrowserRouter basename='/aitutor'>
           <Routes>
 
             {/* Public routes (no navbar) */}
@@ -77,8 +79,17 @@ function App() {
             </Route>
 
           </Routes>
-        </BrowserRouter>
-      </ConfigProvider>
+      </BrowserRouter>
+    </ConfigProvider>
+  );
+}
+
+function App() {
+  return (
+    <Provider store={store}>
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
     </Provider>
   );
 }

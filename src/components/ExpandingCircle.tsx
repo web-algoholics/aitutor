@@ -5,7 +5,9 @@ interface ExpandingCircleProps {
   autoStart?: boolean;
   delay?: number;
   className?: string;
+  onExpandStart?: () => void;
   onAnimationStart?: () => void;
+  onCollapseComplete?: () => void;
 }
 
 export interface ExpandingCircleRef {
@@ -17,7 +19,9 @@ const ExpandingCircle = forwardRef<ExpandingCircleRef, ExpandingCircleProps>(({
   autoStart = true, 
   delay = 1000,
   className = '',
-  onAnimationStart
+  onExpandStart,
+  onAnimationStart,
+  onCollapseComplete
 }, ref) => {
   const [animationStarted, setAnimationStarted] = useState(false);
   const [dotExpanding, setDotExpanding] = useState(false);
@@ -25,6 +29,9 @@ const ExpandingCircle = forwardRef<ExpandingCircleRef, ExpandingCircleProps>(({
 
   const startAnimation = () => {
     if (!dotExpanding && !animationStarted && !collapsing) {
+      if (onExpandStart) {
+        onExpandStart(); // Уведомляем о начале расширения
+      }
       setDotExpanding(true);
       setTimeout(() => {
         setAnimationStarted(true);
@@ -42,6 +49,9 @@ const ExpandingCircle = forwardRef<ExpandingCircleRef, ExpandingCircleProps>(({
         setAnimationStarted(false);
         setDotExpanding(false);
         setCollapsing(false);
+        if (onCollapseComplete) {
+          onCollapseComplete();
+        }
       }, 300);
     }
   };

@@ -17,6 +17,7 @@ import {
   useMarkLessonCompletedMutation
 } from '../../services/theoryApi';
 import PageContainer from '../../components/PageContainer';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -24,6 +25,7 @@ const TheoryLessonPage: React.FC = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
   const lessonIdNum = parseInt(lessonId!);
+  const { theme } = useTheme();
 
   const { data: content, isLoading: contentLoading, error: contentError, refetch } = useGetLessonContentQuery(lessonIdNum);
   const [generateContent, { isLoading: generating }] = useGenerateLessonContentMutation();
@@ -164,7 +166,7 @@ const TheoryLessonPage: React.FC = () => {
                   const isInline = !className?.includes('language-');
                   return !isInline && match ? (
                     <pre style={{
-                      backgroundColor: '#f6f8fa',
+                      backgroundColor: theme === 'dark' ? '#2a2a2a' : '#f6f8fa',
                       padding: '16px',
                       borderRadius: '6px',
                       overflow: 'auto',
@@ -177,7 +179,7 @@ const TheoryLessonPage: React.FC = () => {
                     </pre>
                   ) : (
                     <code style={{
-                      backgroundColor: '#f3f4f6',
+                      backgroundColor: theme === 'dark' ? '#2a2a2a' : '#f3f4f6',
                       padding: '2px 4px',
                       borderRadius: '3px',
                       fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
@@ -207,7 +209,7 @@ const TheoryLessonPage: React.FC = () => {
         </Card>
 
         {/* Footer */}
-        <Card size="small" bordered={false} className="bg-gray-50">
+        <Card size="small" bordered={false} style={{ backgroundColor: theme === 'dark' ? '#1f1f1f' : '#f9fafb' }}>
           <div className="text-center">
             <Space direction="vertical" align="center">
               <Space>

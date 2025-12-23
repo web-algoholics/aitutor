@@ -3,6 +3,7 @@ import { Typography, Button } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import ExpandingCircle, { ExpandingCircleRef } from './ExpandingCircle';
+import ThemeToggle from './ThemeToggle';
 
 const { Title } = Typography;
 
@@ -35,6 +36,7 @@ export default function AuthLayout({ children, title, animationDelay = 1000 }: A
   return (
     <CircleAnimationContext.Provider value={contextValue}>
       <div className="min-h-screen bg-gray-100 flex items-center justify-center p-2 sm:p-4 relative">
+        <ThemeToggle zIndex={1001} />
         <ExpandingCircle
           ref={circleRef}
           autoStart={true}

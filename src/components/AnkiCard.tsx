@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Typography } from 'antd';
+import { useTheme } from '../contexts/ThemeContext';
 
 const { Title, Text } = Typography;
 
@@ -17,6 +18,7 @@ export default function AnkiCard({ front, back, isFlipped, onFlip, onSwipeLeft, 
   const [isDragging, setIsDragging] = useState(false);
   const startX = useRef(0);
   const hasMoved = useRef(false);
+  const { theme } = useTheme();
 
   const SWIPE_THRESHOLD = 100;
   const MAX_SWIPE_DISTANCE = 150; // Maximum swipe distance in pixels (limited to container width)
@@ -147,7 +149,7 @@ export default function AnkiCard({ front, back, isFlipped, onFlip, onSwipeLeft, 
             top: '50%',
             left: '20px',
             transform: 'translateY(-50%)',
-            backgroundColor: '#000',
+            backgroundColor: '#2B5797',
             color: '#fff',
             padding: '12px 16px',
             borderRadius: '8px',
@@ -166,7 +168,7 @@ export default function AnkiCard({ front, back, isFlipped, onFlip, onSwipeLeft, 
             top: '50%',
             right: '20px',
             transform: 'translateY(-50%)',
-            backgroundColor: '#000',
+            backgroundColor: '#2B5797',
             color: '#fff',
             padding: '12px 16px',
             borderRadius: '8px',
@@ -216,17 +218,17 @@ export default function AnkiCard({ front, back, isFlipped, onFlip, onSwipeLeft, 
               padding: '32px',
               border: '2px solid #666666',
               borderRadius: '12px',
-              backgroundColor: '#fff',
+              backgroundColor: theme === 'dark' ? '#1f1f1f' : '#fff',
               boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
             }}
           >
             <div style={{ textAlign: 'center', width: '100%', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <Text style={{ display: 'block', marginBottom: '16px', fontSize: '14px', color: '#000' }}>
+              <Text style={{ display: 'block', marginBottom: '16px', fontSize: '14px', color: theme === 'dark' ? '#fafafa' : '#000' }}>
                 Вопрос
               </Text>
               <Title level={2} style={{ margin: 0 }}>{front}</Title>
             </div>
-            <Text style={{ fontSize: '12px', color: '#000', opacity: 0.5 }}>
+            <Text style={{ fontSize: '12px', color: theme === 'dark' ? '#fafafa' : '#000', opacity: 0.5 }}>
               Нажмите, чтобы показать ответ
             </Text>
           </div>
@@ -246,13 +248,13 @@ export default function AnkiCard({ front, back, isFlipped, onFlip, onSwipeLeft, 
               padding: '32px',
               border: '2px solid #666666',
               borderRadius: '12px',
-              backgroundColor: '#fff',
+              backgroundColor: theme === 'dark' ? '#1f1f1f' : '#fff',
               boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
               transform: 'rotateY(180deg)',
             }}
           >
             <div style={{ textAlign: 'center', width: '100%', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <Text style={{ display: 'block', marginBottom: '16px', fontSize: '14px', color: '#000' }}>
+              <Text style={{ display: 'block', marginBottom: '16px', fontSize: '14px', color: theme === 'dark' ? '#fafafa' : '#000' }}>
                 Ответ
               </Text>
               <Title level={3} style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{back}</Title>

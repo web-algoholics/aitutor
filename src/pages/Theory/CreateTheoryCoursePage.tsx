@@ -104,7 +104,7 @@ const CreateTheoryCoursePage: React.FC = () => {
                 size="large"
                 loading={isLoading}
                 disabled={isLoading}
-                style={{ width: '100%', height: '48px', fontSize: '16px', backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
+                style={{ width: '100%', height: '48px', fontSize: '16px', backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
               >
                 {isLoading ? 'Создаю курс...' : 'Создать курс'}
               </Button>
@@ -119,7 +119,7 @@ const CreateTheoryCoursePage: React.FC = () => {
               <Button
                 key={topic}
                 onClick={() => form.setFieldsValue({ topic })}
-                style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
+                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
               >
                 {topic}
               </Button>

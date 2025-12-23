@@ -57,13 +57,15 @@ export default function ForgotPasswordPage() {
   return (
     <AuthLayout title="Восстановление пароля">
       {contextHolder}
-      <div className="max-w-md mx-auto py-4">
-        <Title level={4} className="text-center mb-6">Сброс пароля</Title>
+      <Form<ForgotPasswordValues> 
+        form={form} 
+        layout="vertical" 
+        onFinish={onFinish}
+        style={{ width: 'min(320px, 100%)', margin: '0 auto' }}
+      >
         <Text type="secondary" className="block text-center mb-6">
           Введите email — мы отправим ссылку для сброса пароля.
         </Text>
-
-        <Form<ForgotPasswordValues> form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item
             name="email"
             rules={[
@@ -71,7 +73,7 @@ export default function ForgotPasswordPage() {
               { type: 'email', message: 'Некорректный формат email' },
             ]}
           >
-            <Input prefix={<MailOutlined />} placeholder="you@example.com" size="large" />
+            <Input prefix={<MailOutlined style={{ color: '#2B5797' }} />} placeholder="you@example.com" size="large" />
           </Form.Item>
 
           <Form.Item>
@@ -79,9 +81,7 @@ export default function ForgotPasswordPage() {
               Отправить ссылку
             </Button>
           </Form.Item>
-
-        </Form>
-      </div>
+      </Form>
     </AuthLayout>
   );
 }

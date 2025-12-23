@@ -5,6 +5,7 @@ import LoadingDot from '../../components/LoadingDot';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import Confetti from 'react-confetti';
 import { useGetDeckQuery } from '../../services/ankiApi';
+import { useTheme } from '../../contexts/ThemeContext';
 import PageContainer from '../../components/PageContainer';
 import AnkiCard from '../../components/AnkiCard';
 
@@ -13,6 +14,7 @@ const { Title, Text } = Typography;
 export default function AnkiPracticePage() {
   const { deckId } = useParams<{ deckId: string }>();
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const { data: deck, isLoading } = useGetDeckQuery(parseInt(deckId!));
   
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -32,7 +34,7 @@ export default function AnkiPracticePage() {
         <Card bordered={false} className="min-h-[300px] flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <LoadingDot size="large" />
-            <Text style={{ color: '#000' }}>Загружаем карточки...</Text>
+            <Text style={{ color: '#2B5797' }}>Загружаем карточки...</Text>
           </div>
         </Card>
       </PageContainer>
@@ -119,11 +121,11 @@ export default function AnkiPracticePage() {
         <Card bordered={false}>
           <div className="flex items-center justify-between mb-4">
             <Title level={3}>{deck.title}</Title>
-            <Text style={{ color: '#000', opacity: 0.5 }}>
+            <Text style={{ color: theme === 'dark' ? '#a1a1aa' : '#000', opacity: theme === 'dark' ? 1 : 0.5 }}>
               Карточка {currentIndex + 1} из {deck.cards.length}
             </Text>
           </div>
-          <Progress percent={progress} strokeColor="#000" />
+          <Progress percent={progress} strokeColor="#2B5797" />
         </Card>
 
         {/* Card */}
@@ -167,7 +169,7 @@ export default function AnkiPracticePage() {
             <Button
               size="large"
               onClick={handleRestart}
-              style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
+              style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
             >
               Ещё раз
             </Button>
@@ -177,7 +179,7 @@ export default function AnkiPracticePage() {
         {/* Swipe hint - only show when not completed */}
         {!allCardsReviewed && (
           <div className="text-center">
-            <Text style={{ fontSize: '16px', color: '#000', fontWeight: 500 }}>
+            <Text style={{ fontSize: '16px', color: '#2B5797', fontWeight: 500 }}>
               ← Свайп влево — не знаю | Свайп вправо — знаю →
             </Text>
           </div>
@@ -190,7 +192,7 @@ export default function AnkiPracticePage() {
               <Button
                 disabled={currentIndex === 0}
                 onClick={handlePrevious}
-                style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
+                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff', border: 'none' }}
               >
                 Предыдущая карточка
               </Button>

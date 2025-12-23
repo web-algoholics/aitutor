@@ -21,10 +21,12 @@ export default function RegisterPage() {
     to,
     className,
     children,
+    style,
   }: {
     to: string;
     className?: string;
     children: React.ReactNode;
+    style?: React.CSSProperties;
   }) => {
     const { collapse } = useCircleAnimation();
     const innerNavigate = useNavigate();
@@ -33,6 +35,7 @@ export default function RegisterPage() {
       <Link
         to={to}
         className={className}
+        style={style}
         onClick={(e) => {
           e.preventDefault();
           collapse();
@@ -101,7 +104,7 @@ export default function RegisterPage() {
           rules={[{ required: true, message: 'Введите имя пользователя' }]}
         >
           <Input 
-            prefix={<UserOutlined />} 
+            prefix={<UserOutlined style={{ color: '#2B5797' }} />} 
             placeholder="john_doe"
             style={{
               color: '#000'
@@ -119,7 +122,7 @@ export default function RegisterPage() {
           ]}
         >
           <Input 
-            prefix={<MailOutlined />} 
+            prefix={<MailOutlined style={{ color: '#2B5797' }} />} 
             placeholder="you@example.com"
             style={{
               color: '#000'
@@ -137,7 +140,7 @@ export default function RegisterPage() {
           ]}
         >
           <Input.Password 
-            prefix={<LockOutlined />} 
+            prefix={<LockOutlined style={{ color: '#2B5797' }} />} 
             placeholder="Минимум 8 символов"
             style={{
               color: '#000'
@@ -147,7 +150,13 @@ export default function RegisterPage() {
 
         {/* Submit */}
         <Form.Item>
-          <Button type="primary" htmlType="submit" loading={isLoading} block>
+          <Button 
+            type="primary" 
+            htmlType="submit" 
+            loading={isLoading} 
+            block
+            style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+          >
             Зарегистрироваться
           </Button>
         </Form.Item>
@@ -156,7 +165,7 @@ export default function RegisterPage() {
         <div className="text-center text-sm">
           <div>Уже есть аккаунт?</div>
           <div>
-            <CollapseLink to="/login" className="text-sm hover:text-black hover:underline">Войти</CollapseLink>
+            <CollapseLink to="/login" className="text-sm hover:text-black hover:underline" style={{ color: '#2B5797' }}>Войти</CollapseLink>
           </div>
         </div>
       </Form>

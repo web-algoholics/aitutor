@@ -4,6 +4,7 @@ import FeaturesSection from '../components/landing/FeaturesSection';
 import HowItWorksSection from '../components/landing/HowItWorksSection';
 import BenefitsSection from '../components/landing/BenefitsSection';
 import Footer from '../components/Footer';
+import ThemeToggle from '../components/ThemeToggle';
 import { useGetCurrentUserQuery } from '../services/authApi';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,6 +21,8 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <ThemeToggle />
+      
       <HeroSection />
       <FeaturesSection />
       <HowItWorksSection />
