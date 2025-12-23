@@ -32,8 +32,9 @@ import QuizzesListPage from './pages/Quizzes/QuizzesListPage';
 import AnkiDecksListPage from './pages/Anki/AnkiDecksListPage';
 import AnkiPracticePage from './pages/Anki/AnkiPracticePage';
 
-// Help Center
+// Help Center & AI Assistant
 import HelpCenterPage from './pages/HelpCenterPage';
+import GigaChatAssistantPage from './pages/GigaChatAssistantPage';
 
 function App() {
   return (
@@ -77,6 +78,7 @@ function App() {
 
               {/* Help Center */}
               <Route path="/help" element={<HelpCenterPage />} />
+              <Route path="/help/chat" element={<GigaChatAssistantPage />} />
             </Route>
 
           </Routes>
