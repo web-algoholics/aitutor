@@ -46,8 +46,8 @@ async def update_study_streak(user: User, db: AsyncSession):
         user.current_streak += 1
         user.last_study_date = today
     else:
-        # Streak broken, reset to 1
-        user.current_streak = 1
+        # Streak broken, reset to 0
+        user.current_streak = 0
         user.last_study_date = today
     
     await db.commit()
