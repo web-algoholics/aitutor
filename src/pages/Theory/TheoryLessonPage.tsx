@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import {
   Card, Typography, Button, Space, Alert, message,
-  Tag, Divider, Progress
+  Tag, Divider
 } from 'antd';
 import LoadingDot from '../../components/LoadingDot';
 import {
@@ -94,11 +94,7 @@ const TheoryLessonPage: React.FC = () => {
     return (
       <PageContainer>
         <div className="flex justify-center items-center min-h-[400px]">
-          <Space direction="vertical" align="center">
-            <LoadingDot size="large" />
-            <Text>Загрузка...</Text>
-            <Progress percent={75} status="active" showInfo={false} style={{ width: '200px' }} />
-          </Space>
+          <LoadingDot size="large" />
         </div>
       </PageContainer>
     );

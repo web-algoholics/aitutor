@@ -13,10 +13,10 @@ import {
   Checkbox,
   Divider,
   Alert,
-  Progress,
   InputNumber,
 } from 'antd';
 import LoadingDot from '../../components/LoadingDot';
+import Confetti from 'react-confetti';
 import {
   ArrowLeftOutlined,
   CheckCircleOutlined,
@@ -93,6 +93,13 @@ const QuizPage: React.FC = () => {
     }
   }, [quizId, lessonContent, form]);
 
+  // Scroll to top when results are shown
+  useEffect(() => {
+    if (quizState === 'results') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [quizState]);
+
   const handleCreateQuiz = async (values: {
     theory_content: string;
   }) => {
@@ -132,6 +139,8 @@ const QuizPage: React.FC = () => {
 
       setQuizResult(result);
       setQuizState('results');
+      // Scroll to top when showing results
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       // Refetch quiz with answers to show explanations
       refetchQuiz();
     } catch (error: any) {
@@ -345,6 +354,7 @@ const QuizPage: React.FC = () => {
     const totalCount = quizResult.total_questions;
     const score = quizResult.score_percentage;
     const isPassed = quizResult.is_passed;
+    const allCorrect = correctCount === totalCount;
 
     // Create a map of question results for easy lookup
     const questionResultsMap = new Map(
@@ -353,6 +363,16 @@ const QuizPage: React.FC = () => {
 
     return (
       <PageContainer>
+        {/* Confetti when all answers are correct */}
+        {allCorrect && (
+          <Confetti
+            width={window.innerWidth}
+            height={window.innerHeight}
+            recycle={false}
+            numberOfPieces={200}
+            gravity={0.3}
+          />
+        )}
         <Space direction="vertical" size="large" className="w-full">
           {/* Empty div to match Create page layout - matches Button height */}
           <div style={{ height: '36px' }}></div>
@@ -376,12 +396,9 @@ const QuizPage: React.FC = () => {
               <Text className="text-2xl font-bold" style={{ color: '#2B5797' }}>
                 {score.toFixed(1)}%
               </Text>
-              <Progress
-                type="circle"
-                percent={score}
-                strokeColor="#2B5797"
-                format={(percent) => `${correctCount}/${totalCount}`}
-              />
+              <Text style={{ fontSize: '18px', color: '#ffffff', fontWeight: 500 }}>
+                {correctCount}/{totalCount}
+              </Text>
             </Space>
           </Card>
 

@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import Stats from '../components/Stats';
 import PageContainer from '../components/PageContainer';
+import LoadingDot from '../components/LoadingDot';
 
 
 const { Title, Text } = Typography;
@@ -134,7 +135,9 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <PageContainer>
-        <div className="p-8 text-center">Загрузка...</div>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <LoadingDot size="large" />
+        </div>
       </PageContainer>
     );
   }
@@ -216,8 +219,8 @@ export default function ProfilePage() {
         {profile && 'is_verified' in profile && !profile.is_verified ? (
           <div className="mt-6 p-4 rounded-lg" style={{ 
             backgroundColor: '#fefce8',
-            border: theme === 'dark' ? '2px solid #713f12' : '2px solid #eab308',
-            borderColor: theme === 'dark' ? '#713f12' : '#eab308'
+            border: theme === 'dark' ? '2px solid #1a1a1a' : '2px solid #eab308',
+            borderColor: theme === 'dark' ? '#1a1a1a' : '#eab308'
           }}>
             <Space size="middle" style={{ width: '100%', alignItems: 'flex-start' }}>
               <ExclamationCircleOutlined style={{ fontSize: '18px', marginTop: '2px', color: '#2B5797' }} />

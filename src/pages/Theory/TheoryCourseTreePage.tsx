@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import {
-  Card, Typography, List, Button, Space, Tag, Progress,
+  Card, Typography, List, Button, Space, Tag,
   Skeleton, message, Alert
 } from 'antd';
 import LoadingDot from '../../components/LoadingDot';
@@ -227,20 +227,14 @@ const TheoryCourseTreePage: React.FC = () => {
               {isGenerationInProgress && (
                 <div className="mb-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <LoadingOutlined style={{ color: '#666' }} />
+                    <LoadingOutlined style={{ color: theme === 'dark' ? '#a1a1aa' : '#666' }} />
                     <Text strong>Генерация контента уроков</Text>
                     <Button size="small" onClick={() => refetch()}>
                       Обновить
                     </Button>
                   </div>
-                  <Progress
-                    percent={generationProgress}
-                    strokeColor="#2B5797"
-                    size="small"
-                    format={(percent) => `${lessonsWithContentCount}/${totalLessonsCount} уроков`}
-                  />
                   <Text type="secondary" className="text-xs">
-                    Уроки еще генерируются.
+                    Уроки еще генерируются. {lessonsWithContentCount}/{totalLessonsCount} уроков
                   </Text>
                 </div>
               )}
@@ -279,7 +273,6 @@ const TheoryCourseTreePage: React.FC = () => {
               <Text strong>Прогресс курса</Text>
               <Text>{completedLessons}/{totalLessons} уроков</Text>
             </div>
-            <Progress percent={progressPercent} strokeColor="#2B5797" />
           </div>
         </Card>
 

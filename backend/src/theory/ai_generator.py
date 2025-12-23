@@ -143,9 +143,9 @@ JSON ДОЛЖЕН БЫТЬ ПОЛНОСТЬЮ ВАЛИДНЫМ И ПАРСИТЬ
         response_content = str(response.content)
 
         # Save AI response to file for debugging
-        debug_file_path = '/home/bakamol/Desktop/code/WebProjects/aitutor/ai_response_debug.txt'
-        with open(debug_file_path, 'w', encoding='utf-8') as f:
-            f.write(response_content)
+        #debug_file_path = '/home/bakamol/Desktop/code/WebProjects/aitutor/ai_response_debug.txt'
+        #№with open(debug_file_path, 'w', encoding='utf-8') as f:
+        #    f.write(response_content)
 
         # Try to parse JSON, if it fails, ask AI to fix it in a loop
         max_fix_attempts = 3
