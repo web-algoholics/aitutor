@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Select, Button, Card, Typography, Space, message, Spin } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useCreateTheoryCourseMutation } from '../../services/theoryApi';
 import { BookOutlined, LoadingOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 
@@ -9,8 +9,19 @@ const { Option } = Select;
 
 const CreateTheoryCoursePage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [createCourse, { isLoading }] = useCreateTheoryCourseMutation();
   const [form] = Form.useForm();
+
+  // Если пришли с MarketAnalysis с заранее выбранной технологией,
+  // подтягиваем её в поле "Тема курса"
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const topicFromQuery = params.get('topic');
+    if (topicFromQuery) {
+      form.setFieldsValue({ topic: topicFromQuery });
+    }
+  }, [location.search, form]);
 
   const handleSubmit = async (values: any) => {
     try {

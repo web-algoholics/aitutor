@@ -35,7 +35,7 @@ export default function RegisterPage() {
     } else if (error) {
       const msg = 'data' in error && error.data && typeof error.data === 'object' && 'detail' in error.data
         ? (error.data as any).detail
-        : 'Registration failed';
+        : 'Не удалось зарегистрироваться';
       messageApi.error(msg);
     }
   }, [error, form, messageApi]);
@@ -43,7 +43,7 @@ export default function RegisterPage() {
   // SUCCESS REDIRECT
   useEffect(() => {
     if (isSuccess) {
-      messageApi.success('Check your email to verify your account.');
+      messageApi.success('Проверьте email, чтобы подтвердить аккаунт');
       navigate('/login');
     }
   }, [isSuccess, navigate, messageApi]);
@@ -61,7 +61,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <AuthLayout title="Create Account">
+    <AuthLayout title="Создать аккаунт">
       {contextHolder}
       <Form<RegisterValues>
         form={form}
@@ -71,9 +71,9 @@ export default function RegisterPage() {
       >
         {/* Username */}
         <Form.Item
-          label="Username"
+          label="Имя пользователя"
           name="username"
-          rules={[{ required: true, message: 'Please enter a username' }]}
+          rules={[{ required: true, message: 'Введите имя пользователя' }]}
         >
           <Input prefix={<UserOutlined />} placeholder="john_doe" />
         </Form.Item>
@@ -83,8 +83,8 @@ export default function RegisterPage() {
           label="Email"
           name="email"
           rules={[
-            { required: true, message: 'Please enter your email' },
-            { type: 'email', message: 'Invalid email format' },
+            { required: true, message: 'Введите email' },
+            { type: 'email', message: 'Неверный формат email' },
           ]}
         >
           <Input prefix={<MailOutlined />} placeholder="you@example.com" />
@@ -92,34 +92,34 @@ export default function RegisterPage() {
 
         {/* Password */}
         <Form.Item
-          label="Password"
+          label="Пароль"
           name="password"
           rules={[
-            { required: true, message: 'Please enter a password' },
-            { min: 8, message: 'Password must be at least 8 characters' },
+            { required: true, message: 'Введите пароль' },
+            { min: 8, message: 'Пароль должен быть не менее 8 символов' },
           ]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder="At least 8 characters" />
+          <Input.Password prefix={<LockOutlined />} placeholder="Минимум 8 символов" />
         </Form.Item>
 
         {/* Confirm Password */}
         <Form.Item
-          label="Confirm Password"
+          label="Подтверждение пароля"
           name="confirm"
           dependencies={['password']}
           rules={[
-            { required: true, message: 'Please confirm your password' },
+            { required: true, message: 'Подтвердите пароль' },
             ({ getFieldValue }) => ({
               validator(_, value) {
                 if (!value || getFieldValue('password') === value) {
                   return Promise.resolve();
                 }
-                return Promise.reject(new Error('Passwords do not match'));
+                return Promise.reject(new Error('Пароли не совпадают'));
               },
             }),
           ]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder="Repeat password" />
+          <Input.Password prefix={<LockOutlined />} placeholder="Повторите пароль" />
         </Form.Item>
 
         {/* Terms */}
@@ -129,18 +129,18 @@ export default function RegisterPage() {
           rules={[
             {
               validator: (_, value) =>
-                value ? Promise.resolve() : Promise.reject(new Error('You must accept the terms')),
+                value ? Promise.resolve() : Promise.reject(new Error('Нужно принять условия использования')),
             },
           ]}
         >
           <Checkbox>
-            I accept the{' '}
+            Я принимаю{' '}
             <Link to="/terms" target="_blank" rel="noopener noreferrer">
-              Terms of Service
+              Условия использования
             </Link>{' '}
-            and{' '}
+            и{' '}
             <Link to="/privacy" target="_blank" rel="noopener noreferrer">
-              Privacy Policy
+              Политику конфиденциальности
             </Link>
           </Checkbox>
         </Form.Item>
@@ -148,13 +148,16 @@ export default function RegisterPage() {
         {/* Submit */}
         <Form.Item>
           <Button type="primary" htmlType="submit" loading={isLoading} block>
-            Sign Up
+            Зарегистрироваться
           </Button>
         </Form.Item>
 
         {/* Login Link */}
         <div className="text-center text-sm">
-          Already have an account? <Link to="/login" className="text-sm hover:text-black hover:underline">Sign in</Link>
+          Уже есть аккаунт?{' '}
+          <Link to="/login" className="text-sm hover:text-black hover:underline">
+            Войти
+          </Link>
         </div>
       </Form>
     </AuthLayout>

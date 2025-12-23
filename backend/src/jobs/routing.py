@@ -35,7 +35,12 @@ async def analyze_job_market(
             query=request.query,
             area=request.area,
             experience=request.experience,
-            limit=request.limit
+            limit=request.limit,
+            only_with_salary=request.only_with_salary,
+            employment=request.employment,
+            schedule=request.schedule,
+            date_from=request.date_from,
+            date_to=request.date_to,
         )
         
         # Преобразовать в формат ответа

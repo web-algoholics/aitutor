@@ -220,10 +220,12 @@ export interface SubmitCodeResponse {
   completed: boolean;
 }
 
+import { getApiUrl } from '../utils/config';
+
 export const coursesApi = createApi({
   reducerPath: 'coursesApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: (process.env as any).REACT_APP_API_URL || 'http://localhost:8000',
+    baseUrl: getApiUrl(),
     credentials: 'include',
   }),
   tagTypes: ['Courses', 'Modules', 'Chat', 'Submissions', 'CustomCourses', 'CustomModules'],
