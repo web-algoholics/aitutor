@@ -1,6 +1,11 @@
 const pkg = require('./package')
 const webpack = require('webpack')
 
+// Конфигурация приложения - единственное место для изменения API URL
+const appConfig = {
+  'aitutor.api': 'http://localhost:8000'
+}
+
 module.exports = {
   apiPath: 'stubs/api',
   webpackConfig: {
@@ -9,22 +14,30 @@ module.exports = {
     },
     plugins: [
       new webpack.DefinePlugin({
-        'process.env.REACT_APP_API_URL': JSON.stringify(process.env.REACT_APP_API_URL || 'http://localhost:8000'),
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+        // Инжектируем конфиг в приложение из appConfig
+        '__BRO_CONFIG__': JSON.stringify(appConfig),
       }),
     ],
   },
   /* use https://admin.bro-js.ru/ to create config, navigations and features */
   navigations: {
-    'career-up.main': '/career-up',
-    'link.career-up.auth': '/auth'
+    'aitutor.auth': '/',
+    'aututor.theory': '/theory',
+    'aututor.quizzes': '/quizzes',
+    'aututor.anki': '/anki',
+    'aututor.market-analysis': '/market-analysis',
+    'aututor.profile': '/profile',
   },
   features: {
-    'career-up': {
+    'aitutor': {
       // add your features here in the format [featureName]: { value: string }
+      theory: { value: 'true' },
+      quizzes: { value: 'true' },
+      anki: { value: 'true' },
+      marketAnalysis: { value: 'true' },
+      profile: { value: 'true' },
     },
   },
-  config: {
-    'career-up.api': '/api'
-  }
+  config: appConfig
 }

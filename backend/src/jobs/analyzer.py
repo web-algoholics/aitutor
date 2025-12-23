@@ -27,7 +27,13 @@ class JobAnalyzer:
         query: str,
         area: Optional[str] = None,
         experience: Optional[str] = None,
-        limit: int = 100
+        limit: int = 100,
+        *,
+        only_with_salary: bool = False,
+        employment: Optional[str] = None,
+        schedule: Optional[str] = None,
+        date_from: Optional[str] = None,
+        date_to: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Полный анализ рынка вакансий
@@ -40,7 +46,12 @@ class JobAnalyzer:
             query=query,
             area=area,
             experience=experience,
-            limit=limit
+            limit=limit,
+            employment=employment,
+            schedule=schedule,
+            only_with_salary=only_with_salary,
+            date_from=date_from,
+            date_to=date_to,
         )
         
         if not vacancies_data:

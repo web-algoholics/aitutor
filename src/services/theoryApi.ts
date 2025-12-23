@@ -64,11 +64,13 @@ export interface TheoryCourseTreeResponse {
   lessons: TheoryLessonResponse[][];
 }
 
+import { getApiUrl } from '../utils/config';
+
 // API definition
 export const theoryApi = createApi({
   reducerPath: 'theoryApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: (process.env as any).REACT_APP_API_URL || 'http://localhost:8000',
+    baseUrl: getApiUrl(),
     credentials: 'include',
   }),
   tagTypes: ['TheoryCourses', 'TheoryModules', 'TheoryLessons', 'TheoryContent'],

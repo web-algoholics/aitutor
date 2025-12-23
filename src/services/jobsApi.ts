@@ -27,6 +27,17 @@ export interface MarketAnalysisResponse {
   experience_distribution: Record<string, number>;
   recommended_courses: string[];
   skill_gaps: string[];
+  top_skills?: {
+    skill: string;
+    demand_count: number;
+    percentage: number;
+    course_url?: string;
+  }[];
+  skill_combinations?: {
+    skills: string[];
+    count: number;
+    percentage: number;
+  }[];
 }
 
 export interface AnalysisRequest {
@@ -34,12 +45,21 @@ export interface AnalysisRequest {
   area?: string;
   experience?: string;
   limit?: number;
+
+  // Расширенные фильтры HH API
+  only_with_salary?: boolean;
+  employment?: string;
+  schedule?: string;
+  date_from?: string;
+  date_to?: string;
 }
+
+import { getApiUrl } from '../utils/config';
 
 export const jobsApi = createApi({
   reducerPath: 'jobsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: (process.env as any).REACT_APP_API_URL || 'http://localhost:8000',
+    baseUrl: getApiUrl(),
     credentials: 'include',
   }),
   tagTypes: ['MarketAnalysis'],

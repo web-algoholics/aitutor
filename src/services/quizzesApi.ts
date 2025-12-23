@@ -70,11 +70,13 @@ export interface QuizResultResponse {
   }>;
 }
 
+import { getApiUrl } from '../utils/config';
+
 // API definition
 export const quizzesApi = createApi({
   reducerPath: 'quizzesApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: (process.env as any).REACT_APP_API_URL || 'http://localhost:8000',
+    baseUrl: getApiUrl(),
     credentials: 'include',
   }),
   tagTypes: ['Quizzes', 'Quiz'],
