@@ -100,7 +100,13 @@ export default function RegisterPage() {
           name="username"
           rules={[{ required: true, message: 'Введите имя пользователя' }]}
         >
-          <Input prefix={<UserOutlined />} placeholder="john_doe" />
+          <Input 
+            prefix={<UserOutlined />} 
+            placeholder="john_doe"
+            style={{
+              color: '#000'
+            }}
+          />
         </Form.Item>
 
         {/* Email */}
@@ -112,7 +118,13 @@ export default function RegisterPage() {
             { type: 'email', message: 'Некорректный формат email' },
           ]}
         >
-          <Input prefix={<MailOutlined />} placeholder="you@example.com" />
+          <Input 
+            prefix={<MailOutlined />} 
+            placeholder="you@example.com"
+            style={{
+              color: '#000'
+            }}
+          />
         </Form.Item>
 
         {/* Password */}
@@ -124,7 +136,13 @@ export default function RegisterPage() {
             { min: 8, message: 'Пароль должен быть не короче 8 символов' },
           ]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder="Минимум 8 символов" />
+          <Input.Password 
+            prefix={<LockOutlined />} 
+            placeholder="Минимум 8 символов"
+            style={{
+              color: '#000'
+            }}
+          />
         </Form.Item>
 
         {/* Submit */}
@@ -136,7 +154,10 @@ export default function RegisterPage() {
 
         {/* Login Link */}
         <div className="text-center text-sm">
-          Уже есть аккаунт? <CollapseLink to="/login" className="text-sm hover:text-black hover:underline">Войти</CollapseLink>
+          <div>Уже есть аккаунт?</div>
+          <div>
+            <CollapseLink to="/login" className="text-sm hover:text-black hover:underline">Войти</CollapseLink>
+          </div>
         </div>
       </Form>
     </AuthLayout>

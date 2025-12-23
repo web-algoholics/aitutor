@@ -7,12 +7,12 @@ import {
   Space,
   Tag,
   Empty,
-  Spin,
   Row,
   Col,
 } from 'antd';
+import LoadingDot from '../../components/LoadingDot';
 import {
-  FormOutlined,
+  PlusOutlined,
   PlayCircleOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -55,7 +55,7 @@ const QuizzesListPage: React.FC = () => {
     return (
       <PageContainer>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <Spin size="large" />
+          <LoadingDot size="large" />
         </div>
       </PageContainer>
     );
@@ -84,6 +84,8 @@ const QuizzesListPage: React.FC = () => {
   return (
     <PageContainer>
       <Space direction="vertical" size="large" className="w-full">
+        {/* Empty div to match Create page layout - matches Button height */}
+        <div style={{ height: '36px' }}></div>
         {/* Header */}
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{
@@ -105,7 +107,7 @@ const QuizzesListPage: React.FC = () => {
           </Paragraph>
           <Button
             size="large"
-            icon={<FormOutlined />}
+            icon={<PlusOutlined />}
             onClick={handleCreateQuiz}
             style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
           >
@@ -145,7 +147,7 @@ const QuizzesListPage: React.FC = () => {
               image={Empty.PRESENTED_IMAGE_SIMPLE}
             >
               <Button 
-                icon={<FormOutlined />} 
+                icon={<PlusOutlined />} 
                 onClick={handleCreateQuiz}
                 style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
               >
@@ -189,7 +191,7 @@ const QuizzesListPage: React.FC = () => {
                     </Text>
                   </div>
 
-                  <div className="flex flex-col h-full" style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="flex flex-col h-full" style={{ alignItems: 'center' }}>
                     {/* Large icon */}
                     <div style={{ marginBottom: '16px' }}>
                       {quiz.is_completed ? (
@@ -199,11 +201,13 @@ const QuizzesListPage: React.FC = () => {
                       )}
                     </div>
                     
-                    <Text style={{ margin: 0, textAlign: 'center', color: '#000', fontSize: '20px', fontWeight: 400, display: 'block' }}>
-                      {quiz.title}
-                    </Text>
+                    <div style={{ minHeight: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', width: '100%' }}>
+                      <Text style={{ margin: 0, textAlign: 'center', color: '#000', fontSize: '20px', fontWeight: 400, display: 'block' }}>
+                        {quiz.title}
+                      </Text>
+                    </div>
                     
-                    <div className="mt-4" style={{ width: '100%' }}>
+                    <div style={{ width: '100%', marginTop: 'auto' }}>
                       <Button
                         type={quiz.is_completed ? "default" : "primary"}
                         icon={<PlayCircleOutlined />}

@@ -5,7 +5,6 @@ import {
   Input,
   Select,
   Space,
-  Spin,
   Statistic,
   Row,
   Col,
@@ -15,6 +14,7 @@ import {
   Alert,
   Divider,
 } from 'antd';
+import LoadingDot from '../../components/LoadingDot';
 import {
   SearchOutlined,
   DollarOutlined,
@@ -97,22 +97,25 @@ export default function MarketAnalysis() {
 
   return (
     <PageContainer>
-      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px' }}>
-        <div style={{
-          width: '200px',
-          height: '200px',
-          borderRadius: '50%',
-          backgroundColor: '#000',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: '16px'
-        }}>
-          <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
-            Анализ рынка вакансий
-          </Title>
-        </div>
-        <Paragraph className="text-gray-600 mb-6" style={{ textAlign: 'center' }}>
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        {/* Empty div to match Create page layout - matches Button height */}
+        <div style={{ height: '36px' }}></div>
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px' }}>
+          <div style={{
+            width: '200px',
+            height: '200px',
+            borderRadius: '50%',
+            backgroundColor: '#000',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '16px'
+          }}>
+            <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
+              Анализ вакансий
+            </Title>
+          </div>
+        <Paragraph className="text-base text-gray-600 mb-4" style={{ textAlign: 'center' }}>
           Узнайте, какие навыки востребованы на рынке труда, и получите рекомендации по обучению
         </Paragraph>
       </div>
@@ -195,7 +198,7 @@ export default function MarketAnalysis() {
         {/* Loading */}
         {isLoading && (
           <div className="text-center py-12">
-            <Spin size="large" />
+            <LoadingDot size="large" />
             <div className="mt-4">
               <Text>Анализируем вакансии с hh.ru...</Text>
             </div>
@@ -350,6 +353,7 @@ export default function MarketAnalysis() {
             </div>
           </Card>
         )}
+      </Space>
     </PageContainer>
   );
 }

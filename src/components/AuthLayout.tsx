@@ -93,7 +93,7 @@ export default function AuthLayout({ children, title, animationDelay = 1000 }: A
                 }}
                 size="middle"
               >
-                Back
+                Назад
               </Button>
             </div>
           </div>

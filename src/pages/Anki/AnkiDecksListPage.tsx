@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Button, Space, Typography, Empty, Spin } from 'antd';
-import { PlusOutlined, FileTextOutlined, ArrowUpOutlined, EyeOutlined } from '@ant-design/icons';
+import { Card, Button, Space, Typography, Empty } from 'antd';
+import LoadingDot from '../../components/LoadingDot';
+import { PlusOutlined, FileTextOutlined, EyeOutlined, PlayCircleOutlined, BookOutlined } from '@ant-design/icons';
 import { Row, Col } from 'antd';
 import { useGetDecksQuery } from '../../services/ankiApi';
 import PageContainer from '../../components/PageContainer';
@@ -25,71 +26,7 @@ interface DeckCardProps {
 }
 
 const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice }) => {
-  const [dragY, setDragY] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const startY = useRef(0);
-  const hasMoved = useRef(false);
-  const SWIPE_UP_THRESHOLD = 100;
-
-  const handleSwipeStart = (clientY: number) => {
-    startY.current = clientY;
-    setIsDragging(true);
-    hasMoved.current = false;
-  };
-
-  const handleSwipeMove = (clientY: number) => {
-    if (!isDragging) return;
-    const diff = startY.current - clientY; // Negative for upward swipe
-    if (Math.abs(diff) > 5) {
-      hasMoved.current = true;
-    }
-    setDragY(diff);
-  };
-
-  const handleSwipeEnd = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
-
-    if (dragY > SWIPE_UP_THRESHOLD && !isFlipped) {
-      // Swipe up detected - go to practice
-      onPractice();
-    }
-
-    setDragY(0);
-  };
-
-  // Mouse events
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
-    handleSwipeStart(e.clientY);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    handleSwipeMove(e.clientY);
-  };
-
-  const handleMouseUp = () => {
-    handleSwipeEnd();
-  };
-
-  const handleMouseLeave = () => {
-    if (isDragging) {
-      handleSwipeEnd();
-    }
-  };
-
-  // Touch events
-  const handleTouchStart = (e: React.TouchEvent) => {
-    handleSwipeStart(e.touches[0].clientY);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    handleSwipeMove(e.touches[0].clientY);
-  };
-
-  const handleTouchEnd = () => {
-    handleSwipeEnd();
-  };
+  const isFromCourse = deck.source_type && deck.source_id;
 
   return (
     <div className="deck-card-wrapper" style={{ width: '100%' }}>
@@ -101,32 +38,7 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice
           position: 'relative',
           marginBottom: '16px',
         }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
       >
-        {/* Deck effect layers - only show when not flipped */}
-        {!isFlipped && (
-          <div
-            className="deck-card-layer deck-card-back-2"
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              border: '2px solid #666666',
-              borderRadius: '12px',
-              backgroundColor: '#fff',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-              transform: 'translate(4px, 4px)',
-              transition: 'transform 0.3s ease',
-              zIndex: 1,
-            }}
-          />
-        )}
         {/* Flip container */}
         <div
           style={{
@@ -152,23 +64,28 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'space-between',
               padding: '32px',
               border: '2px solid #666666',
               borderRadius: '12px',
               backgroundColor: '#fff',
               boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-              transition: isDragging ? 'none' : 'transform 0.3s ease, box-shadow 0.3s ease',
-              transform: `translateY(${-dragY * 0.2}px)`,
               cursor: 'pointer',
             }}
             onClick={(e) => {
               e.stopPropagation();
-              if (!hasMoved.current) {
-                onFlip(e);
-              }
+              onFlip(e);
             }}
           >
+            {/* Course indicator in top left corner */}
+            {isFromCourse && (
+              <div style={{ position: 'absolute', top: '16px', left: '16px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <BookOutlined style={{ fontSize: '14px', color: '#000' }} />
+                <Text style={{ fontSize: '12px', color: '#000', fontWeight: 500 }}>
+                  Из курса
+                </Text>
+              </div>
+            )}
             {/* Card count in top right corner */}
             <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <FileTextOutlined style={{ fontSize: '18px', color: '#000' }} />
@@ -177,9 +94,25 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice
               </Text>
             </div>
             
-            <Text style={{ margin: 0, color: '#000', textAlign: 'center', fontSize: '20px', fontWeight: 400, display: 'block' }}>
-              {deck.title}
-            </Text>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+              <Text style={{ margin: 0, color: '#000', textAlign: 'center', fontSize: '20px', fontWeight: 400, display: 'block' }}>
+                {deck.title}
+              </Text>
+            </div>
+
+            {/* Start button */}
+            <div style={{ width: '100%' }}>
+              <Button
+                type="primary"
+                icon={<PlayCircleOutlined />}
+                onClick={(e) => {
+                  onPractice();
+                }}
+                block
+              >
+                Начать
+              </Button>
+            </div>
           </div>
 
           {/* Back side - Description only */}
@@ -204,9 +137,7 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice
             }}
             onClick={(e) => {
               e.stopPropagation();
-              if (!hasMoved.current) {
-                onFlip(e);
-              }
+              onFlip(e);
             }}
           >
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', width: '100%', justifyContent: 'center' }}>
@@ -253,7 +184,7 @@ export default function AnkiDecksListPage() {
     return (
       <PageContainer>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <Spin size="large" />
+          <LoadingDot size="large" />
         </div>
       </PageContainer>
     );
@@ -265,6 +196,8 @@ export default function AnkiDecksListPage() {
   return (
     <PageContainer>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        {/* Empty div to match Create page layout - matches Button height */}
+        <div style={{ height: '36px' }}></div>
         {/* Header */}
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{
@@ -304,12 +237,8 @@ export default function AnkiDecksListPage() {
           </Col>
           <Col xs={24} sm={12} md={8}>
             <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <Title level={3} className="mb-2">
-                <ArrowUpOutlined style={{ fontSize: '24px' }} />
-              </Title>
-              <Text type="secondary" style={{ display: 'block', marginBottom: '4px' }}>
-                Свайпай вверх — перейди к карточкам
-              </Text>
+              <Title level={3} className="mb-2">{totalCards}</Title>
+              <Text type="secondary">Всего карточек</Text>
             </Card>
           </Col>
           <Col xs={24} sm={12} md={8}>

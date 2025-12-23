@@ -1,5 +1,6 @@
 import React from 'react';
-import { Card, Button, Spin, message, Steps, Space, Tag, Progress, Empty, Badge } from 'antd';
+import { Card, Button, message, Steps, Space, Tag, Progress, Empty, Badge } from 'antd';
+import LoadingDot from '../components/LoadingDot';
 import { CheckCircleOutlined, LockOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetCourseQuery, useGetCourseRoadmapQuery, useGetUserProgressQuery, useGetUserModuleProgressQuery, type Course, type Module } from '../services/coursesApi';
@@ -39,7 +40,7 @@ export default function CourseRoadmapPage() {
     return moduleProgressData.find(progress => progress.module_id === moduleId);
   };
 
-  if (courseLoading || modulesLoading) return <Spin size="large" className="flex items-center justify-center min-h-screen" />;
+  if (courseLoading || modulesLoading) return <div className="flex items-center justify-center min-h-screen"><LoadingDot size="large" /></div>;
   if (courseError || !course) return <Empty description="Курс не найден" />;
 
   const sortedModules = [...(modules as Module[])].sort((a, b) => a.order - b.order);

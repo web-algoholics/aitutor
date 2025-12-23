@@ -3,16 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import {
   Card, Typography, Button, Space, Tag, Progress,
   Skeleton, message, Empty, Alert, Row, Col,
-  Spin
 } from 'antd';
+import LoadingDot from '../../components/LoadingDot';
 import {
   BookOutlined, PlusOutlined, PlayCircleOutlined,
-  CheckCircleOutlined, ClockCircleOutlined, BulbOutlined
+  CheckCircleOutlined, AppstoreOutlined
 } from '@ant-design/icons';
 import { useGetTheoryCoursesQuery } from '../../services/theoryApi';
 import PageContainer from '../../components/PageContainer';
 
-const { Title, Text, Paragraph, Meta } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 const TheoryCoursesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ const TheoryCoursesPage: React.FC = () => {
     return (
       <PageContainer>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <Spin size="large" />
+          <LoadingDot size="large" />
         </div>
       </PageContainer>
     );
@@ -51,7 +51,9 @@ const TheoryCoursesPage: React.FC = () => {
 
   return (
     <PageContainer>
-      <Space orientation="vertical" size="large" style={{ width: '100%' }}>
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        {/* Empty div to match Create page layout - matches Button height */}
+        <div style={{ height: '36px' }}></div>
         {/* Header */}
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{
@@ -72,11 +74,10 @@ const TheoryCoursesPage: React.FC = () => {
             Персонализированные курсы, созданные ИИ специально для вас
           </Paragraph>
           <Button
-            type="primary"
             size="large"
             icon={<PlusOutlined />}
             onClick={handleCreateCourse}
-            className="h-12 text-base"
+            style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
           >
             Создать курс
           </Button>
@@ -84,116 +85,114 @@ const TheoryCoursesPage: React.FC = () => {
 
         {/* Stats */}
         {courses && courses.length > 0 && (
-          <div className="flex gap-6">
-            <Card size="small" className="flex-1">
-              <div className="text-center">
-                <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff' }}>
-                  {courses.length}
-                </Text>
-                <div>
-                  <Text type="secondary">Курсов</Text>
-                </div>
-              </div>
-            </Card>
-            <Card size="small" className="flex-1">
-              <div className="text-center">
-                <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#52c41a' }}>
-                  {courses.filter(c => c.is_completed).length}
-                </Text>
-                <div>
-                  <Text type="secondary">Завершено</Text>
-                </div>
-              </div>
-            </Card>
-            <Card size="small" className="flex-1">
-              <div className="text-center">
-                <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#fa8c16' }}>
-                  {courses.reduce((sum, c) => sum + c.estimated_duration, 0)}
-                </Text>
-                <div>
-                  <Text type="secondary">Часов обучения</Text>
-                </div>
-              </div>
-            </Card>
-          </div>
+          <Row gutter={16}>
+            <Col xs={24} sm={12} md={8}>
+              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Title level={3} className="mb-2">{courses.length}</Title>
+                <Text type="secondary">Курсов</Text>
+              </Card>
+            </Col>
+            <Col xs={24} sm={12} md={8}>
+              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Title level={3} className="mb-2">{courses.filter(c => c.is_completed).length}</Title>
+                <Text type="secondary">Завершено</Text>
+              </Card>
+            </Col>
+            <Col xs={24} sm={12} md={8}>
+              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Title level={3} className="mb-2">{courses.reduce((sum, c) => sum + c.estimated_duration, 0)}</Title>
+                <Text type="secondary">Часов обучения</Text>
+              </Card>
+            </Col>
+          </Row>
         )}
 
         {/* Courses List */}
         {courses && courses.length > 0 ? (
-          <Row gutter={[16, 16]}>
+          <Row gutter={[16, 16]} style={{ display: 'flex' }}>
             {courses.map((course) => (
-              <Col key={course.id} xs={24} sm={12} md={12} lg={8} xl={8}>
-                <Card
-                  hoverable
-                  onClick={() => handleCourseClick(course.id)}
+              <Col xs={24} sm={12} lg={8} key={course.id} style={{ display: 'flex' }}>
+                <div
                   style={{
-                    height: '100%',
-                    minHeight: '320px',
+                    width: '100%',
+                    border: '2px solid #666666',
+                    borderRadius: '12px',
+                    backgroundColor: '#fff',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                     display: 'flex',
-                    flexDirection: 'column'
+                    flexDirection: 'column',
+                    padding: '32px',
+                    cursor: 'pointer',
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    position: 'relative',
                   }}
-                  bodyStyle={{
-                    flex: 1,
-                    display: 'flex',
-                    flexDirection: 'column'
+                  onClick={() => handleCourseClick(course.id)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
                   }}
-                  actions={[
-                    <Button
-                      key="start"
-                      type={course.is_completed ? "default" : "primary"}
-                      style={course.is_completed ? { borderColor: '#52c41a', color: '#52c41a' } : {}}
-                      icon={<PlayCircleOutlined />}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCourseClick(course.id);
-                      }}
-                    >
-                      {course.is_completed ? 'Посмотреть' : 'Продолжить'}
-                    </Button>
-                  ]}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                  }}
                 >
-                  <Card.Meta
-                    avatar={<BookOutlined style={{ fontSize: '32px', color: '#1890ff' }} />}
-                    title={course.title}
-                    description={
-                      <Space orientation="vertical" size="small" style={{ width: '100%' }}>
-                        <Text>{course.description}</Text>
-                        <Space wrap>
-                          <Tag color="blue">
-                            {course.difficulty === 'beginner' ? 'Начальный' :
-                             course.difficulty === 'intermediate' ? 'Средний' : 'Продвинутый'}
-                          </Tag>
-                          <Tag icon={<ClockCircleOutlined />}>
-                            ~{course.estimated_duration} ч
-                          </Tag>
-                          <Tag>{course.modules_count} модулей</Tag>
-                        </Space>
-                        {course.is_completed && (
-                          <Tag icon={<CheckCircleOutlined />} color="success">
-                            Завершен
-                          </Tag>
-                        )}
-                      </Space>
-                    }
-                  />
-                </Card>
+                  {/* Module count in top right corner */}
+                  <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <AppstoreOutlined style={{ fontSize: '18px', color: '#000' }} />
+                    <Text style={{ fontSize: '16px', color: '#000', fontWeight: 500 }}>
+                      {course.modules_count}
+                    </Text>
+                  </div>
+
+                  <div className="flex flex-col h-full" style={{ alignItems: 'center' }}>
+                    {/* Large icon */}
+                    <div style={{ marginBottom: '16px' }}>
+                      {course.is_completed ? (
+                        <CheckCircleOutlined style={{ fontSize: '64px', color: '#000' }} />
+                      ) : (
+                        <BookOutlined style={{ fontSize: '64px', color: '#000' }} />
+                      )}
+                    </div>
+                    
+                    <div style={{ minHeight: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', width: '100%' }}>
+                      <Text style={{ margin: 0, textAlign: 'center', color: '#000', fontSize: '20px', fontWeight: 400, display: 'block' }}>
+                        {course.title}
+                      </Text>
+                    </div>
+                    
+                    <div style={{ width: '100%', marginTop: 'auto' }}>
+                      <Button
+                        type={course.is_completed ? "default" : "primary"}
+                        icon={<PlayCircleOutlined />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCourseClick(course.id);
+                        }}
+                        block
+                      >
+                        {course.is_completed ? 'Посмотреть' : 'Продолжить'}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               </Col>
             ))}
           </Row>
         ) : (
-          <Empty
-            image={<BookOutlined style={{ fontSize: '64px', color: '#d9d9d9' }} />}
-            description={
-              <div style={{ textAlign: 'center' }}>
-                <Title level={4} style={{ color: '#666' }}>
-                  У вас пока нет AI курсов
-                </Title>
-                <Paragraph style={{ color: '#999', marginBottom: '24px' }}>
-                  Создайте персонализированный курс по интересующей вас теме с помощью ИИ
-                </Paragraph>
-              </div>
-            }
-          />
+          <Card bordered={false}>
+            <Empty
+              description="У вас пока нет курсов"
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            >
+              <Button 
+                icon={<PlusOutlined />} 
+                onClick={handleCreateCourse}
+                style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
+              >
+                Создать первый курс
+              </Button>
+            </Empty>
+          </Card>
         )}
       </Space>
     </PageContainer>

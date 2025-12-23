@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import {
-  Card, Typography, Button, Space, Spin, Alert, message,
+  Card, Typography, Button, Space, Alert, message,
   Tag, Divider, Progress
 } from 'antd';
+import LoadingDot from '../../components/LoadingDot';
 import {
   ArrowLeftOutlined, ClockCircleOutlined, BulbOutlined,
   CheckCircleOutlined, LoadingOutlined, FormOutlined
@@ -92,7 +93,7 @@ const TheoryLessonPage: React.FC = () => {
       <PageContainer>
         <div className="flex justify-center items-center min-h-[400px]">
           <Space direction="vertical" align="center">
-            <Spin size="large" />
+            <LoadingDot size="large" />
             <Text>Загрузка...</Text>
             <Progress percent={75} status="active" showInfo={false} style={{ width: '200px' }} />
           </Space>
@@ -139,19 +140,15 @@ const TheoryLessonPage: React.FC = () => {
             <Tag icon={<ClockCircleOutlined />}>
               ~{content.reading_time} мин чтения
             </Tag>
-            {content.is_generated && (
-              <Tag icon={<CheckCircleOutlined />} color="success">
-                Сгенерировано ИИ
-              </Tag>
-            )}
           </Space>
         </div>
 
         {/* Lesson Content */}
-        <Card>
+        <Card bordered={false}>
           <div style={{
             lineHeight: '1.8',
-            fontSize: '16px'
+            fontSize: '16px',
+            padding: '24px'
           }}>
             <ReactMarkdown
               components={{
@@ -210,7 +207,7 @@ const TheoryLessonPage: React.FC = () => {
         </Card>
 
         {/* Footer */}
-        <Card size="small" className="bg-gray-50">
+        <Card size="small" bordered={false} className="bg-gray-50">
           <div className="text-center">
             <Space direction="vertical" align="center">
               <Space>

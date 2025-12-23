@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { Form, Input, Button, Card, Typography, Space, message, Spin } from 'antd';
+import { Form, Input, Button, Card, Typography, Space, message } from 'antd';
+import LoadingDot from '../../components/LoadingDot';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useCreateQuizMutation } from '../../services/quizzesApi';
@@ -55,7 +56,7 @@ const CreateQuizPage: React.FC = () => {
     return (
       <PageContainer>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <Spin size="large" />
+          <LoadingDot size="large" />
         </div>
       </PageContainer>
     );
@@ -134,4 +135,6 @@ const CreateQuizPage: React.FC = () => {
 };
 
 export default CreateQuizPage;
+
+
 

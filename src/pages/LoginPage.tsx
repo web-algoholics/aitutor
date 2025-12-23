@@ -102,7 +102,13 @@ export default function LoginPage() {
             { required: true, message: 'Введите email или имя пользователя' },
           ]}
         >
-          <Input prefix={<UserOutlined />} placeholder="you@example.com" />
+          <Input 
+            prefix={<UserOutlined />} 
+            placeholder="you@example.com"
+            style={{
+              color: '#000'
+            }}
+          />
         </Form.Item>
 
         <Form.Item
@@ -110,7 +116,13 @@ export default function LoginPage() {
           name="password"
           rules={[{ required: true, message: 'Введите пароль' }]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder="••••••••" />
+          <Input.Password 
+            prefix={<LockOutlined />} 
+            placeholder="••••••••"
+            style={{
+              color: '#000'
+            }}
+          />
         </Form.Item>
 
         <Form.Item>
@@ -131,7 +143,10 @@ export default function LoginPage() {
         </Form.Item>
 
         <div className="text-center text-sm">
-          Нет аккаунта? <CollapseLink to="/register" className="hover:text-black hover:underline">Зарегистрироваться</CollapseLink>
+          <div>Нет аккаунта?</div>
+          <div>
+            <CollapseLink to="/register" className="hover:text-black hover:underline">Зарегистрироваться</CollapseLink>
+          </div>
         </div>
       </Form>
     </AuthLayout>

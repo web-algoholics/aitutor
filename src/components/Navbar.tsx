@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Avatar, Button, Drawer } from "antd";
 import { UserOutlined, ArrowRightOutlined, MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
@@ -9,6 +9,7 @@ import Logo from "./Logo";
 
 export default function Navbar() {
   const dispatch = useDispatch();
+  const location = useLocation();
   const { data: user, isError } = useGetCurrentUserQuery(undefined, {});
   const { data: avatarData } = useGetAvatarQuery(undefined, { skip: !user });
   const [logout] = useLogoutMutation(undefined);
@@ -16,6 +17,22 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const avatarUrl = avatarData?.image || null;
+
+  const isActive = (path: string) => {
+    if (path === '/theory') {
+      return location.pathname.startsWith('/theory');
+    }
+    if (path === '/quizzes') {
+      return location.pathname.startsWith('/quizzes');
+    }
+    if (path === '/anki') {
+      return location.pathname.startsWith('/anki');
+    }
+    if (path === '/market-analysis') {
+      return location.pathname.startsWith('/market-analysis');
+    }
+    return location.pathname === path;
+  };
 
   const handleLogout = async () => {
     try {
@@ -30,7 +47,7 @@ export default function Navbar() {
     { to: "/theory", label: "AI Курсы" },
     { to: "/quizzes", label: "Квизы" },
     { to: "/anki", label: "Anki" },
-    { to: "/market-analysis", label: "Анализ рынка" },
+    { to: "/market-analysis", label: "Анализ вакансий" },
   ];
 
   const handleNavClick = () => {
@@ -57,11 +74,35 @@ export default function Navbar() {
       {/* Desktop Links - Center */}
       {!isError && user && (
         <nav className="hidden md:flex gap-6 text-sm font-medium text-black justify-center" style={{ flex: '1 1 0' }}>
-          {navLinks.map((link) => (
-            <Link key={link.to} to={link.to} className="text-black hover:text-gray-600 transition-colors">
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const active = isActive(link.to);
+            return (
+              <Link 
+                key={link.to} 
+                to={link.to} 
+                className="text-black hover:text-gray-600 transition-all duration-300 flex items-center justify-center gap-2 relative"
+                style={{ transition: 'color 0.3s ease' }}
+              >
+                <span 
+                  style={{ 
+                    width: '6px', 
+                    height: '6px', 
+                    backgroundColor: '#000', 
+                    borderRadius: '50%',
+                    display: 'inline-block',
+                    opacity: active ? 1 : 0,
+                    transform: active ? 'scale(1)' : 'scale(0)',
+                    transition: 'opacity 0.3s ease, transform 0.3s ease',
+                    visibility: active ? 'visible' : 'hidden',
+                    minWidth: '6px'
+                  }} 
+                />
+                <span style={{ transition: 'transform 0.3s ease', textAlign: 'center' }}>
+                  {link.label}
+                </span>
+              </Link>
+            );
+          })}
         </nav>
       )}
 
@@ -107,16 +148,36 @@ export default function Navbar() {
         <div className="flex flex-col h-full">
           {/* Mobile Nav Links */}
           <nav className="flex flex-col py-4">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={handleNavClick}
-                className="px-6 py-4 text-base font-medium text-black hover:bg-gray-100 transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const active = isActive(link.to);
+              return (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  onClick={handleNavClick}
+                  className="px-6 py-4 text-base font-medium text-black hover:bg-gray-100 transition-all duration-300 flex items-center justify-center gap-3"
+                  style={{ transition: 'background-color 0.3s ease, color 0.3s ease' }}
+                >
+                  <span 
+                    style={{ 
+                      width: '8px', 
+                      height: '8px', 
+                      backgroundColor: '#000', 
+                      borderRadius: '50%',
+                      display: 'inline-block',
+                      opacity: active ? 1 : 0,
+                      transform: active ? 'scale(1)' : 'scale(0)',
+                      transition: 'opacity 0.3s ease, transform 0.3s ease',
+                      visibility: active ? 'visible' : 'hidden',
+                      minWidth: '8px'
+                    }} 
+                  />
+                  <span style={{ transition: 'transform 0.3s ease', textAlign: 'center', flex: 1 }}>
+                    {link.label}
+                  </span>
+                </Link>
+              );
+            })}
           </nav>
         </div>
       </Drawer>

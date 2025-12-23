@@ -20,6 +20,18 @@ html, body, #root {
   width: 100%;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  scrollbar-gutter: stable;
+}
+
+#root {
+  scrollbar-gutter: stable;
+}
+
 /* Scrollbar Styles */
 ::-webkit-scrollbar {
   width: 8px;
@@ -56,6 +68,27 @@ a {
 
 a:hover {
   color: inherit;
+}
+
+/* Placeholder Styles */
+.ant-input::placeholder,
+.ant-input-password input::placeholder,
+.ant-input-affix-wrapper input::placeholder,
+.ant-input::-webkit-input-placeholder,
+.ant-input-password input::-webkit-input-placeholder,
+.ant-input-affix-wrapper input::-webkit-input-placeholder,
+.ant-input::-moz-placeholder,
+.ant-input-password input::-moz-placeholder,
+.ant-input-affix-wrapper input::-moz-placeholder,
+.ant-input:-ms-input-placeholder,
+.ant-input-password input:-ms-input-placeholder,
+.ant-input-affix-wrapper input:-ms-input-placeholder,
+input::placeholder,
+input::-webkit-input-placeholder,
+input::-moz-placeholder,
+input:-ms-input-placeholder {
+  color: #999 !important;
+  opacity: 1 !important;
 }
 
 /* Ant Design Card Header Alignment */
@@ -823,18 +856,26 @@ a:hover {
 
 .starting-point-dot.show-content .ant-input::placeholder,
 .starting-point-dot.show-content .ant-input-password input::placeholder,
+.starting-point-dot.show-content .ant-input-affix-wrapper input::placeholder,
 .starting-point-dot.show-content .ant-input::-webkit-input-placeholder,
 .starting-point-dot.show-content .ant-input-password input::-webkit-input-placeholder,
+.starting-point-dot.show-content .ant-input-affix-wrapper input::-webkit-input-placeholder,
 .starting-point-dot.show-content .ant-input::-moz-placeholder,
 .starting-point-dot.show-content .ant-input-password input::-moz-placeholder,
+.starting-point-dot.show-content .ant-input-affix-wrapper input::-moz-placeholder,
 .starting-point-dot.show-content .ant-input:-ms-input-placeholder,
 .starting-point-dot.show-content .ant-input-password input:-ms-input-placeholder,
+.starting-point-dot.show-content .ant-input-affix-wrapper input:-ms-input-placeholder,
 .starting-point-dot.show-content input::placeholder,
 .starting-point-dot.show-content input::-webkit-input-placeholder,
 .starting-point-dot.show-content input::-moz-placeholder,
-.starting-point-dot.show-content input:-ms-input-placeholder {
-  color: #808080 !important;
+.starting-point-dot.show-content input:-ms-input-placeholder,
+.starting-point-dot.show-content input[type="text"]::placeholder,
+.starting-point-dot.show-content input[type="password"]::placeholder,
+.starting-point-dot.show-content input[type="email"]::placeholder {
+  color: #666666 !important;
   opacity: 1 !important;
+  -webkit-text-fill-color: #666666 !important;
 }
 
 .starting-point-dot.show-content .ant-input:focus,
@@ -904,6 +945,13 @@ a:hover {
 
 .starting-point-dot.show-content .anticon {
   color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.starting-point-dot.show-content .ant-input-affix-wrapper .anticon,
+.starting-point-dot.show-content .ant-input-prefix .anticon,
+.starting-point-dot.show-content .ant-input-suffix .anticon,
+.starting-point-dot.show-content .ant-input-password .anticon {
+  color: #000000 !important;
 }
 
 .starting-point-dot.show-content .ant-btn-text {
@@ -1226,8 +1274,8 @@ a:hover {
 
 /* Deck Card Hover Animation */
 .deck-card-container:hover .deck-card-front {
-  transform: translateY(-35px) rotate(-2deg) translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
 }
 
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Button, Space, Typography, Progress, message, Spin } from 'antd';
+import { Card, Button, Space, Typography, Progress, message } from 'antd';
+import LoadingDot from '../../components/LoadingDot';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import Confetti from 'react-confetti';
 import { useGetDeckQuery } from '../../services/ankiApi';
@@ -30,7 +31,7 @@ export default function AnkiPracticePage() {
       <PageContainer>
         <Card bordered={false} className="min-h-[300px] flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
-            <Spin size="large" />
+            <LoadingDot size="large" />
             <Text style={{ color: '#000' }}>Загружаем карточки...</Text>
           </div>
         </Card>
@@ -42,8 +43,10 @@ export default function AnkiPracticePage() {
   const knownCount = cardResults.filter(r => r === true).length;
   // totalReviewed should count cards that have been answered (not null)
   const totalReviewed = cardResults.filter(r => r !== null).length;
-  // Progress based on answered cards (starts from 0)
-  const progress = Math.round((totalReviewed / deck.cards.length) * 100);
+  const allCardsReviewed = showResults;
+  // Progress based on current position, starting from 0% (returns when going back)
+  // Show 100% when all cards are reviewed
+  const progress = allCardsReviewed ? 100 : Math.round((currentIndex / deck.cards.length) * 100);
   // Calculate accuracy percentage and ensure it's a whole number
   const accuracyPercent = totalReviewed > 0 ? Math.round((knownCount / totalReviewed) * 100) : 0;
 
@@ -87,7 +90,6 @@ export default function AnkiPracticePage() {
   };
 
   const isLastCard = currentIndex === deck.cards.length - 1;
-  const allCardsReviewed = showResults;
   const allCorrect = allCardsReviewed && knownCount === deck.cards.length;
 
   return (
@@ -108,7 +110,6 @@ export default function AnkiPracticePage() {
           <Button 
             icon={<ArrowLeftOutlined />} 
             onClick={() => navigate('/anki')}
-            style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
           >
             К списку колод
           </Button>
@@ -128,6 +129,7 @@ export default function AnkiPracticePage() {
         {/* Card */}
         <div className="flex justify-center">
           <AnkiCard
+            key={showResults ? 'results' : `card-${currentIndex}`}
             front={showResults ? deck.cards[deck.cards.length - 1].front : currentCard.front}
             back={showResults 
               ? `Поздравляем!\n\nВы прошли все карточки.\n\nВерно: ${knownCount} из ${deck.cards.length}\n\n${Math.round((knownCount / deck.cards.length) * 100)}%`
@@ -175,7 +177,7 @@ export default function AnkiPracticePage() {
         {/* Swipe hint - only show when not completed */}
         {!allCardsReviewed && (
           <div className="text-center">
-            <Text style={{ fontSize: '14px', color: '#000', opacity: 0.5 }}>
+            <Text style={{ fontSize: '16px', color: '#000', fontWeight: 500 }}>
               ← Свайп влево — не знаю | Свайп вправо — знаю →
             </Text>
           </div>

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Button, Spin } from 'antd';
+import { Button } from 'antd';
+import LoadingDot from '../components/LoadingDot';
 import { useVerifyEmailMutation } from '../services/profileApi';
 import AuthLayout from '../components/AuthLayout';
 
@@ -32,7 +33,10 @@ export default function VerifyEmailPage() {
     return (
       <AuthLayout>
         <div className="flex justify-center items-center h-64">
-          <Spin size="large" tip="Verifying your email..." />
+          <div className="flex flex-col items-center gap-3">
+            <LoadingDot size="large" />
+            <p className="text-gray-600">Verifying your email...</p>
+          </div>
         </div>
       </AuthLayout>
     );

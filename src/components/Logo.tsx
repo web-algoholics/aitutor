@@ -14,11 +14,11 @@ export default function Logo({ to = "/theory", className = "", style }: LogoProp
     <div className="font-bold font-source-sans" style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
       {to ? (
         <Link to={to} className={textClassName} style={{ ...style, display: 'inline-block', whiteSpace: 'nowrap' }}>
-          EdGen.
+          EdGen<span style={{ color: '#2B5797' }}>.</span>
         </Link>
       ) : (
         <span className={textClassName} style={{ ...style, display: 'inline-block', whiteSpace: 'nowrap' }}>
-          EdGen.
+          EdGen<span style={{ color: '#2B5797' }}>.</span>
         </span>
       )}
     </div>

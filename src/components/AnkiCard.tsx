@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Typography } from 'antd';
 
 const { Title, Text } = Typography;
@@ -19,68 +19,103 @@ export default function AnkiCard({ front, back, isFlipped, onFlip, onSwipeLeft, 
   const hasMoved = useRef(false);
 
   const SWIPE_THRESHOLD = 100;
+  const MAX_SWIPE_DISTANCE = 150; // Maximum swipe distance in pixels (limited to container width)
 
-  const handleStart = (clientX: number) => {
-    startX.current = clientX;
+
+  // Global mouse/touch event handlers for tracking movement outside the card
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (!onSwipeLeft && !onSwipeRight) return;
+      const diff = e.clientX - startX.current;
+      if (Math.abs(diff) > 10) {
+        hasMoved.current = true;
+      }
+      const limitedDiff = Math.max(-MAX_SWIPE_DISTANCE, Math.min(MAX_SWIPE_DISTANCE, diff));
+      setDragX(limitedDiff);
+    };
+
+    const handleGlobalMouseUp = () => {
+      if (!isDragging) return;
+      setIsDragging(false);
+
+      // Get current dragX value from state
+      setDragX((currentDragX) => {
+        // Actions only trigger on release
+        if (currentDragX > SWIPE_THRESHOLD && onSwipeRight) {
+          onSwipeRight();
+        } else if (currentDragX < -SWIPE_THRESHOLD && onSwipeLeft) {
+          onSwipeLeft();
+        } else if (!hasMoved.current && onFlip) {
+          onFlip();
+        }
+        return 0;
+      });
+    };
+
+    const handleGlobalTouchMove = (e: TouchEvent) => {
+      if (!onSwipeLeft && !onSwipeRight) return;
+      if (e.touches.length > 0) {
+        const diff = e.touches[0].clientX - startX.current;
+        if (Math.abs(diff) > 10) {
+          hasMoved.current = true;
+        }
+        const limitedDiff = Math.max(-MAX_SWIPE_DISTANCE, Math.min(MAX_SWIPE_DISTANCE, diff));
+        setDragX(limitedDiff);
+      }
+    };
+
+    const handleGlobalTouchEnd = () => {
+      if (!isDragging) return;
+      setIsDragging(false);
+
+      // Get current dragX value from state
+      setDragX((currentDragX) => {
+        // Actions only trigger on release
+        if (currentDragX > SWIPE_THRESHOLD && onSwipeRight) {
+          onSwipeRight();
+        } else if (currentDragX < -SWIPE_THRESHOLD && onSwipeLeft) {
+          onSwipeLeft();
+        } else if (!hasMoved.current && onFlip) {
+          onFlip();
+        }
+        return 0;
+      });
+    };
+
+    // Add global event listeners
+    document.addEventListener('mousemove', handleGlobalMouseMove);
+    document.addEventListener('mouseup', handleGlobalMouseUp);
+    document.addEventListener('touchmove', handleGlobalTouchMove, { passive: false });
+    document.addEventListener('touchend', handleGlobalTouchEnd);
+
+    return () => {
+      // Cleanup: remove global event listeners
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+      document.removeEventListener('touchmove', handleGlobalTouchMove);
+      document.removeEventListener('touchend', handleGlobalTouchEnd);
+    };
+  }, [isDragging, onSwipeLeft, onSwipeRight, onFlip]);
+
+  // Mouse events - only for starting drag
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Don't allow dragging if swipe handlers are not provided
+    if (!onSwipeLeft && !onSwipeRight) return;
+    startX.current = e.clientX;
     setIsDragging(true);
     hasMoved.current = false;
   };
 
-  const handleMove = (clientX: number) => {
-    if (!isDragging) return;
-    const diff = clientX - startX.current;
-    if (Math.abs(diff) > 10) {
-      hasMoved.current = true;
-    }
-    setDragX(diff);
-  };
-
-  const handleEnd = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
-
-    if (dragX > SWIPE_THRESHOLD && onSwipeRight) {
-      onSwipeRight();
-    } else if (dragX < -SWIPE_THRESHOLD && onSwipeLeft) {
-      onSwipeLeft();
-    } else if (!hasMoved.current && onFlip) {
-      onFlip();
-    }
-
-    setDragX(0);
-  };
-
-  // Mouse events
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
-    handleStart(e.clientX);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    handleMove(e.clientX);
-  };
-
-  const handleMouseUp = () => {
-    handleEnd();
-  };
-
-  const handleMouseLeave = () => {
-    if (isDragging) {
-      handleEnd();
-    }
-  };
-
-  // Touch events
+  // Touch events - only for starting drag
   const handleTouchStart = (e: React.TouchEvent) => {
-    handleStart(e.touches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    handleMove(e.touches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    handleEnd();
+    // Don't allow dragging if swipe handlers are not provided
+    if (!onSwipeLeft && !onSwipeRight) return;
+    startX.current = e.touches[0].clientX;
+    setIsDragging(true);
+    hasMoved.current = false;
   };
 
   // Calculate visual feedback
@@ -102,12 +137,7 @@ export default function AnkiCard({ front, back, isFlipped, onFlip, onSwipeLeft, 
         userSelect: 'none',
       }}
       onMouseDown={isInteractive ? handleMouseDown : undefined}
-      onMouseMove={isInteractive ? handleMouseMove : undefined}
-      onMouseUp={isInteractive ? handleMouseUp : undefined}
-      onMouseLeave={isInteractive ? handleMouseLeave : undefined}
       onTouchStart={isInteractive ? handleTouchStart : undefined}
-      onTouchMove={isInteractive ? handleTouchMove : undefined}
-      onTouchEnd={isInteractive ? handleTouchEnd : undefined}
     >
       {/* Swipe indicators */}
       {isSwipingRight && (
@@ -155,8 +185,9 @@ export default function AnkiCard({ front, back, isFlipped, onFlip, onSwipeLeft, 
           position: 'relative',
           width: '100%',
           height: '100%',
-          transition: isDragging ? 'none' : 'transform 0.3s ease',
+          transition: isDragging ? 'transform 0.05s ease-out' : 'transform 0.3s ease',
           transform: `translateX(${dragX}px) rotate(${rotation}deg)`,
+          willChange: isDragging ? 'transform' : 'auto',
         }}
       >
         {/* Flip container - handles rotation */}
