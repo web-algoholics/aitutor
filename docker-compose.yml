@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: aitutor-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app_db
+    ports:
+      # If 5432 is already used on the host, expose Postgres on another port (e.g. 5433)
+      # Inside Docker network it is still available as db:5432
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aitutor-backend
+    depends_on:
+      - db
+    env_file:
+      - .env.local
+    environment:
+      # Переопределяем только хост базы, чтобы внутри докера он всегда указывал на сервис db,
+      # даже если в .env.local для локальной разработки стоит localhost
+      DB_HOST: db
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/uploads/profile_icons:/app/src/uploads/profile_icons
+
+volumes:
+  postgres_data:
+
+

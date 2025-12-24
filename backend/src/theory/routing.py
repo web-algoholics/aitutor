@@ -514,9 +514,6 @@ async def mark_lesson_completed(
     lesson.is_completed = True
     await db.commit()
 
-    # Update study streak
-    await update_study_streak(current_user, db)
-
     # Check if all lessons in module are completed
     result = await db.execute(
         select(TheoryLesson).where(TheoryLesson.module_id == lesson.module_id)
