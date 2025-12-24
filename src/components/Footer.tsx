@@ -19,8 +19,8 @@ export default function Footer() {
   </div>
   <div className="flex items-center gap-6 text-sm" style={{ color: theme === 'dark' ? '#a1a1aa' : '#4b5563' }}>
     <Link to="/help" style={{ color: theme === 'dark' ? '#a1a1aa' : '#4b5563' }}>О проекте</Link>
-    <a href="#" style={{ color: theme === 'dark' ? '#a1a1aa' : '#4b5563' }}>Вопросы и ответы</a>
-    <a href="#" style={{ color: theme === 'dark' ? '#a1a1aa' : '#4b5563' }}>Обратная связь</a>
+    <Link to="/help" style={{ color: theme === 'dark' ? '#a1a1aa' : '#4b5563' }}>Вопросы и ответы</Link>
+    <Link to="/help" style={{ color: theme === 'dark' ? '#a1a1aa' : '#4b5563' }}>Обратная связь</Link>
   </div>
 </div>
 </footer>

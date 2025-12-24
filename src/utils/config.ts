@@ -27,6 +27,6 @@ export function getConfig(key: string, defaultValue?: string): string | undefine
  * @returns API URL или значение по умолчанию
  */
 export function getApiUrl(): string {
-  return getConfig('aitutor.api', 'http://localhost:8099') || 'http://localhost:8099';
+  return getConfig('aitutor.api', 'http://localhost:8000') || 'http://localhost:8000';
 }
 
