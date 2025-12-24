@@ -275,171 +275,12 @@ export default function MarketAnalysis() {
         </Paragraph>
       </div>
 
-<<<<<<< HEAD:src/pages/MarketAnalysis.tsx
-        {/* Search Form */}
-        <Card className="mb-6">
-          <Space direction="vertical" size="middle" className="w-full">
-            <div>
-              <Text strong>Поисковый запрос</Text>
-              <Input
-                size="large"
-                placeholder="Например: Python разработчик, Frontend разработчик"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onPressEnter={handleAnalyze}
-                prefix={<SearchOutlined />}
-              />
-            </div>
-
-            <Row gutter={16}>
-              <Col span={8}>
-                <Text strong>Регион (опционально)</Text>
-                <Select
-                  size="large"
-                  className="w-full mt-2"
-                  placeholder="Выберите регион"
-                  allowClear
-                  value={area}
-                  onChange={setArea}
-                  showSearch
-                  optionFilterProp="children"
-                >
-                  {AREAS.map((a) => (
-                    <Option key={a.value} value={a.value}>
-                      {a.label}
-                    </Option>
-                  ))}
-                </Select>
-              </Col>
-              <Col span={8}>
-                <Text strong>Опыт</Text>
-                <Select
-                  size="large"
-                  className="w-full mt-2"
-                  placeholder="Уровень опыта"
-                  allowClear
-                  value={experience}
-                  onChange={setExperience}
-                >
-                  {EXPERIENCE_LEVELS.map((e) => (
-                    <Option key={e.value} value={e.value}>
-                      {e.label}
-                    </Option>
-                  ))}
-                </Select>
-              </Col>
-              <Col span={8}>
-                <Text strong>Количество вакансий для анализа</Text>
-                <InputNumber
-                  min={1}
-                  max={1000}
-                  size="large"
-                  className="w-full mt-2"
-                  value={limit}
-                  onChange={(value) => setLimit(value || 1)}
-                />
-              </Col>
-            </Row>
-
-            {/* Переключатель расширенных фильтров */}
-            <Button
-              type="default"
-              onClick={() => setShowAdvanced((prev) => !prev)}
-              style={{ borderColor: '#000', color: '#000' }}
-            >
-              {showAdvanced ? 'Скрыть расширенные фильтры' : 'Показать расширенные фильтры'}
-            </Button>
-
-            {showAdvanced && (
-              <>
-                <Divider />
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Text strong>Формат занятости</Text>
-                    <Select
-                      size="large"
-                      className="w-full mt-2"
-                      placeholder="Выберите формат занятости"
-                      allowClear
-                      value={employment}
-                      onChange={(value) => {
-                        if (value === 'any') {
-                          setEmployment(undefined);
-                        } else {
-                          setEmployment(value);
-                        }
-                      }}
-                    >
-                      <Option value="any">Любой формат</Option>
-                      {EMPLOYMENTS.map((e) => (
-                        <Option key={e.value} value={e.value}>
-                          {e.label}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Col>
-                  <Col span={12}>
-                    <Text strong>График работы</Text>
-                    <Select
-                      size="large"
-                      className="w-full mt-2"
-                      placeholder="Выберите график работы"
-                      allowClear
-                      value={schedule}
-                      onChange={(value) => {
-                        if (value === 'any') {
-                          setSchedule(undefined);
-                        } else {
-                          setSchedule(value);
-                        }
-                      }}
-                    >
-                      <Option value="any">Любой график</Option>
-                      {SCHEDULES.map((s) => (
-                        <Option key={s.value} value={s.value}>
-                          {s.label}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Text strong>Дата публикации с</Text>
-                    <Input
-                      type="date"
-                      size="large"
-                      className="w-full mt-2"
-                      value={dateFrom}
-                      onChange={(e) => setDateFrom(e.target.value || undefined)}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <Text strong>Дата публикации по</Text>
-                    <Input
-                      type="date"
-                      size="large"
-                      className="w-full mt-2"
-                      value={dateTo}
-                      onChange={(e) => setDateTo(e.target.value || undefined)}
-                    />
-                  </Col>
-                </Row>
-
-              </>
-            )}
-
-            <Button
-              type="primary"
-=======
       {/* Search Form */}
       <Card className="mb-6" bordered={false}>
         <Space direction="vertical" size="middle" className="w-full">
           <div>
             <Text strong>Поисковый запрос</Text>
             <Input
->>>>>>> feature/dark-theme:src/pages/MarketAnalysis/MarketAnalysis.tsx
               size="large"
               placeholder="Например: Python разработчик, Frontend разработчик"
               value={query}
@@ -539,10 +380,6 @@ export default function MarketAnalysis() {
 
             {/* Summary Stats */}
             <Row gutter={16} className="mb-6">
-<<<<<<< HEAD:src/pages/MarketAnalysis.tsx
-              <Col span={12}>
-                <Card>
-=======
               <Col span={8}>
                 <Card bordered={false}>
                   <Statistic
@@ -554,7 +391,6 @@ export default function MarketAnalysis() {
               </Col>
               <Col span={8}>
                 <Card bordered={false}>
->>>>>>> feature/dark-theme:src/pages/MarketAnalysis/MarketAnalysis.tsx
                   <Statistic
                     title="Средняя зарплата"
                     value={formatSalary(data.salary_stats.average_mid)}
@@ -562,13 +398,8 @@ export default function MarketAnalysis() {
                   />
                 </Card>
               </Col>
-<<<<<<< HEAD:src/pages/MarketAnalysis.tsx
-              <Col span={12}>
-                <Card>
-=======
               <Col span={8}>
                 <Card bordered={false}>
->>>>>>> feature/dark-theme:src/pages/MarketAnalysis/MarketAnalysis.tsx
                   <Statistic
                     title="Рекомендуемых курсов"
                     value={data.recommended_courses.length}

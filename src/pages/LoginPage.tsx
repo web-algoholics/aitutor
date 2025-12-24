@@ -3,8 +3,7 @@ import { Form, Input, Button, Checkbox, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLoginMutation, useGetCurrentUserQuery } from '../services/authApi';
-import AuthLayout from '../components/AuthLayout';
-import type { FormInstance } from 'antd';
+import AuthLayout, { useCircleAnimation } from '../components/AuthLayout';
 
 interface LoginValues {
   email: string;
@@ -19,6 +18,36 @@ export default function LoginPage() {
   const [form] = Form.useForm<LoginValues>();
   const [messageApi, contextHolder] = message.useMessage();
 
+  const CollapseLink = ({
+    to,
+    className,
+    children,
+    style,
+  }: {
+    to: string;
+    className?: string;
+    children: React.ReactNode;
+    style?: React.CSSProperties;
+  }) => {
+    const { collapse } = useCircleAnimation();
+    const innerNavigate = useNavigate();
+
+    return (
+      <Link
+        to={to}
+        className={className}
+        style={style}
+        onClick={(e) => {
+          e.preventDefault();
+          collapse();
+          setTimeout(() => innerNavigate(to), 320);
+        }}
+      >
+        {children}
+      </Link>
+    );
+  };
+
   // HANDLE 422 + FIELD ERRORS
   useEffect(() => {
     if (error && 'status' in error && error.status === 422 && 'data' in error && error.data && typeof error.data === 'object' && 'detail' in error.data) {
@@ -32,7 +61,7 @@ export default function LoginPage() {
       });
       form.setFields(fieldErrors);
     } else if (error) {
-      messageApi.error('Неверный email или пароль');
+      messageApi.error('Неверный логин или пароль');
     }
   }, [error, form, messageApi]);
 
@@ -40,7 +69,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (isSuccess && !isFetching && user) {
       if (!('is_verified' in user) || !user.is_verified) {
-        messageApi.info('Пожалуйста, подтвердите ваш email.');
+        messageApi.info('Пожалуйста, подтвердите email.');
         navigate('/theory');
       } else {
         navigate('/theory');
@@ -60,9 +89,15 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthLayout title="Войти">
+    <AuthLayout title="Вход">
       {contextHolder}
-      <Form<LoginValues> form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
+      <Form<LoginValues>
+        form={form}
+        layout="vertical"
+        onFinish={onFinish}
+        autoComplete="off"
+        style={{ width: 'min(320px, 100%)', margin: '0 auto' }}
+      >
         <Form.Item
           label="Email или имя пользователя"
           name="email"
@@ -70,7 +105,13 @@ export default function LoginPage() {
             { required: true, message: 'Введите email или имя пользователя' },
           ]}
         >
-          <Input prefix={<UserOutlined />} placeholder="you@example.com" />
+          <Input 
+            prefix={<UserOutlined style={{ color: '#2B5797' }} />} 
+            placeholder="you@example.com"
+            style={{
+              color: '#000'
+            }}
+          />
         </Form.Item>
 
         <Form.Item
@@ -78,7 +119,13 @@ export default function LoginPage() {
           name="password"
           rules={[{ required: true, message: 'Введите пароль' }]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder="••••••••" />
+          <Input.Password 
+            prefix={<LockOutlined style={{ color: '#2B5797' }} />} 
+            placeholder="••••••••"
+            style={{
+              color: '#000'
+            }}
+          />
         </Form.Item>
 
         <Form.Item>
@@ -86,20 +133,29 @@ export default function LoginPage() {
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox>Запомнить меня</Checkbox>
             </Form.Item>
-            <Link to="/forgot-password" className="text-sm hover:text-black hover:underline">
+            <CollapseLink to="/forgot-password" className="text-sm hover:text-black hover:underline">
               Забыли пароль?
-            </Link>
+            </CollapseLink>
           </div>
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" loading={isLoading} block>
+          <Button 
+            type="primary" 
+            htmlType="submit" 
+            loading={isLoading} 
+            block
+            style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+          >
             Войти
           </Button>
         </Form.Item>
 
         <div className="text-center text-sm">
-          Нет аккаунта? <Link to="/register" className="hover:text-black hover:underline">Зарегистрироваться</Link>
+          <div>Нет аккаунта?</div>
+          <div>
+            <CollapseLink to="/register" className="hover:text-black hover:underline" style={{ color: '#2B5797' }}>Зарегистрироваться</CollapseLink>
+          </div>
         </div>
       </Form>
     </AuthLayout>

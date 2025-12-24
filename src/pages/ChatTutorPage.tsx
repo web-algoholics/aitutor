@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Spin, message, Space, Empty, Collapse, Radio, Typography, Divider } from 'antd';
+import { Button, Card, message, Space, Empty, Collapse, Radio, Typography, Divider } from 'antd';
+import LoadingDot from '../components/LoadingDot';
 import { CheckCircleOutlined, BookOutlined, FileTextOutlined, CodeOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -297,7 +298,7 @@ export default function ChatTutorPage() {
   };
 
   if (moduleLoading || initLoading) {
-    return <Spin size="large" className="flex items-center justify-center min-h-screen" />;
+    return <div className="flex items-center justify-center min-h-screen"><LoadingDot size="large" /></div>;
   }
 
   if (!module) {

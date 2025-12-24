@@ -1,5 +1,6 @@
 import React from 'react';
-import { Card, Button, Empty, Space, Tag, Progress, Spin, message } from 'antd';
+import { Card, Button, Empty, Space, Tag, Progress, message } from 'antd';
+import LoadingDot from '../components/LoadingDot';
 import { BookOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useGetCoursesQuery, type Course } from '../services/coursesApi';
@@ -43,7 +44,7 @@ export default function CoursesPage() {
     }
   };
 
-  if (isLoading) return <Spin size="large" className="flex items-center justify-center min-h-screen" />;
+  if (isLoading) return <div className="flex items-center justify-center min-h-screen"><LoadingDot size="large" /></div>;
 
   if (isError) {
     messageApi.error('Ошибка при загрузке курсов');

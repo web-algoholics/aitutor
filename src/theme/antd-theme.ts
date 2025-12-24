@@ -1,33 +1,38 @@
 import { theme as antdTheme } from 'antd';
 
-export const designTheme = {
-  algorithm: antdTheme.defaultAlgorithm,
+type ThemeMode = 'light' | 'dark';
+
+export const getTheme = (mode: ThemeMode = 'light') => {
+  const isDark = mode === 'dark';
+  
+  return {
+  algorithm: isDark ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
   token: {
     // shadcn/ui color palette - neutral & accessible
-    colorPrimary: '#09090b',        // Nearly black, primary text
-    colorPrimaryHover: '#18181b',   // Slightly lighter for hover
-    colorPrimaryActive: '#09090b',  // Back to primary for active
+    colorPrimary: '#2B5797',        // Primary blue from logo
+    colorPrimaryHover: '#1e3f6d',   // Darker blue for hover
+    colorPrimaryActive: '#2B5797',  // Back to primary for active
     colorSuccess: '#22c55e',        // Green for success
     colorWarning: '#eab308',        // Amber for warning
     colorError: '#ef4444',          // Red for error
     colorInfo: '#0ea5e9',           // Sky blue for info
 
     // Text colors - shadcn/ui uses semantic text colors
-    colorTextBase: '#09090b',       // Primary text (black)
-    colorTextSecondary: '#71717a',  // Secondary text (muted gray)
-    colorTextTertiary: '#a1a1aa',   // Tertiary text (lighter gray)
-    colorTextPlaceholder: '#d4d4d8',// Placeholder text
-    colorTextDisabled: '#d4d4d8',   // Disabled text
+    colorTextBase: isDark ? '#fafafa' : '#09090b',       // Primary text
+    colorTextSecondary: isDark ? '#a1a1aa' : '#71717a',  // Secondary text
+    colorTextTertiary: isDark ? '#71717a' : '#a1a1aa',   // Tertiary text
+    colorTextPlaceholder: isDark ? '#666' : '#999',      // Placeholder text
+    colorTextDisabled: isDark ? '#404040' : '#d4d4d8',   // Disabled text
 
-    // Background colors - clean whites and grays
-    colorBgBase: '#ffffff',         // Base white
-    colorBgContainer: '#ffffff',    // Container white
-    colorBgElevated: '#fafafa',     // Slightly elevated (off-white)
-    colorBgLayout: '#ffffff',       // Layout background
+    // Background colors
+    colorBgBase: isDark ? '#141414' : '#ffffff',         // Base background
+    colorBgContainer: isDark ? '#1f1f1f' : '#ffffff',    // Container background
+    colorBgElevated: isDark ? '#2a2a2a' : '#fafafa',     // Elevated background
+    colorBgLayout: isDark ? '#141414' : '#ffffff',       // Layout background
 
-    // Border colors - subtle grays
-    colorBorder: '#e4e4e7',         // Primary border (light gray)
-    colorBorderSecondary: '#d4d4d8',// Secondary border (darker gray)
+    // Border colors
+    colorBorder: isDark ? '#303030' : '#e4e4e7',         // Primary border
+    colorBorderSecondary: isDark ? '#404040' : '#d4d4d8',// Secondary border
 
     // Typography - shadcn/ui style
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", sans-serif',
@@ -49,8 +54,10 @@ export const designTheme = {
     lineHeightLG: 1.5715,           // Large line height
     lineHeightSM: 1.5,              // Small line height
 
-    // Shadows - subtle like shadcn/ui
-    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+    // Shadows
+    boxShadow: isDark 
+      ? '0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2)'
+      : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
     
     // Border radius
     borderRadius: 6,                // shadcn/ui uses 6px for consistency
@@ -58,21 +65,21 @@ export const designTheme = {
   components: {
     Button: {
       borderRadius: 6,
-      colorPrimary: '#09090b',
-      colorPrimaryHover: '#27272a',
-      colorPrimaryActive: '#09090b',
+      colorPrimary: '#2B5797',
+      colorPrimaryHover: '#1e3f6d',
+      colorPrimaryActive: '#2B5797',
       fontSize: 14,
       fontWeight: 500,
       controlHeight: 36,              // Reduced from 40 to 36
       lineHeight: 1.5715,
-      defaultBorderColor: '#e4e4e7',
-      defaultColor: '#09090b',
+      defaultBorderColor: isDark ? '#303030' : '#e4e4e7',
+      defaultColor: '#2B5797',
       paddingContentHorizontal: 20,   // Reduced from 24
       paddingXS: 6,                   // Reduced from 8
       paddingSM: 10,                  // Reduced from 12
       paddingMD: 14,                  // Reduced from 16
       controlPaddingHorizontal: 14,   // Reduced from 16
-      primaryColor: '#09090b',
+      primaryColor: '#2B5797',
       controlHeightLG: 40,            // Reduced from 48
       controlHeightSM: 28,            // Reduced from 32
     },
@@ -84,47 +91,47 @@ export const designTheme = {
       lineHeight: 1.5715,
       paddingBlock: 8,
       paddingInline: 12,
-      colorBgContainer: '#ffffff',
-      colorBorder: '#e4e4e7',
-      colorBgElevated: '#fafafa',
-      hoverBorderColor: '#d4d4d8',
-      activeBorderColor: '#09090b',
+      colorBgContainer: isDark ? '#141414' : '#ffffff',
+      colorBorder: isDark ? '#303030' : '#e4e4e7',
+      colorBgElevated: isDark ? '#1f1f1f' : '#fafafa',
+      hoverBorderColor: isDark ? '#404040' : '#d4d4d8',
+      activeBorderColor: '#2B5797',
       colorBorderHover: '#d4d4d8',
-      colorTextPlaceholder: '#d4d4d8',
+      colorTextPlaceholder: '#999',
     },
     InputNumber: {
       borderRadius: 6,
       controlHeight: 40,
       fontSize: 14,
       lineHeight: 1.5715,
-      colorBorder: '#e4e4e7',
-      hoverBorderColor: '#d4d4d8',
-      activeBorderColor: '#09090b',
+      colorBorder: isDark ? '#303030' : '#e4e4e7',
+      hoverBorderColor: isDark ? '#404040' : '#d4d4d8',
+      activeBorderColor: '#2B5797',
     },
     Select: {
       borderRadius: 6,
       controlHeight: 40,
       fontSize: 14,
       lineHeight: 1.5715,
-      colorBorder: '#e4e4e7',
-      colorBgElevated: '#fafafa',
-      hoverBorderColor: '#d4d4d8',
+      colorBorder: isDark ? '#303030' : '#e4e4e7',
+      colorBgElevated: isDark ? '#1f1f1f' : '#fafafa',
+      hoverBorderColor: isDark ? '#404040' : '#d4d4d8',
     },
     Checkbox: {
       borderRadius: 4,
       fontSize: 14,
       lineHeight: 1.5715,
-      colorPrimary: '#09090b',
-      colorPrimaryHover: '#18181b',
-      colorBorder: '#e4e4e7',
+      colorPrimary: '#2B5797',
+      colorPrimaryHover: '#1e3f6d',
+      colorBorder: isDark ? '#303030' : '#e4e4e7',
     },
     Radio: {
       borderRadius: 4,
       fontSize: 14,
       lineHeight: 1.5715,
-      colorPrimary: '#09090b',
-      colorPrimaryHover: '#18181b',
-      colorBorder: '#e4e4e7',
+      colorPrimary: '#2B5797',
+      colorPrimaryHover: '#1e3f6d',
+      colorBorder: isDark ? '#303030' : '#e4e4e7',
     },
     Switch: {
       colorPrimary: '#22c55e',
@@ -134,10 +141,15 @@ export const designTheme = {
     },
     Card: {
       borderRadiusLG: 8,
-      colorBorder: '#e4e4e7',
-      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-      boxShadowSecondary: '0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-      headerBg: 'transparent',
+      colorBorder: isDark ? '#303030' : '#e4e4e7',
+      colorBgContainer: isDark ? '#1f1f1f' : '#ffffff',
+      boxShadow: isDark 
+        ? '0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2)'
+        : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+      boxShadowSecondary: isDark 
+        ? '0 1px 2px 0 rgba(0, 0, 0, 0.2)'
+        : '0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+      headerBg: isDark ? '#1f1f1f' : 'transparent',
       headerFontSize: 18,
       headerFontWeight: 600,
       headerLineHeight: 1.333,       // Line height adjusted for better centering
@@ -149,7 +161,7 @@ export const designTheme = {
       labelFontSize: 14,
       labelFontWeight: 500,
       labelLineHeight: 1.5715,
-      labelColor: '#09090b',
+      labelColor: '#2B5797',
       itemMarginBottom: 24,
       verticalLabelPadding: 0,
     },
@@ -182,15 +194,15 @@ export const designTheme = {
     },
     Modal: {
       borderRadiusLG: 8,
-      colorBgMask: 'rgba(0, 0, 0, 0.45)',
+      colorBgMask: isDark ? 'rgba(0, 0, 0, 0.65)' : 'rgba(0, 0, 0, 0.45)',
       fontWeightStrong: 600,
       titleFontSize: 20,
       titleLineHeight: 1.4,
-      contentBg: '#ffffff',
+      contentBg: isDark ? '#141414' : '#ffffff',
     },
     Tooltip: {
       borderRadius: 4,
-      colorBgDefault: '#18181b',
+      colorBgDefault: isDark ? '#1f1f1f' : '#18181b',
       colorTextLightSolid: '#ffffff',
       fontSize: 12,
       lineHeight: 1.5,
@@ -199,63 +211,63 @@ export const designTheme = {
       borderRadius: 6,
       fontSize: 14,
       lineHeight: 1.5715,
-      colorBgElevated: '#ffffff',
-      colorBorder: '#e4e4e7',
+      colorBgElevated: isDark ? '#1f1f1f' : '#ffffff',
+      colorBorder: isDark ? '#303030' : '#e4e4e7',
     },
     Menu: {
       borderRadius: 6,
       fontSize: 14,
       lineHeight: 1.5715,
-      colorBgBase: '#ffffff',
-      colorItemBg: '#ffffff',
-      colorItemBgHover: '#f4f4f5',
-      colorItemBgSelected: '#f4f4f5',
-      colorItemBgSelectedHorizontal: '#f4f4f5',
+      colorBgBase: isDark ? '#141414' : '#ffffff',
+      colorItemBg: isDark ? '#141414' : '#ffffff',
+      colorItemBgHover: isDark ? '#1f1f1f' : '#f4f4f5',
+      colorItemBgSelected: isDark ? '#1f1f1f' : '#f4f4f5',
+      colorItemBgSelectedHorizontal: isDark ? '#1f1f1f' : '#f4f4f5',
     },
     Pagination: {
-      itemActiveBg: '#09090b',
-      itemActiveBorderColor: '#09090b',
-      itemActiveTonalBg: '#f4f4f5',
-      itemLinkBg: '#ffffff',
-      itemBg: '#ffffff',
-      itemDisabledBgActive: '#fafafa',
+      itemActiveBg: '#2B5797',
+      itemActiveBorderColor: '#2B5797',
+      itemActiveTonalBg: isDark ? '#1f1f1f' : '#f4f4f5',
+      itemLinkBg: isDark ? '#141414' : '#ffffff',
+      itemBg: isDark ? '#141414' : '#ffffff',
+      itemDisabledBgActive: isDark ? '#0a0a0a' : '#fafafa',
       borderRadius: 6,
       fontSize: 14,
       lineHeight: 1.5715,
     },
     Table: {
-      borderColor: '#e4e4e7',
-      headerBg: '#fafafa',
-      headerColor: '#09090b',
+      borderColor: isDark ? '#303030' : '#e4e4e7',
+      headerBg: isDark ? '#1f1f1f' : '#fafafa',
+      headerColor: '#2B5797',
       headerFontWeight: 600,
       headerFontSize: 14,
-      rowHoverBg: '#fafafa',
-      colorBgContainer: '#ffffff',
+      rowHoverBg: isDark ? '#1f1f1f' : '#fafafa',
+      colorBgContainer: isDark ? '#141414' : '#ffffff',
       borderRadius: 6,
       fontSize: 14,
       lineHeight: 1.5715,
     },
     Spin: {
-      colorPrimary: '#09090b',
+      colorPrimary: '#2B5797',
       fontSize: 14,
     },
     Slider: {
-      colorPrimary: '#09090b',
-      colorPrimaryBorder: '#e4e4e7',
-      trackBg: '#e4e4e7',
-      trackBgHover: '#d4d4d8',
+      colorPrimary: '#2B5797',
+      colorPrimaryBorder: isDark ? '#303030' : '#e4e4e7',
+      trackBg: isDark ? '#303030' : '#e4e4e7',
+      trackBgHover: isDark ? '#404040' : '#d4d4d8',
       fontSize: 12,
       lineHeight: 1.5,
     },
     Progress: {
       colorPrimary: '#22c55e',
-      remainingColor: '#e4e4e7',
+      remainingColor: isDark ? '#303030' : '#e4e4e7',
       fontSize: 12,
       lineHeight: 1.5,
     },
     Badge: {
-      colorBgDefault: '#f4f4f5',
-      colorTextLightSolid: '#09090b',
+      colorBgDefault: isDark ? '#1f1f1f' : '#f4f4f5',
+      colorTextLightSolid: '#2B5797',
       borderRadius: 12,
       fontSize: 12,
       lineHeight: 1.5,
@@ -263,17 +275,21 @@ export const designTheme = {
     },
     Tag: {
       borderRadiusSM: 4,
-      colorBgContainer: '#f4f4f5',
-      colorTextLightSolid: '#09090b',
+      colorBgContainer: isDark ? '#1f1f1f' : '#f4f4f5',
+      colorTextLightSolid: '#2B5797',
       fontSize: 12,
       lineHeight: 1.5,
       fontWeightStrong: 600,
     },
     Divider: {
-      colorBorder: '#e4e4e7',
+      colorBorder: isDark ? '#303030' : '#e4e4e7',
       marginSM: 12,
       fontSize: 14,
       lineHeight: 1.5715,
     },
   },
+  };
 };
+
+// Export default light theme for backward compatibility
+export const designTheme = getTheme('light');

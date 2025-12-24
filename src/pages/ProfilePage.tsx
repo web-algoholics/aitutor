@@ -4,7 +4,10 @@ import { EditOutlined, MailOutlined, GiftOutlined, CheckCircleOutlined, Exclamat
 import { useGetProfileQuery, useUpdateProfileMutation, useRequestVerifyTokenMutation, useUploadAvatarMutation, useGetAvatarQuery } from '../services/profileApi';
 import AuthLayout from '../components/AuthLayout';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../contexts/ThemeContext';
 import Stats from '../components/Stats';
+import PageContainer from '../components/PageContainer';
+import LoadingDot from '../components/LoadingDot';
 
 
 const { Title, Text } = Typography;
@@ -21,6 +24,7 @@ interface PasswordChangeValues {
 
 export default function ProfilePage() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   const { data: profile, isLoading, refetch } = useGetProfileQuery(undefined);
   const { data: avatarData } = useGetAvatarQuery(undefined, { skip: !profile?.profile_icon_filename } as any);
@@ -97,7 +101,7 @@ export default function ProfilePage() {
       return;
     }
     try {
-      messageApi.success('Письмо с подтверждением отправлено!');
+      messageApi.success('Письмо для подтверждения отправлено!');
       await requestVerifyToken(profile.email as string).unwrap();
     } catch (err: any) {
       messageApi.error(err?.data?.detail?.[0]?.msg || 'Не удалось отправить письмо');
@@ -113,7 +117,7 @@ export default function ProfilePage() {
       messageApi.success('Аватар обновлён');
       refetch();
     } catch {
-      messageApi.error('Не удалось загрузить аватар');
+      messageApi.error('Не удалось загрузить файл');
     }
   };
 
@@ -128,15 +132,23 @@ export default function ProfilePage() {
     setEditMode(false);
   };
 
-  if (isLoading) return <div className="p-8 text-center">Загрузка...</div>;
+  if (isLoading) {
+    return (
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <LoadingDot size="large" />
+        </div>
+      </PageContainer>
+    );
+  }
   if (!profile) navigate("/login");
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8 w-full">
+    <PageContainer>
       {contextHolder}
 
       {/* Header */}
-      <Card className="mb-6 shadow-sm">
+      <Card bordered={false} className="mb-6 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Upload
@@ -153,31 +165,34 @@ export default function ProfilePage() {
               />
             </Upload>
             <div>
-              <Title level={4} className="m-0">{profile && 'username' in profile ? profile.username : 'Пользователь'}</Title>
-              <Space size={4} className="text-gray-600">
-                <MailOutlined />
-                <Text>{profile && 'email' in profile ? profile.email : 'Loading...'}</Text>
+              <Title level={4} className="m-0" style={{ color: theme === 'dark' ? '#fafafa' : 'inherit' }}>{profile && 'username' in profile ? profile.username : 'Пользователь'}</Title>
+              <Space size={4} style={{ color: theme === 'dark' ? '#a1a1aa' : '#4b5563' }}>
+                <MailOutlined style={{ color: '#2B5797' }} />
+                <Text style={{ color: theme === 'dark' ? '#a1a1aa' : 'inherit' }}>{profile && 'email' in profile ? profile.email : 'Загрузка...'}</Text>
               </Space>
             </div>
           </div>
-          <Button type="primary" icon={<EditOutlined />} onClick={enterEditMode} disabled={editMode}>
-            Редактировать профиль
-          </Button>
         </div>
       </Card>
 
       {/* Profile Form */}
-      <Card title="Информация профиля" className="shadow-sm">
+      <Card bordered={false} title="Информация профиля" className="shadow-sm">
         <Form<ProfileFormValues> form={form} layout="vertical" onFinish={onFinish} disabled={!editMode}>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item label="Имя пользователя" name="username">
-                <Input prefix={<EditOutlined className="text-gray-400" />} />
+                <Input 
+                  prefix={<EditOutlined className="text-gray-400" />} 
+                  style={{ color: theme === 'dark' ? '#fafafa' : '#000' }}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item label="Email" name="email">
-                <Input prefix={<MailOutlined className="text-gray-400" />} />
+                <Input 
+                  prefix={<MailOutlined className="text-gray-400" />} 
+                  style={{ color: theme === 'dark' ? '#fafafa' : '#000' }}
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -192,24 +207,48 @@ export default function ProfilePage() {
           )}
         </Form>
 
+        {!editMode && (
+          <div style={{ marginTop: '16px' }}>
+            <Button type="primary" icon={<EditOutlined />} onClick={enterEditMode} style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}>
+              Редактировать
+            </Button>
+          </div>
+        )}
+
         {/* Email Verification */}
         {profile && 'is_verified' in profile && !profile.is_verified ? (
-          <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <Space>
-              <ExclamationCircleOutlined className="text-yellow-600" />
-              <Text className="text-yellow-800">
-                Ваш email не подтверждён.{' '}
-                <Button type="link" onClick={handleVerify} className="p-0 h-auto">
-                  Подтвердить email
+          <div className="mt-6 p-4 rounded-lg" style={{ 
+            backgroundColor: '#fefce8',
+            border: theme === 'dark' ? '2px solid #1a1a1a' : '2px solid #eab308',
+            borderColor: theme === 'dark' ? '#1a1a1a' : '#eab308'
+          }}>
+            <Space size="middle" style={{ width: '100%', alignItems: 'flex-start' }}>
+              <ExclamationCircleOutlined style={{ fontSize: '18px', marginTop: '2px', color: '#2B5797' }} />
+              <div style={{ flex: 1 }}>
+                <Text style={{ fontSize: '14px', display: 'block', marginBottom: '8px', color: '#000' }}>
+                  Email не подтверждён
+                </Text>
+                <Button 
+                  type="link" 
+                  onClick={handleVerify} 
+                  style={{ 
+                    padding: 0, 
+                    height: 'auto', 
+                    color: '#2B5797',
+                    fontWeight: 500,
+                    fontSize: '14px'
+                  }}
+                >
+                  Отправить письмо для подтверждения
                 </Button>
-              </Text>
+              </div>
             </Space>
           </div>
         ) : (
-          <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-            <Space>
-              <CheckCircleOutlined className="text-green-600" />
-              <Text className="text-green-800">Email подтверждён</Text>
+          <div className="mt-6 p-4 bg-green-50 border-2 border-green-300 rounded-lg">
+            <Space size="middle" style={{ width: '100%' }}>
+              <CheckCircleOutlined className="text-green-600" style={{ fontSize: '18px' }} />
+              <Text className="text-green-900" style={{ fontSize: '14px', fontWeight: 500 }}>Email подтверждён</Text>
             </Space>
           </div>
         )}
@@ -217,14 +256,14 @@ export default function ProfilePage() {
         {/* Change Password */}
         <div className="mt-8">
           <Button type="default" onClick={() => setPwdModal(true)}>
-            Изменить пароль
+            Сменить пароль
           </Button>
         </div>
       </Card>
 
       {/* Password Modal */}
       <Modal
-        title="Изменить пароль"
+        title="Смена пароля"
         open={pwdModal}
         onCancel={() => { setPwdModal(false); pwdForm.resetFields(); }}
         footer={null}
@@ -237,13 +276,13 @@ export default function ProfilePage() {
               { min: 8, message: 'Минимум 8 символов' },
             ]}
           >
-          <Input.Password placeholder="Новый пароль" />
+            <Input.Password placeholder="Новый пароль" />
           </Form.Item>
           <Form.Item
             name="confirm_password"
-            rules={[{ required: true, message: 'Подтвердите новый пароль' }]}
+            rules={[{ required: true, message: 'Повторите новый пароль' }]}
           >
-            <Input.Password placeholder="Подтвердите новый пароль" />
+            <Input.Password placeholder="Повторите новый пароль" />
           </Form.Item>
           <Form.Item className="mb-0 text-right">
             <Space>
@@ -255,9 +294,9 @@ export default function ProfilePage() {
       </Modal>
 
       {/* Stats Section */}
-      <Card title="Статистика обучения" className="shadow-sm mt-6">
+      <Card bordered={false} title="Статистика обучения" className="shadow-sm mt-6">
         <Stats />
       </Card>
-    </div>
+    </PageContainer>
   );
 }

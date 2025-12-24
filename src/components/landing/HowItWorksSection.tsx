@@ -8,35 +8,35 @@ const steps = [
   {
     number: 1,
     color: 'bg-blue-500',
-    title: 'Sign Up',
-    description: 'Create a free account in seconds'
+    title: 'Регистрация',
+    description: 'Создайте бесплатный аккаунт за пару секунд'
   },
   {
     number: 2,
     color: 'bg-green-500',
-    title: 'Choose a Topic',
-    description: 'Specify the topic you want to create a course on (e.g., "Python for Beginners")'
+    title: 'Выберите тему',
+    description: 'Укажите тему, по которой хотите курс (например: «Python для начинающих»)'
   },
   {
     number: 3,
     color: 'bg-purple-500',
-    title: 'Get Your Course',
-    description: 'AI will create a structured course with lessons and assignments for you'
+    title: 'Получите курс',
+    description: 'ИИ сформирует структурированный курс с уроками и заданиями'
   },
   {
     number: 4,
     color: 'bg-orange-500',
-    title: 'Start Learning',
-    description: 'Complete lessons, do assignments, and track your progress'
+    title: 'Начните обучение',
+    description: 'Проходите уроки, выполняйте задания и следите за прогрессом'
   }
 ];
 
 const courseExamples = [
-  'Python for Beginners',
-  'Web Development with JavaScript',
-  'Machine Learning',
-  'English for IT',
-  'Algorithms and Data Structures'
+  'Python для начинающих',
+  'Веб‑разработка на JavaScript',
+  'Машинное обучение',
+  'Английский для IT',
+  'Алгоритмы и структуры данных'
 ];
 
 export default function HowItWorksSection() {
@@ -71,7 +71,7 @@ export default function HowItWorksSection() {
       <div className="max-w-6xl mx-auto">
         <div className={`text-center mb-20 fade-in-up ${isVisible ? 'visible' : ''}`} style={{ animationDelay: '0s' }}>
           <Title level={2} className="text-4xl font-bold mb-4">
-            How It Works?
+            Как это работает?
           </Title>
         </div>
         
@@ -101,7 +101,7 @@ export default function HowItWorksSection() {
           <Col xs={24} md={12}>
           <div className={`shadow-lg fade-in-up ${isVisible ? 'visible' : ''}`}
               style={{ animationDelay: '0.5s' }}>
-            <Title level={3} className="mb-6 text-center">Course Topic Examples</Title>
+            <Title level={3} className="mb-6 text-center">Примеры тем курса</Title>
             <Card>
               <div className="text-center p-8">
                 <div className="space-y-3 text-left">

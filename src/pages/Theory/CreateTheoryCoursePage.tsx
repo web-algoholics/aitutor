@@ -3,6 +3,7 @@ import { Form, Input, Select, Button, Card, Typography, Space, message, Spin } f
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCreateTheoryCourseMutation } from '../../services/theoryApi';
 import { BookOutlined, LoadingOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import PageContainer from '../../components/PageContainer';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -54,22 +55,34 @@ const CreateTheoryCoursePage: React.FC = () => {
   ];
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '20px' }}>
+    <PageContainer>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <div>
           <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/theory')}>
             К списку курсов
           </Button>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <BookOutlined style={{ fontSize: '48px', color: '#1890ff', marginBottom: '16px' }} />
-          <Title level={2}>Создать AI курс</Title>
-          <Paragraph style={{ fontSize: '16px', color: '#666' }}>
+        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{
+            width: '200px',
+            height: '200px',
+            borderRadius: '50%',
+            backgroundColor: '#000',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '16px'
+          }}>
+            <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
+              Создать AI курс
+            </Title>
+          </div>
+          <Paragraph style={{ fontSize: '16px', color: '#666', textAlign: 'center' }}>
             ИИ сгенерирует персонализированный курс по вашей теме с подробной теорией и практическими заданиями
           </Paragraph>
         </div>
 
-        <Card title="Настройки курса" style={{ boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}>
+        <Card bordered={false}>
           <Form
             form={form}
             layout="vertical"
@@ -98,43 +111,34 @@ const CreateTheoryCoursePage: React.FC = () => {
 
             <Form.Item>
               <Button
-                type="primary"
                 htmlType="submit"
                 size="large"
                 loading={isLoading}
                 disabled={isLoading}
-                style={{ width: '100%', height: '48px', fontSize: '16px' }}
+                style={{ width: '100%', height: '48px', fontSize: '16px', backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
               >
-                {isLoading ? (
-                  <>
-                    <Spin indicator={<LoadingOutlined />} style={{ marginRight: '8px' }} />
-                    Создаю курс...
-                  </>
-                ) : (
-                  'Создать курс'
-                )}
+                {isLoading ? 'Создаю курс...' : 'Создать курс'}
               </Button>
             </Form.Item>
           </Form>
         </Card>
 
-        <Card title="Примеры тем" size="small">
-          <div style={{ marginTop: '12px' }}>
-            <Space wrap>
-              {exampleTopics.map((topic) => (
-                <Button
-                  key={topic}
-                  type="dashed"
-                  onClick={() => form.setFieldsValue({ topic })}
-                >
-                  {topic}
-                </Button>
-              ))}
-            </Space>
-          </div>
+        <Card bordered={false}>
+          <Title level={5} style={{ marginBottom: '12px' }}>Примеры тем</Title>
+          <Space wrap>
+            {exampleTopics.map((topic) => (
+              <Button
+                key={topic}
+                onClick={() => form.setFieldsValue({ topic })}
+                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+              >
+                {topic}
+              </Button>
+            ))}
+          </Space>
         </Card>
       </Space>
-    </div>
+    </PageContainer>
   );
 };
 

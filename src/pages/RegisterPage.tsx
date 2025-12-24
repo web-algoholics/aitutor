@@ -1,17 +1,14 @@
 import React, { useEffect } from 'react';
-import { Form, Input, Button, Checkbox, message } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import { UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRegisterMutation } from '../services/authApi';
-import AuthLayout from '../components/AuthLayout';
-import type { FormInstance } from 'antd';
+import AuthLayout, { useCircleAnimation } from '../components/AuthLayout';
 
 interface RegisterValues {
   username: string;
   email: string;
   password: string;
-  confirm: string;
-  agree: boolean;
 }
 
 export default function RegisterPage() {
@@ -19,6 +16,36 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const [form] = Form.useForm<RegisterValues>();
   const [messageApi, contextHolder] = message.useMessage();
+
+  const CollapseLink = ({
+    to,
+    className,
+    children,
+    style,
+  }: {
+    to: string;
+    className?: string;
+    children: React.ReactNode;
+    style?: React.CSSProperties;
+  }) => {
+    const { collapse } = useCircleAnimation();
+    const innerNavigate = useNavigate();
+
+    return (
+      <Link
+        to={to}
+        className={className}
+        style={style}
+        onClick={(e) => {
+          e.preventDefault();
+          collapse();
+          setTimeout(() => innerNavigate(to), 320);
+        }}
+      >
+        {children}
+      </Link>
+    );
+  };
 
   // HANDLE 422 + FIELD ERRORS
   useEffect(() => {
@@ -43,7 +70,7 @@ export default function RegisterPage() {
   // SUCCESS REDIRECT
   useEffect(() => {
     if (isSuccess) {
-      messageApi.success('Проверьте email, чтобы подтвердить аккаунт');
+      messageApi.success('Проверьте почту: мы отправили письмо для подтверждения аккаунта.');
       navigate('/login');
     }
   }, [isSuccess, navigate, messageApi]);
@@ -61,13 +88,14 @@ export default function RegisterPage() {
   };
 
   return (
-    <AuthLayout title="Создать аккаунт">
+    <AuthLayout title="Регистрация">
       {contextHolder}
       <Form<RegisterValues>
         form={form}
         layout="vertical"
         onFinish={onFinish}
         autoComplete="off"
+        style={{ width: 'min(320px, 100%)', margin: '0 auto' }}
       >
         {/* Username */}
         <Form.Item
@@ -75,7 +103,13 @@ export default function RegisterPage() {
           name="username"
           rules={[{ required: true, message: 'Введите имя пользователя' }]}
         >
-          <Input prefix={<UserOutlined />} placeholder="john_doe" />
+          <Input 
+            prefix={<UserOutlined style={{ color: '#2B5797' }} />} 
+            placeholder="john_doe"
+            style={{
+              color: '#000'
+            }}
+          />
         </Form.Item>
 
         {/* Email */}
@@ -84,10 +118,16 @@ export default function RegisterPage() {
           name="email"
           rules={[
             { required: true, message: 'Введите email' },
-            { type: 'email', message: 'Неверный формат email' },
+            { type: 'email', message: 'Некорректный формат email' },
           ]}
         >
-          <Input prefix={<MailOutlined />} placeholder="you@example.com" />
+          <Input 
+            prefix={<MailOutlined style={{ color: '#2B5797' }} />} 
+            placeholder="you@example.com"
+            style={{
+              color: '#000'
+            }}
+          />
         </Form.Item>
 
         {/* Password */}
@@ -96,68 +136,37 @@ export default function RegisterPage() {
           name="password"
           rules={[
             { required: true, message: 'Введите пароль' },
-            { min: 8, message: 'Пароль должен быть не менее 8 символов' },
+            { min: 8, message: 'Пароль должен быть не короче 8 символов' },
           ]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder="Минимум 8 символов" />
-        </Form.Item>
-
-        {/* Confirm Password */}
-        <Form.Item
-          label="Подтверждение пароля"
-          name="confirm"
-          dependencies={['password']}
-          rules={[
-            { required: true, message: 'Подтвердите пароль' },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error('Пароли не совпадают'));
-              },
-            }),
-          ]}
-        >
-          <Input.Password prefix={<LockOutlined />} placeholder="Повторите пароль" />
-        </Form.Item>
-
-        {/* Terms */}
-        <Form.Item
-          name="agree"
-          valuePropName="checked"
-          rules={[
-            {
-              validator: (_, value) =>
-                value ? Promise.resolve() : Promise.reject(new Error('Нужно принять условия использования')),
-            },
-          ]}
-        >
-          <Checkbox>
-            Я принимаю{' '}
-            <Link to="/terms" target="_blank" rel="noopener noreferrer">
-              Условия использования
-            </Link>{' '}
-            и{' '}
-            <Link to="/privacy" target="_blank" rel="noopener noreferrer">
-              Политику конфиденциальности
-            </Link>
-          </Checkbox>
+          <Input.Password 
+            prefix={<LockOutlined style={{ color: '#2B5797' }} />} 
+            placeholder="Минимум 8 символов"
+            style={{
+              color: '#000'
+            }}
+          />
         </Form.Item>
 
         {/* Submit */}
         <Form.Item>
-          <Button type="primary" htmlType="submit" loading={isLoading} block>
+          <Button 
+            type="primary" 
+            htmlType="submit" 
+            loading={isLoading} 
+            block
+            style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+          >
             Зарегистрироваться
           </Button>
         </Form.Item>
 
         {/* Login Link */}
         <div className="text-center text-sm">
-          Уже есть аккаунт?{' '}
-          <Link to="/login" className="text-sm hover:text-black hover:underline">
-            Войти
-          </Link>
+          <div>Уже есть аккаунт?</div>
+          <div>
+            <CollapseLink to="/login" className="text-sm hover:text-black hover:underline" style={{ color: '#2B5797' }}>Войти</CollapseLink>
+          </div>
         </div>
       </Form>
     </AuthLayout>
