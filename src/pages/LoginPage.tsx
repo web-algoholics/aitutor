@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Form, Input, Button, Checkbox, message } from 'antd';
+import { Form, Input, Button, Checkbox, message, Alert } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLoginMutation, useGetCurrentUserQuery } from '../services/authApi';
@@ -9,6 +9,12 @@ interface LoginValues {
   email: string;
   password: string;
   remember?: boolean;
+}
+
+function isFetchBaseQueryError(error: unknown): error is { status: number; data?: any } {
+  return (
+    typeof error === 'object' && error !== null && 'status' in error
+  );
 }
 
 export default function LoginPage() {
@@ -60,20 +66,16 @@ export default function LoginPage() {
         };
       });
       form.setFields(fieldErrors);
-    } else if (error) {
-      messageApi.error('Неверный логин или пароль');
     }
-  }, [error, form, messageApi]);
+  }, [error, form]);
 
   // SUCCESS REDIRECT
   useEffect(() => {
     if (isSuccess && !isFetching && user) {
       if (!('is_verified' in user) || !user.is_verified) {
         messageApi.info('Пожалуйста, подтвердите email.');
-        navigate('/theory');
-      } else {
-        navigate('/theory');
       }
+      navigate('/theory');
     }
   }, [isSuccess, isFetching, user, navigate, messageApi]);
 
@@ -91,6 +93,18 @@ export default function LoginPage() {
   return (
     <AuthLayout title="Вход">
       {contextHolder}
+      <div style={{ minHeight: 24, marginBottom: 20, pointerEvents: 'none' }}>
+        {error && isFetchBaseQueryError(error) && !(error.status === 422 && error.data && typeof error.data === 'object' && 'detail' in error.data) && (
+          <Alert
+            message="Неверный логин или пароль"
+            type="error"
+            showIcon={false}
+            style={{
+              background: 'transparent', border: 'none', color: '#e53935', fontSize: 14, padding: 0
+            }}
+          />
+        )}
+      </div>
       <Form<LoginValues>
         form={form}
         layout="vertical"
@@ -107,10 +121,7 @@ export default function LoginPage() {
         >
           <Input 
             prefix={<UserOutlined style={{ color: '#2B5797' }} />} 
-            placeholder="you@example.com"
-            style={{
-              color: '#000'
-            }}
+            placeholder="user@example.com"
           />
         </Form.Item>
 
@@ -122,9 +133,6 @@ export default function LoginPage() {
           <Input.Password 
             prefix={<LockOutlined style={{ color: '#2B5797' }} />} 
             placeholder="••••••••"
-            style={{
-              color: '#000'
-            }}
           />
         </Form.Item>
 

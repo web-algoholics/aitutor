@@ -1,21 +1,26 @@
 import React from 'react';
-import { Form, Input, Button, message, Card, Typography } from 'antd';
+import { Form, Input, Button, message, Typography, Alert } from 'antd';
 import { MailOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForgotPasswordMutation } from '../services/authApi';
 import AuthLayout, { useCircleAnimation } from '../components/AuthLayout';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 interface ForgotPasswordValues {
   email: string;
 }
 
+function isFetchBaseQueryError(error: unknown): error is { status: number; data?: any } {
+  return (
+    typeof error === 'object' && error !== null && 'status' in error
+  );
+}
+
 export default function ForgotPasswordPage() {
-  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
+  const [forgotPassword, { isLoading, error, isSuccess }] = useForgotPasswordMutation();
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm<ForgotPasswordValues>();
-  const navigate = useNavigate();
 
   const CollapseLink = ({
     to,
@@ -47,16 +52,39 @@ export default function ForgotPasswordPage() {
   const onFinish = async (values: ForgotPasswordValues) => {
     try {
       await forgotPassword(values.email).unwrap();
-      messageApi.success('Ссылка для сброса пароля отправлена на ваш email!');
       form.resetFields();
-    } catch (err: any) {
-      messageApi.error(err?.data?.detail || 'Не удалось отправить ссылку для сброса');
+    } catch {
+      // Error handled via Alert component
     }
   };
 
   return (
     <AuthLayout title="Восстановление пароля">
       {contextHolder}
+      <div style={{ minHeight: 24, marginBottom: 20, pointerEvents: 'none' }}>
+        {isSuccess && (
+          <Alert
+            message="Ссылка для сброса пароля отправлена на ваш email!"
+            type="success"
+            showIcon={false}
+            style={{
+              background: 'transparent', border: 'none', color: '#52c41a', fontSize: 14, padding: 0
+            }}
+          />
+        )}
+        {error && isFetchBaseQueryError(error) && !isSuccess && (
+          <Alert
+            message={'data' in error && error.data && typeof error.data === 'object' && 'detail' in error.data
+              ? (error.data as any).detail
+              : 'Не удалось отправить ссылку для сброса пароля'}
+            type="error"
+            showIcon={false}
+            style={{
+              background: 'transparent', border: 'none', color: '#e53935', fontSize: 14, padding: 0
+            }}
+          />
+        )}
+      </div>
       <Form<ForgotPasswordValues> 
         form={form} 
         layout="vertical" 
@@ -73,7 +101,7 @@ export default function ForgotPasswordPage() {
               { type: 'email', message: 'Некорректный формат email' },
             ]}
           >
-            <Input prefix={<MailOutlined style={{ color: '#2B5797' }} />} placeholder="you@example.com" size="large" />
+            <Input prefix={<MailOutlined style={{ color: '#2B5797' }} />} placeholder="user@example.com" size="large" />
           </Form.Item>
 
           <Form.Item>

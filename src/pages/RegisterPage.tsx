@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Form, Input, Button, message } from 'antd';
+import { Form, Input, Button, message, Alert } from 'antd';
 import { UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRegisterMutation } from '../services/authApi';
@@ -9,6 +9,12 @@ interface RegisterValues {
   username: string;
   email: string;
   password: string;
+}
+
+function isFetchBaseQueryError(error: unknown): error is { status: number; data?: any } {
+  return (
+    typeof error === 'object' && error !== null && 'status' in error
+  );
 }
 
 export default function RegisterPage() {
@@ -59,13 +65,8 @@ export default function RegisterPage() {
         };
       });
       form.setFields(fieldErrors);
-    } else if (error) {
-      const msg = 'data' in error && error.data && typeof error.data === 'object' && 'detail' in error.data
-        ? (error.data as any).detail
-        : 'Не удалось зарегистрироваться';
-      messageApi.error(msg);
     }
-  }, [error, form, messageApi]);
+  }, [error, form]);
 
   // SUCCESS REDIRECT
   useEffect(() => {
@@ -90,6 +91,20 @@ export default function RegisterPage() {
   return (
     <AuthLayout title="Регистрация">
       {contextHolder}
+      <div style={{ minHeight: 24, marginBottom: 20, pointerEvents: 'none' }}>
+        {error && isFetchBaseQueryError(error) && !(error.status === 422 && error.data && typeof error.data === 'object' && 'detail' in error.data) && (
+          <Alert
+            message={'data' in error && error.data && typeof error.data === 'object' && 'detail' in error.data
+              ? (error.data as any).detail
+              : 'Не удалось зарегистрироваться'}
+            type="error"
+            showIcon={false}
+            style={{
+              background: 'transparent', border: 'none', color: '#e53935', fontSize: 14, padding: 0
+            }}
+          />
+        )}
+      </div>
       <Form<RegisterValues>
         form={form}
         layout="vertical"
@@ -106,9 +121,6 @@ export default function RegisterPage() {
           <Input 
             prefix={<UserOutlined style={{ color: '#2B5797' }} />} 
             placeholder="john_doe"
-            style={{
-              color: '#000'
-            }}
           />
         </Form.Item>
 
@@ -123,10 +135,7 @@ export default function RegisterPage() {
         >
           <Input 
             prefix={<MailOutlined style={{ color: '#2B5797' }} />} 
-            placeholder="you@example.com"
-            style={{
-              color: '#000'
-            }}
+            placeholder="user@example.com"
           />
         </Form.Item>
 
@@ -142,9 +151,6 @@ export default function RegisterPage() {
           <Input.Password 
             prefix={<LockOutlined style={{ color: '#2B5797' }} />} 
             placeholder="Минимум 8 символов"
-            style={{
-              color: '#000'
-            }}
           />
         </Form.Item>
 

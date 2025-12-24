@@ -108,7 +108,6 @@ input:-ms-input-placeholder {
   color: #999 !important;
   opacity: 1 !important;
 }
-
 /* Ant Design Card Header Alignment */
 .ant-card-head {
   display: flex;
@@ -864,12 +863,12 @@ input:-ms-input-placeholder {
 .starting-point-dot.show-content input[type="password"],
 .starting-point-dot.show-content input[type="email"] {
   color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  /* -webkit-text-fill-color: #000000 !important; — убрано чтобы не перекрашивать placeholder */
 }
 
 .starting-point-dot.show-content input {
   color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  /* -webkit-text-fill-color: #000000 !important; — убрано чтобы не перекрашивать placeholder */
 }
 
 .starting-point-dot.show-content .ant-input::placeholder,
@@ -890,10 +889,10 @@ input:-ms-input-placeholder {
 .starting-point-dot.show-content input:-ms-input-placeholder,
 .starting-point-dot.show-content input[type="text"]::placeholder,
 .starting-point-dot.show-content input[type="password"]::placeholder,
-.starting-point-dot.show-content input[type="email"]::placeholder {
-  color: #666666 !important;
+.starting-point-dot.show-content input::placeholder {
+  color: #666 !important;
+  -webkit-text-fill-color: #666 !important;
   opacity: 1 !important;
-  -webkit-text-fill-color: #666666 !important;
 }
 
 .starting-point-dot.show-content .ant-input:focus,
@@ -1310,6 +1309,13 @@ input:-ms-input-placeholder {
 .ant-message-notice {
   z-index: 1000 !important;
 }
+.ant-message-notice-content {
+  color: #fff !important;
+}
+[data-theme="light"] .ant-message-notice-content {
+  color: #fff !important;
+}
+
 
 /* Dark Theme Styles */
 [data-theme="dark"] {
@@ -1370,14 +1376,15 @@ input:-ms-input-placeholder {
 [data-theme="dark"] .ant-input-disabled,
 [data-theme="dark"] .ant-input[disabled] {
   color: #fafafa !important;
-  -webkit-text-fill-color: #fafafa !important;
+  -webkit-text-fill-color: unset !important; /* или initial */
 }
 
 [data-theme="dark"] .ant-input-affix-wrapper.ant-input-disabled input,
 [data-theme="dark"] .ant-input-affix-wrapper.ant-input-disabled .ant-input {
   color: #fafafa !important;
-  -webkit-text-fill-color: #fafafa !important;
+  -webkit-text-fill-color: unset !important; /* или initial */
 }
+
 
 /* Light theme: "Нет аккаунта?" and "Уже есть аккаунт?" should be white like in dark theme */
 html:not([data-theme="dark"]) .starting-point-dot.show-content .text-center.text-sm > div:first-child,
@@ -1441,3 +1448,40 @@ html:not([data-theme="dark"]) .starting-point-dot.show-content .text-center > di
   color: #2B5797 !important;
 }
 
+/* Force placeholder color in dark theme (put this at the very end) */
+[data-theme="dark"] .ant-input::placeholder,
+[data-theme="dark"] .ant-input-affix-wrapper input::placeholder,
+[data-theme="dark"] .ant-input-password input::placeholder,
+[data-theme="dark"] input::placeholder {
+  color: #666 !important;
+  -webkit-text-fill-color: #666 !important;
+  opacity: 1 !important;
+}
+
+[data-theme="dark"] .starting-point-dot.show-content input:placeholder-shown {
+  -webkit-text-fill-color: #666 !important;
+  color: #666 !important;
+}
+
+/* Chrome/Safari autofill fix for dark theme */
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover,
+[data-theme="dark"] input:-webkit-autofill:focus,
+[data-theme="dark"] input:-webkit-autofill:active,
+[data-theme="dark"] textarea:-webkit-autofill,
+[data-theme="dark"] textarea:-webkit-autofill:hover,
+[data-theme="dark"] textarea:-webkit-autofill:focus,
+[data-theme="dark"] textarea:-webkit-autofill:active {
+  -webkit-text-fill-color: #fafafa !important;
+  -webkit-box-shadow: 0 0 0 1000px #2a2a2a inset !important; /* фон инпута */
+  caret-color: #fafafa !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Password placeholder in dark theme */
+[data-theme="dark"] .ant-input-password input::placeholder,
+[data-theme="dark"] .ant-input-affix-wrapper.ant-input-password input::placeholder {
+  color: #666 !important;
+  -webkit-text-fill-color: #666 !important;
+  opacity: 1 !important;
+}

@@ -38,9 +38,37 @@ async def get_user_db(session: AsyncSession = Depends(get_session)):
     yield SQLAlchemyUserDatabase(session, User)
 
 # --- User Manager ---
+from fastapi_users import exceptions
+from fastapi import HTTPException
+from starlette.status import HTTP_400_BAD_REQUEST
+
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     reset_password_token_secret = SECRET
     verification_token_secret = SECRET
+
+    async def create(self, user_create, safe=True, request=None):
+        try:
+            return await super().create(user_create, safe, request)
+        except exceptions.UserAlreadyExists:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST,
+                detail="Пользователь с таким email уже зарегистрирован."
+            )
+        except exceptions.InvalidPasswordException:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST,
+                detail="Пароль не соответствует требованиям безопасности."
+            )
+        except exceptions.UserNotVerified:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST,
+                detail="Email не подтвержден. Проверьте вашу почту."
+            )
+        except exceptions.UserInactive:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST,
+                detail="Пользователь неактивен. Обратитесь к администратору."
+            )
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
         print(f"User {user.id} has registered.")

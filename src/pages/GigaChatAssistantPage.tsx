@@ -73,12 +73,8 @@ const GigaChatAssistantPage: React.FC = () => {
           Чат с AI‑помощницей Май
         </Title>
         <Paragraph type="secondary" style={{ marginBottom: 16 }}>
-          Это встроенный чат на базе GigaChat: твои сообщения отправляются на наш backend,
-          который общается с GigaChat по API.
+          Чат работает на базе AI-модели GigaChat. Все ваши сообщения обрабатываются безопасно на наших серверах.
         </Paragraph>
-        <Text type="secondary">
-          Токены GigaChat хранятся только на сервере, фронтенд их не видит.
-        </Text>
       </Card>
 
       <Card>
