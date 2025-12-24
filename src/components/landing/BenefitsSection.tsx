@@ -5,12 +5,12 @@ import { CheckCircleOutlined } from '@ant-design/icons';
 const { Title, Text } = Typography;
 
 const benefits = [
-  'Generate courses in seconds',
-  'Personalized learning program',
-  'Interactive lessons and assignments',
-  'AI tutor available 24/7',
-  'Adapts to your level',
-  'Progress tracking'
+  'Создание курсов за секунды',
+  'Персональная программа обучения',
+  'Интерактивные уроки и задания',
+  'ИИ‑тьютор 24/7',
+  'Адаптация под ваш уровень',
+  'Отслеживание прогресса'
 ];
 
 export default function BenefitsSection() {
@@ -45,7 +45,7 @@ export default function BenefitsSection() {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-20">
           <Title level={2} className="text-4xl font-bold mb-4">
-            Platform Benefits
+            Преимущества платформы
           </Title>
         </div>
         

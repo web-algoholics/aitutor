@@ -1,9 +1,10 @@
 import React from "react";
 import { Outlet, Navigate, useLocation } from "react-router-dom";
-import { Layout, Spin } from "antd";
+import { Layout } from "antd";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { useGetCurrentUserQuery } from "../services/authApi";
+import LoadingDot from "./LoadingDot";
 
 const { Content } = Layout;
 
@@ -15,7 +16,7 @@ export default function ProtectedLayout() {
   if (isFetching) {
     return (
       <Layout style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Spin size="large" />
+        <LoadingDot size="large" />
       </Layout>
     );
   }
@@ -26,10 +27,10 @@ export default function ProtectedLayout() {
   }
 
   return (
-    <Layout style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <Layout style={{ minHeight: "100vh", display: "flex", flexDirection: "column", scrollbarGutter: "stable" }}>
       <Navbar />
 
-      <Content style={{ padding: "24px", flex: 1, display: "flex", flexDirection: "column" }}>
+      <Content style={{ padding: "24px", flex: 1, display: "flex", flexDirection: "column", scrollbarGutter: "stable" }}>
         <Outlet />
       </Content>
       <Footer/>

@@ -16,4 +16,5 @@ To test or develop (without docker):
 - create the database: `CREATE DATABASE app_db;`
 
 With docker:
-- TODO
+- Fill env.local.template and rename it to env.local
+- Run `docker compose up --build` in terminal from root directory of the project.

@@ -5,7 +5,6 @@ import {
   Input,
   Select,
   Space,
-  Spin,
   Statistic,
   Row,
   Col,
@@ -19,6 +18,7 @@ import {
   Modal,
   message,
 } from 'antd';
+import LoadingDot from '../../components/LoadingDot';
 import {
   SearchOutlined,
   DollarOutlined,
@@ -26,9 +26,10 @@ import {
   BookOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
-import { useAnalyzeMarketMutation } from '../services/jobsApi';
-import type { MarketAnalysisResponse, AnalysisRequest } from '../services/jobsApi';
-import { useGetTheoryCoursesQuery } from '../services/theoryApi';
+import { useAnalyzeMarketMutation } from '../../services/jobsApi';
+import type { AnalysisRequest, MarketAnalysisResponse } from '../../services/jobsApi';
+import PageContainer from '../../components/PageContainer';
+import { useGetTheoryCoursesQuery } from '../../services/theoryApi';
 import { useNavigate } from 'react-router-dom';
 
 const { Title, Text, Paragraph } = Typography;
@@ -220,7 +221,7 @@ export default function MarketAnalysis() {
     }
 
     return (
-      <Card title={title} className="mb-4">
+      <Card title={title} className="mb-4" bordered={false}>
         <List
           dataSource={filtered}
           renderItem={(item) => (
@@ -252,181 +253,93 @@ export default function MarketAnalysis() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <Title level={2} className="mb-6">
-          Анализ рынка вакансий
-        </Title>
-        <Paragraph className="text-gray-600 mb-6">
+    <PageContainer>
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        {/* Empty div to match Create page layout - matches Button height */}
+        <div style={{ height: '36px' }}></div>
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px' }}>
+          <div style={{
+            width: '200px',
+            height: '200px',
+            borderRadius: '50%',
+            backgroundColor: '#000',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '16px'
+          }}>
+            <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
+              Анализ вакансий
+            </Title>
+          </div>
+        <Paragraph className="text-base text-gray-600 mb-4" style={{ textAlign: 'center' }}>
           Узнайте, какие навыки востребованы на рынке труда, и получите рекомендации по обучению
         </Paragraph>
+      </div>
 
-        {/* Search Form */}
-        <Card className="mb-6">
-          <Space direction="vertical" size="middle" className="w-full">
-            <div>
-              <Text strong>Поисковый запрос</Text>
-              <Input
-                size="large"
-                placeholder="Например: Python разработчик, Frontend разработчик"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onPressEnter={handleAnalyze}
-                prefix={<SearchOutlined />}
-              />
-            </div>
-
-            <Row gutter={16}>
-              <Col span={8}>
-                <Text strong>Регион (опционально)</Text>
-                <Select
-                  size="large"
-                  className="w-full mt-2"
-                  placeholder="Выберите регион"
-                  allowClear
-                  value={area}
-                  onChange={setArea}
-                  showSearch
-                  optionFilterProp="children"
-                >
-                  {AREAS.map((a) => (
-                    <Option key={a.value} value={a.value}>
-                      {a.label}
-                    </Option>
-                  ))}
-                </Select>
-              </Col>
-              <Col span={8}>
-                <Text strong>Опыт</Text>
-                <Select
-                  size="large"
-                  className="w-full mt-2"
-                  placeholder="Уровень опыта"
-                  allowClear
-                  value={experience}
-                  onChange={setExperience}
-                >
-                  {EXPERIENCE_LEVELS.map((e) => (
-                    <Option key={e.value} value={e.value}>
-                      {e.label}
-                    </Option>
-                  ))}
-                </Select>
-              </Col>
-              <Col span={8}>
-                <Text strong>Количество вакансий для анализа</Text>
-                <InputNumber
-                  min={1}
-                  max={1000}
-                  size="large"
-                  className="w-full mt-2"
-                  value={limit}
-                  onChange={(value) => setLimit(value || 1)}
-                />
-              </Col>
-            </Row>
-
-            {/* Переключатель расширенных фильтров */}
-            <Button
-              type="default"
-              onClick={() => setShowAdvanced((prev) => !prev)}
-              style={{ borderColor: '#000', color: '#000' }}
-            >
-              {showAdvanced ? 'Скрыть расширенные фильтры' : 'Показать расширенные фильтры'}
-            </Button>
-
-            {showAdvanced && (
-              <>
-                <Divider />
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Text strong>Формат занятости</Text>
-                    <Select
-                      size="large"
-                      className="w-full mt-2"
-                      placeholder="Выберите формат занятости"
-                      allowClear
-                      value={employment}
-                      onChange={(value) => {
-                        if (value === 'any') {
-                          setEmployment(undefined);
-                        } else {
-                          setEmployment(value);
-                        }
-                      }}
-                    >
-                      <Option value="any">Любой формат</Option>
-                      {EMPLOYMENTS.map((e) => (
-                        <Option key={e.value} value={e.value}>
-                          {e.label}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Col>
-                  <Col span={12}>
-                    <Text strong>График работы</Text>
-                    <Select
-                      size="large"
-                      className="w-full mt-2"
-                      placeholder="Выберите график работы"
-                      allowClear
-                      value={schedule}
-                      onChange={(value) => {
-                        if (value === 'any') {
-                          setSchedule(undefined);
-                        } else {
-                          setSchedule(value);
-                        }
-                      }}
-                    >
-                      <Option value="any">Любой график</Option>
-                      {SCHEDULES.map((s) => (
-                        <Option key={s.value} value={s.value}>
-                          {s.label}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Text strong>Дата публикации с</Text>
-                    <Input
-                      type="date"
-                      size="large"
-                      className="w-full mt-2"
-                      value={dateFrom}
-                      onChange={(e) => setDateFrom(e.target.value || undefined)}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <Text strong>Дата публикации по</Text>
-                    <Input
-                      type="date"
-                      size="large"
-                      className="w-full mt-2"
-                      value={dateTo}
-                      onChange={(e) => setDateTo(e.target.value || undefined)}
-                    />
-                  </Col>
-                </Row>
-
-              </>
-            )}
-
-            <Button
-              type="primary"
+      {/* Search Form */}
+      <Card className="mb-6" bordered={false}>
+        <Space direction="vertical" size="middle" className="w-full">
+          <div>
+            <Text strong>Поисковый запрос</Text>
+            <Input
               size="large"
-              icon={<SearchOutlined />}
-              onClick={handleAnalyze}
-              loading={isLoading}
-              block
-            >
-              Анализировать рынок
-            </Button>
-          </Space>
-        </Card>
+              placeholder="Например: Python разработчик, Frontend разработчик"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onPressEnter={handleAnalyze}
+              prefix={<SearchOutlined />}
+            />
+          </div>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <Text strong>Регион (опционально)</Text>
+              <Select
+                size="large"
+                className="w-full mt-2"
+                placeholder="Выберите регион"
+                allowClear
+                value={area}
+                onChange={setArea}
+              >
+                {AREAS.map((a) => (
+                  <Option key={a.value} value={a.value}>
+                    {a.label}
+                  </Option>
+                ))}
+              </Select>
+            </Col>
+            <Col span={12}>
+              <Text strong>Опыт работы (опционально)</Text>
+              <Select
+                size="large"
+                className="w-full mt-2"
+                placeholder="Выберите уровень опыта"
+                allowClear
+                value={experience}
+                onChange={setExperience}
+              >
+                {EXPERIENCE_LEVELS.map((e) => (
+                  <Option key={e.value} value={e.value}>
+                    {e.label}
+                  </Option>
+                ))}
+              </Select>
+            </Col>
+          </Row>
+
+          <Button
+            type="primary"
+            size="large"
+            onClick={handleAnalyze}
+            loading={isLoading}
+            block
+          >
+            Анализировать рынок
+          </Button>
+        </Space>
+      </Card>
 
         {/* Error */}
         {error && (
@@ -443,7 +356,7 @@ export default function MarketAnalysis() {
         {/* Loading */}
         {isLoading && (
           <div className="text-center py-12">
-            <Spin size="large" />
+            <LoadingDot size="large" />
             <div className="mt-4">
               <Text>Анализируем вакансии с hh.ru...</Text>
             </div>
@@ -469,8 +382,17 @@ export default function MarketAnalysis() {
 
             {/* Summary Stats */}
             <Row gutter={16} className="mb-6">
-              <Col span={12}>
-                <Card>
+              <Col span={8}>
+                <Card bordered={false}>
+                  <Statistic
+                    title="Найдено вакансий"
+                    value={data.total_vacancies}
+                    prefix={<SearchOutlined />}
+                  />
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card bordered={false}>
                   <Statistic
                     title="Средняя зарплата"
                     value={formatSalary(data.salary_stats.average_mid)}
@@ -478,8 +400,8 @@ export default function MarketAnalysis() {
                   />
                 </Card>
               </Col>
-              <Col span={12}>
-                <Card>
+              <Col span={8}>
+                <Card bordered={false}>
                   <Statistic
                     title="Рекомендуемых курсов"
                     value={data.recommended_courses.length}
@@ -499,6 +421,7 @@ export default function MarketAnalysis() {
                   </span>
                 }
                 className="mb-6"
+                bordered={false}
               >
                 <Space wrap>
                   {data.recommended_courses.map((course) => (
@@ -586,7 +509,7 @@ export default function MarketAnalysis() {
 
             {/* Experience Distribution */}
             {Object.keys(data.experience_distribution).length > 0 && (
-              <Card title="Распределение по опыту работы" className="mb-6">
+              <Card title="Распределение по опыту работы" className="mb-6" bordered={false}>
                 <Row gutter={16}>
                   {Object.entries(data.experience_distribution).map(([exp, count]) => (
                     <Col span={6} key={exp}>
@@ -599,7 +522,7 @@ export default function MarketAnalysis() {
 
             {/* Salary Details */}
             {data.salary_stats && (
-              <Card title="Детальная статистика зарплат">
+              <Card title="Детальная статистика зарплат" bordered={false}>
                 <Row gutter={16}>
                   <Col span={8}>
                     <Statistic
@@ -627,7 +550,7 @@ export default function MarketAnalysis() {
 
         {/* Empty State */}
         {!data && !isLoading && !error && (
-          <Card>
+          <Card bordered={false}>
             <div className="text-center py-12">
               <SearchOutlined style={{ fontSize: '48px', color: '#d9d9d9' }} />
               <Title level={4} className="mt-4 text-gray-400">
@@ -639,8 +562,8 @@ export default function MarketAnalysis() {
             </div>
           </Card>
         )}
-      </div>
-    </div>
+      </Space>
+    </PageContainer>
   );
 }
 

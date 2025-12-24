@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useTheme } from '../../contexts/ThemeContext';
 import {
   Card,
   Typography,
   Button,
   Space,
-  Spin,
   message,
   Form,
   Input,
@@ -13,17 +13,17 @@ import {
   Checkbox,
   Divider,
   Alert,
-  Progress,
-  Tag,
   InputNumber,
 } from 'antd';
+import LoadingDot from '../../components/LoadingDot';
+import Confetti from 'react-confetti';
 import {
   ArrowLeftOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   TrophyOutlined,
   PlayCircleOutlined,
-  FormOutlined,
+  PlusOutlined,
 } from '@ant-design/icons';
 import {
   useCreateQuizMutation,
@@ -35,6 +35,7 @@ import {
   type QuestionResponse,
 } from '../../services/quizzesApi';
 import { useGetLessonContentQuery } from '../../services/theoryApi';
+import PageContainer from '../../components/PageContainer';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -46,7 +47,11 @@ const QuizPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const lessonId = searchParams.get('lessonId');
-  const [quizState, setQuizState] = useState<QuizState>('create');
+  const { theme } = useTheme();
+  const [quizState, setQuizState] = useState<QuizState>(() => {
+    // Initialize state based on URL param to avoid showing 'create' form briefly
+    return quizId ? 'taking' : 'create';
+  });
   const [createdQuizId, setCreatedQuizId] = useState<number | null>(null);
   const [form] = Form.useForm();
   const [answersForm] = Form.useForm();
@@ -88,6 +93,13 @@ const QuizPage: React.FC = () => {
     }
   }, [quizId, lessonContent, form]);
 
+  // Scroll to top when results are shown
+  useEffect(() => {
+    if (quizState === 'results') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [quizState]);
+
   const handleCreateQuiz = async (values: {
     theory_content: string;
   }) => {
@@ -127,9 +139,10 @@ const QuizPage: React.FC = () => {
 
       setQuizResult(result);
       setQuizState('results');
+      // Scroll to top when showing results
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       // Refetch quiz with answers to show explanations
       refetchQuiz();
-      message.success('Квиз завершен!');
     } catch (error: any) {
       message.error(error?.data?.detail || 'Ошибка при отправке квиза');
     }
@@ -164,25 +177,39 @@ const QuizPage: React.FC = () => {
     // Show loading while lesson content is being fetched
     if (lessonId && lessonLoading) {
       return (
-        <div className="flex items-center justify-center min-h-screen">
-          <Spin size="large" />
-        </div>
+        <PageContainer>
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <LoadingDot size="large" />
+          </div>
+        </PageContainer>
       );
     }
 
     return (
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <PageContainer>
         <Space direction="vertical" size="large" className="w-full">
           <div className="flex items-center gap-4 mb-2">
             <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
               Назад
             </Button>
-            <Title level={2} className="mb-0">
-              <FormOutlined /> Создать квиз
-            </Title>
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+              <div style={{
+                width: '200px',
+                height: '200px',
+                borderRadius: '50%',
+                backgroundColor: '#000',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
+                  <PlusOutlined /> Создать квиз
+                </Title>
+              </div>
+            </div>
           </div>
 
-          <Card className="shadow-md">
+          <Card bordered={false}>
             <Form
               form={form}
               layout="vertical"
@@ -212,13 +239,12 @@ const QuizPage: React.FC = () => {
 
               <Form.Item className="mb-0 mt-6">
                 <Button
-                  type="primary"
                   htmlType="submit"
                   size="large"
                   loading={creatingQuiz}
                   icon={<PlayCircleOutlined />}
                   block
-                  className="h-12 text-base font-medium"
+                  style={{ height: '48px', backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
                 >
                   {creatingQuiz ? 'Создание квиза...' : 'Создать квиз'}
                 </Button>
@@ -226,23 +252,25 @@ const QuizPage: React.FC = () => {
             </Form>
           </Card>
         </Space>
-      </div>
+      </PageContainer>
     );
   }
 
   // Loading state
   if (quizLoading || !quiz) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Spin size="large" />
-      </div>
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <LoadingDot size="large" />
+        </div>
+      </PageContainer>
     );
   }
 
   // Render quiz taking form
   if (quizState === 'taking') {
     return (
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <PageContainer>
         <Space direction="vertical" size="large" className="w-full">
           <div className="flex items-center justify-between">
             <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
@@ -253,7 +281,7 @@ const QuizPage: React.FC = () => {
             </Text>
           </div>
 
-          <Card className="shadow-md">
+          <Card bordered={false} className="shadow-md">
             <Space direction="vertical" size="large" className="w-full">
               <div>
                 <Title level={2} className="mb-0">{quiz.title}</Title>
@@ -263,7 +291,7 @@ const QuizPage: React.FC = () => {
 
               <Form form={answersForm} layout="vertical" onFinish={handleSubmitQuiz}>
                 {quiz.questions.map((question, index) => (
-                  <Card key={question.id} className="mb-6 shadow-sm">
+                  <Card key={question.id} bordered={false} className="mb-6 shadow-sm">
                     <Form.Item
                       name={`question_${question.id}`}
                       rules={[{ required: true, message: 'Выберите ответ' }]}
@@ -316,7 +344,7 @@ const QuizPage: React.FC = () => {
             </Space>
           </Card>
         </Space>
-      </div>
+      </PageContainer>
     );
   }
 
@@ -326,6 +354,7 @@ const QuizPage: React.FC = () => {
     const totalCount = quizResult.total_questions;
     const score = quizResult.score_percentage;
     const isPassed = quizResult.is_passed;
+    const allCorrect = correctCount === totalCount;
 
     // Create a map of question results for easy lookup
     const questionResultsMap = new Map(
@@ -333,31 +362,47 @@ const QuizPage: React.FC = () => {
     );
 
     return (
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <PageContainer>
+        {/* Confetti when all answers are correct */}
+        {allCorrect && (
+          <Confetti
+            width={window.innerWidth}
+            height={window.innerHeight}
+            recycle={false}
+            numberOfPieces={200}
+            gravity={0.3}
+          />
+        )}
         <Space direction="vertical" size="large" className="w-full">
-          <Card>
+          {/* Empty div to match Create page layout - matches Button height */}
+          <div style={{ height: '36px' }}></div>
+          <Card bordered={false}>
             <Space direction="vertical" size="large" className="w-full" align="center">
-              <TrophyOutlined style={{ fontSize: 64, color: isPassed ? '#52c41a' : '#ff4d4f' }} />
-              <Title level={2}>Результаты квиза</Title>
-              <Text className="text-2xl font-bold" style={{ color: isPassed ? '#52c41a' : '#ff4d4f' }}>
+              <div style={{
+                width: '200px',
+                height: '200px',
+                borderRadius: '50%',
+                backgroundColor: '#000',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '16px'
+              }}>
+                <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
+                  Результаты квиза
+                </Title>
+              </div>
+              <TrophyOutlined style={{ fontSize: 64, color: '#2B5797' }} />
+              <Text className="text-2xl font-bold" style={{ color: '#2B5797' }}>
                 {score.toFixed(1)}%
               </Text>
-              <Progress
-                type="circle"
-                percent={score}
-                status={isPassed ? 'success' : 'exception'}
-                format={(percent) => `${correctCount}/${totalCount}`}
-              />
-              <Alert
-                message={isPassed ? 'Поздравляем! Вы прошли квиз!' : 'Квиз не пройден. Попробуйте еще раз.'}
-                type={isPassed ? 'success' : 'error'}
-                icon={isPassed ? <CheckCircleOutlined /> : <CloseCircleOutlined />}
-                showIcon
-              />
+              <Text style={{ fontSize: '18px', color: '#ffffff', fontWeight: 500 }}>
+                {correctCount}/{totalCount}
+              </Text>
             </Space>
           </Card>
 
-          <Card>
+          <Card bordered={false}>
             <Title level={3}>Детали ответов</Title>
             <Divider />
             <Space direction="vertical" size="large" className="w-full">
@@ -370,6 +415,7 @@ const QuizPage: React.FC = () => {
                 return (
                   <Card
                     key={question.id}
+                    bordered={false}
                     className={isCorrect ? 'border-green-500' : 'border-red-500'}
                   >
                     <Space direction="vertical" size="middle" className="w-full">
@@ -378,36 +424,33 @@ const QuizPage: React.FC = () => {
                           {index + 1}. {question.question_text}
                         </Text>
                         {isCorrect ? (
-                          <Tag color="success" icon={<CheckCircleOutlined />}>
-                            Правильно
-                          </Tag>
+                          <CheckCircleOutlined style={{ fontSize: '24px', color: '#2B5797' }} />
                         ) : (
-                          <Tag color="error" icon={<CloseCircleOutlined />}>
-                            Неправильно
-                          </Tag>
-                        )}
-                      </div>
-
-                      <div>
-                        <Text type="secondary">Ваш ответ: </Text>
-                        {selectedAnswerIds.length > 0 ? (
-                          <Text>
-                            {question.answers
-                              .filter((a) => selectedAnswerIds.includes(a.id))
-                              .map((a) => a.answer_text)
-                              .join(', ')}
-                          </Text>
-                        ) : (
-                          <Text type="danger">Ответ не выбран</Text>
+                          <CloseCircleOutlined style={{ fontSize: '24px', color: '#2B5797' }} />
                         )}
                       </div>
 
                       {!isCorrect && (
                         <div>
-                          <Text type="secondary">Правильный ответ: </Text>
-                          <Text strong style={{ color: '#52c41a' }}>
+                          <Text type="secondary">Ваш ответ: </Text>
+                          {selectedAnswerIds.length > 0 ? (
+                            <Text>
+                              {question.answers
+                                .filter((a) => selectedAnswerIds.includes(a.id))
+                                .map((a) => a.answer_text)
+                                .join(', ')}
+                            </Text>
+                          ) : (
+                            <Text type="danger">Ответ не выбран</Text>
+                          )}
+                        </div>
+                      )}
+                      {isCorrect && selectedAnswerIds.length > 0 && (
+                        <div>
+                          <Text type="secondary">Ваш ответ: </Text>
+                          <Text strong style={{ fontWeight: 600, fontSize: '16px' }}>
                             {question.answers
-                              .filter((a) => correctAnswerIds.includes(a.id))
+                              .filter((a) => selectedAnswerIds.includes(a.id))
                               .map((a) => a.answer_text)
                               .join(', ')}
                           </Text>
@@ -415,12 +458,12 @@ const QuizPage: React.FC = () => {
                       )}
 
                       {question.explanation && (
-                        <Alert
-                          message={question.explanation}
-                          type="info"
-                          showIcon
-                          className="mt-2"
-                        />
+                        <div className="mt-2 p-3 rounded" style={{ 
+                          backgroundColor: theme === 'dark' ? '#2a2a2a' : '#f3f4f6',
+                          border: theme === 'dark' ? '1px solid #303030' : '1px solid #d9d9d9'
+                        }}>
+                          <Text style={{ color: theme === 'dark' ? '#a1a1aa' : '#666' }}>{question.explanation}</Text>
+                        </div>
                       )}
                     </Space>
                   </Card>
@@ -429,7 +472,7 @@ const QuizPage: React.FC = () => {
             </Space>
           </Card>
 
-          <Card>
+          <Card bordered={false}>
             <Space direction="vertical" size="middle" className="w-full">
               <Button
                 type="default"
@@ -452,7 +495,7 @@ const QuizPage: React.FC = () => {
             </Space>
           </Card>
         </Space>
-      </div>
+      </PageContainer>
     );
   }
 

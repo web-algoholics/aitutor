@@ -2,7 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ConfigProvider } from 'antd';
 import { store } from './app/store';
-import { designTheme } from './theme/antd-theme';
+import { getTheme } from './theme/antd-theme';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
@@ -18,7 +19,7 @@ import ProtectedLayout from './components/ProtectedLayout';
 import PublicLayout from './components/PublicLayout';
 
 // Market Analysis
-import MarketAnalysis from './pages/MarketAnalysis';
+import MarketAnalysis from './pages/MarketAnalysis/MarketAnalysis';
 
 // Theory pages
 import TheoryCoursesPage from './pages/Theory/TheoryCoursesPage';
@@ -29,20 +30,21 @@ import TheoryLessonPage from './pages/Theory/TheoryLessonPage';
 // Quiz pages
 import QuizPage from './pages/Quizzes/QuizPage';
 import QuizzesListPage from './pages/Quizzes/QuizzesListPage';
+import CreateQuizPage from './pages/Quizzes/CreateQuizPage';
 
 // Anki pages
 import AnkiDecksListPage from './pages/Anki/AnkiDecksListPage';
 import AnkiPracticePage from './pages/Anki/AnkiPracticePage';
-
-// Help Center & AI Assistant
-import HelpCenterPage from './pages/HelpCenterPage';
+import CreateAnkiDeckPage from './pages/Anki/CreateAnkiDeckPage';
 import GigaChatAssistantPage from './pages/GigaChatAssistantPage';
+import HelpCenterPage from './pages/HelpCenterPage';
 
-function App() {
+function AppContent() {
+  const { theme } = useTheme();
+  
   return (
-    <Provider store={store}>
-      <ConfigProvider theme={designTheme}>
-        <BrowserRouter basename='/aitutor'>
+    <ConfigProvider theme={getTheme(theme)}>
+      <BrowserRouter basename='/aitutor'>
           <Routes>
 
             {/* Public routes (no navbar) */}
@@ -73,11 +75,12 @@ function App() {
 
               {/* Quiz Routes */}
               <Route path="/quizzes" element={<QuizzesListPage />} />
-              <Route path="/quizzes/create" element={<QuizPage />} />
+              <Route path="/quizzes/create" element={<CreateQuizPage />} />
               <Route path="/quizzes/:quizId" element={<QuizPage />} />
 
               {/* Anki Routes */}
               <Route path="/anki" element={<AnkiDecksListPage />} />
+              <Route path="/anki/create" element={<CreateAnkiDeckPage />} />
               <Route path="/anki/decks/:deckId/practice" element={<AnkiPracticePage />} />
 
               {/* Help Center */}
@@ -86,8 +89,17 @@ function App() {
             </Route>
 
           </Routes>
-        </BrowserRouter>
-      </ConfigProvider>
+      </BrowserRouter>
+    </ConfigProvider>
+  );
+}
+
+function App() {
+  return (
+    <Provider store={store}>
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
     </Provider>
   );
 }

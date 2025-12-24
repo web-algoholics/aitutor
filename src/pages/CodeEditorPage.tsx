@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Button, Input, Space, message, Spin, Steps, Alert, Tag, Empty, Drawer } from 'antd';
+import { Card, Button, Input, Space, message, Steps, Alert, Tag, Empty, Drawer } from 'antd';
+import LoadingDot from '../components/LoadingDot';
 import { SendOutlined, CheckOutlined, BulbOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import {
@@ -85,7 +86,7 @@ export default function CodeEditorPage() {
     }
   };
 
-  if (lessonLoading) return <Spin size="large" className="flex items-center justify-center min-h-screen" />;
+  if (lessonLoading) return <div className="flex items-center justify-center min-h-screen"><LoadingDot size="large" /></div>;
   if (!lesson) return <Empty description="Урок не найден" />;
 
   return (

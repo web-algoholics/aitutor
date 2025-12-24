@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import {
-  Card, Typography, Button, Space, Spin, Alert, message,
-  Tag, Divider, Progress
+  Card, Typography, Button, Space, Alert, message,
+  Tag, Divider
 } from 'antd';
+import LoadingDot from '../../components/LoadingDot';
 import {
   ArrowLeftOutlined, ClockCircleOutlined, BulbOutlined,
   CheckCircleOutlined, LoadingOutlined, FormOutlined
@@ -15,6 +16,8 @@ import {
   useGetTheoryCourseTreeQuery,
   useMarkLessonCompletedMutation
 } from '../../services/theoryApi';
+import PageContainer from '../../components/PageContainer';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -22,6 +25,7 @@ const TheoryLessonPage: React.FC = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
   const lessonIdNum = parseInt(lessonId!);
+  const { theme } = useTheme();
 
   const { data: content, isLoading: contentLoading, error: contentError, refetch } = useGetLessonContentQuery(lessonIdNum);
   const [generateContent, { isLoading: generating }] = useGenerateLessonContentMutation();
@@ -88,19 +92,17 @@ const TheoryLessonPage: React.FC = () => {
 
   if (contentLoading || generating) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
-        <Space direction="vertical" align="center">
-          <Spin size="large" />
-          <Text>Загрузка...</Text>
-          <Progress percent={75} status="active" showInfo={false} style={{ width: '200px' }} />
-        </Space>
-      </div>
+      <PageContainer>
+        <div className="flex justify-center items-center min-h-[400px]">
+          <LoadingDot size="large" />
+        </div>
+      </PageContainer>
     );
   }
 
   if (contentError || !content) {
     return (
-      <div style={{ maxWidth: 800, margin: '0 auto', padding: '20px' }}>
+      <PageContainer>
         <Alert
           message="Теория не найдена"
           description="Теория для этого урока еще не была сгенерирована."
@@ -117,14 +119,14 @@ const TheoryLessonPage: React.FC = () => {
             Вернуться к курсу
           </Button>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
 
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', padding: '20px' }}>
+    <PageContainer>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -136,19 +138,15 @@ const TheoryLessonPage: React.FC = () => {
             <Tag icon={<ClockCircleOutlined />}>
               ~{content.reading_time} мин чтения
             </Tag>
-            {content.is_generated && (
-              <Tag icon={<CheckCircleOutlined />} color="success">
-                Сгенерировано ИИ
-              </Tag>
-            )}
           </Space>
         </div>
 
         {/* Lesson Content */}
-        <Card>
+        <Card bordered={false}>
           <div style={{
             lineHeight: '1.8',
-            fontSize: '16px'
+            fontSize: '16px',
+            padding: '24px'
           }}>
             <ReactMarkdown
               components={{
@@ -164,7 +162,7 @@ const TheoryLessonPage: React.FC = () => {
                   const isInline = !className?.includes('language-');
                   return !isInline && match ? (
                     <pre style={{
-                      backgroundColor: '#f6f8fa',
+                      backgroundColor: theme === 'dark' ? '#2a2a2a' : '#f6f8fa',
                       padding: '16px',
                       borderRadius: '6px',
                       overflow: 'auto',
@@ -177,7 +175,7 @@ const TheoryLessonPage: React.FC = () => {
                     </pre>
                   ) : (
                     <code style={{
-                      backgroundColor: '#f3f4f6',
+                      backgroundColor: theme === 'dark' ? '#2a2a2a' : '#f3f4f6',
                       padding: '2px 4px',
                       borderRadius: '3px',
                       fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
@@ -207,7 +205,7 @@ const TheoryLessonPage: React.FC = () => {
         </Card>
 
         {/* Footer */}
-        <Card size="small" className="bg-gray-50">
+        <Card size="small" bordered={false} style={{ backgroundColor: theme === 'dark' ? '#1f1f1f' : '#f9fafb' }}>
           <div className="text-center">
             <Space direction="vertical" align="center">
               <Space>
@@ -234,7 +232,7 @@ const TheoryLessonPage: React.FC = () => {
           </div>
         </Card>
       </Space>
-    </div>
+    </PageContainer>
   );
 };
 
