@@ -134,7 +134,7 @@ dist
 
 
 **/__pycache__/
-backend/src/__pycache__
+backend/src/__pycache__/
 backend/src/uploads/profile_icons/*
 .gitignore
 dist
