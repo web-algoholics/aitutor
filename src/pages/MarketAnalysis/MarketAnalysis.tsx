@@ -27,8 +27,10 @@ import {
   WarningOutlined,
 } from '@ant-design/icons';
 import { useAnalyzeMarketMutation } from '../../services/jobsApi';
-import type { MarketAnalysisResponse } from '../../services/jobsApi';
+import type { AnalysisRequest, MarketAnalysisResponse } from '../../services/jobsApi';
 import PageContainer from '../../components/PageContainer';
+import { useGetTheoryCoursesQuery } from '../../services/theoryApi';
+import { useNavigate } from 'react-router-dom';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;

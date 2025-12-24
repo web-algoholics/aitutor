@@ -36,6 +36,8 @@ import CreateQuizPage from './pages/Quizzes/CreateQuizPage';
 import AnkiDecksListPage from './pages/Anki/AnkiDecksListPage';
 import AnkiPracticePage from './pages/Anki/AnkiPracticePage';
 import CreateAnkiDeckPage from './pages/Anki/CreateAnkiDeckPage';
+import GigaChatAssistantPage from './pages/GigaChatAssistantPage';
+import HelpCenterPage from './pages/HelpCenterPage';
 
 function AppContent() {
   const { theme } = useTheme();
