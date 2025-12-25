@@ -69,8 +69,8 @@ const CreateTheoryCoursePage: React.FC = () => {
         </div>
         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{
-            width: '200px',
-            height: '200px',
+            width: '220px',
+            height: '220px',
             borderRadius: '50%',
             backgroundColor: '#000',
             display: 'flex',

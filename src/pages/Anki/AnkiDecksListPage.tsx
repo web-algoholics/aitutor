@@ -66,7 +66,7 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '32px',
-              border: '2px solid #666666',
+              border: '2px solid hsl(0, 0%, 15%)',
               borderRadius: '12px',
               backgroundColor: '#fff',
               boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
@@ -128,7 +128,7 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice
               alignItems: 'center',
               justifyContent: 'center',
               padding: '32px',
-              border: '2px solid #666666',
+              border: '2px solid hsl(0, 0%, 15%)',
               borderRadius: '12px',
               backgroundColor: '#fff',
               boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
@@ -201,8 +201,8 @@ export default function AnkiDecksListPage() {
         {/* Header */}
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{
-            width: '200px',
-            height: '200px',
+            width: '220px',
+            height: '220px',
             borderRadius: '50%',
             backgroundColor: '#000',
             display: 'flex',
@@ -231,19 +231,19 @@ export default function AnkiDecksListPage() {
         {decks && decks.length > 0 && (
           <Row gutter={16}>
             <Col xs={24} sm={12} md={8}>
-              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <Title level={3} className="mb-2">{totalDecks}</Title>
                 <Text type="secondary">Всего колод</Text>
               </Card>
             </Col>
             <Col xs={24} sm={12} md={8}>
-              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <Title level={3} className="mb-2">{totalCards}</Title>
                 <Text type="secondary">Всего карточек</Text>
               </Card>
             </Col>
             <Col xs={24} sm={12} md={8}>
-              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <Title level={3} className="mb-2">
                   <EyeOutlined style={{ fontSize: '24px' }} />
                 </Title>

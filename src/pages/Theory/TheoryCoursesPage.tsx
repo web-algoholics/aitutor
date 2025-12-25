@@ -57,10 +57,10 @@ const TheoryCoursesPage: React.FC = () => {
         {/* Header */}
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{
-            width: '200px',
-            height: '200px',
+            width: '220px',
+            height: '220px',
             borderRadius: '50%',
-            backgroundColor: 'hsl(var(--foreground))',
+            backgroundColor: '#000',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -87,19 +87,19 @@ const TheoryCoursesPage: React.FC = () => {
         {courses && courses.length > 0 && (
           <Row gutter={16}>
             <Col xs={24} sm={12} md={8}>
-              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <Title level={3} className="mb-2">{courses.length}</Title>
                 <Text type="secondary">Курсов</Text>
               </Card>
             </Col>
             <Col xs={24} sm={12} md={8}>
-              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <Title level={3} className="mb-2">{courses.filter(c => c.is_completed).length}</Title>
                 <Text type="secondary">Завершено</Text>
               </Card>
             </Col>
             <Col xs={24} sm={12} md={8}>
-              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <Title level={3} className="mb-2">{courses.reduce((sum, c) => sum + c.estimated_duration, 0)}</Title>
                 <Text type="secondary">Часов обучения</Text>
               </Card>
@@ -115,7 +115,7 @@ const TheoryCoursesPage: React.FC = () => {
                 <div
                   style={{
                     width: '100%',
-                    border: '2px solid #666666',
+                    border: '2px solid hsl(0, 0%, 15%)',
                     borderRadius: '12px',
                     backgroundColor: 'hsl(var(--card))',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.1)',

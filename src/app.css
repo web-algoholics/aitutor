@@ -32,22 +32,22 @@ body {
   scrollbar-gutter: stable;
 }
 
-/* shadcn/ui CSS Variables - Black and White Theme */
+/* shadcn/ui CSS Variables - Neutral Theme */
 :root {
   --background: 0 0% 100%;
-  --foreground: 0 0% 9%;
+  --foreground: 0 0% 15%;
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 9%;
+  --card-foreground: 0 0% 15%;
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 9%;
-  --primary: 0 0% 9%;
+  --popover-foreground: 0 0% 15%;
+  --primary: 0 0% 15%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 100%;
-  --secondary-foreground: 0 0% 9%;
-  --muted: 0 0% 100%;
+  --secondary: 0 0% 98%;
+  --secondary-foreground: 0 0% 15%;
+  --muted: 0 0% 96%;
   --muted-foreground: 0 0% 45%;
-  --accent: 0 0% 100%;
-  --accent-foreground: 0 0% 9%;
+  --accent: 0 0% 96%;
+  --accent-foreground: 0 0% 15%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 100%;
   --border: 0 0% 90%;
@@ -92,26 +92,26 @@ body {
 .hover\:bg-primary:hover { background-color: hsl(0, 0%, 0%); }
 .hover\:text-primary-foreground:hover { color: hsl(var(--primary-foreground)); }
 
-/* Enhanced hover effects for shadcn/ui style */
+/* Subtle hover effects for shadcn/ui style */
 .hover\:bg-primary-dark:hover {
-  background-color: hsl(0, 0%, 0%);
-  transition: all 0.2s ease;
+  background-color: hsl(0, 0%, 10%);
+  transition: all 0.15s ease;
 }
 .hover\:bg-gray-50-dark:hover {
-  background-color: hsl(0, 0%, 95%);
-  transition: all 0.2s ease;
+  background-color: hsl(0, 0%, 98%);
+  transition: all 0.15s ease;
 }
 .hover\:text-primary-dark:hover {
-  color: hsl(0, 0%, 0%);
-  transition: all 0.2s ease;
+  color: hsl(0, 0%, 10%);
+  transition: all 0.15s ease;
 }
 .hover\:border-primary-dark:hover {
-  border-color: hsl(0, 0%, 80%);
-  transition: all 0.2s ease;
+  border-color: hsl(0, 0%, 85%);
+  transition: all 0.15s ease;
 }
 .hover\:shadow-lg-dark:hover {
-  /* No shadow for flat design */
-  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  transition: all 0.15s ease;
 }
 
 /* General interactive element hover effects */
@@ -1098,8 +1098,8 @@ input:-ms-input-placeholder {
 }
 
 .starting-point-dot.show-content .ant-btn-default:hover {
-  background-color: rgba(255, 255, 255, 0.9) !important;
-  border-color: #ffffff !important;
+  background-color: #ffffff !important;
+  border-color: #000000 !important;
   color: #000000 !important;
 }
 

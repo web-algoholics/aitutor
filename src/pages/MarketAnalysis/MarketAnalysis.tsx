@@ -197,7 +197,7 @@ export default function MarketAnalysis() {
     }
 
     return (
-      <Card title={title} className="mb-4" variant="borderless">
+      <Card title={title} className="mb-4">
         <List
           dataSource={filtered}
           renderItem={(item) => (
@@ -235,8 +235,8 @@ export default function MarketAnalysis() {
         <div style={{ height: '36px' }}></div>
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px' }}>
           <div style={{
-            width: '200px',
-            height: '200px',
+            width: '220px',
+            height: '220px',
             borderRadius: '50%',
             backgroundColor: '#000',
             display: 'flex',
@@ -254,7 +254,7 @@ export default function MarketAnalysis() {
       </div>
 
       {/* Search Form */}
-      <Card className="mb-6" variant="borderless">
+      <Card className="mb-6">
         <Space vertical size="middle" className="w-full">
           <div>
             <Text strong>Поисковый запрос</Text>
@@ -407,7 +407,7 @@ export default function MarketAnalysis() {
             {/* Summary Stats */}
             <Row gutter={16} className="mb-6">
               <Col span={8}>
-                <Card variant="borderless">
+                <Card>
                   <Statistic
                     title="Найдено вакансий"
                     value={data.total_vacancies}
@@ -415,7 +415,7 @@ export default function MarketAnalysis() {
                 </Card>
               </Col>
               <Col span={8}>
-                <Card variant="borderless">
+                <Card>
                   <Statistic
                     title="Средняя зарплата"
                     value={formatSalary(data.salary_stats.average_mid)}
@@ -423,7 +423,7 @@ export default function MarketAnalysis() {
                 </Card>
               </Col>
               <Col span={8}>
-                <Card variant="borderless">
+                <Card>
                   <Statistic
                     title="Рекомендуемых курсов"
                     value={data.recommended_courses.length}
@@ -434,7 +434,7 @@ export default function MarketAnalysis() {
 
             {/* Experience Distribution */}
             {Object.keys(data.experience_distribution).length > 0 && (
-              <Card title="Распределение по опыту работы" className="mb-6" variant="borderless">
+              <Card title="Распределение по опыту работы" className="mb-6">
                 <Row gutter={16}>
                   {Object.entries(data.experience_distribution).map(([exp, count]) => (
                     <Col span={6} key={exp}>
@@ -447,7 +447,7 @@ export default function MarketAnalysis() {
 
             {/* Salary Details */}
             {data.salary_stats && (
-              <Card title="Детальная статистика зарплат" className="mb-6" variant="borderless">
+              <Card title="Детальная статистика зарплат" className="mb-6">
                 <Row gutter={16}>
                   <Col span={8}>
                     <Statistic
@@ -476,7 +476,6 @@ export default function MarketAnalysis() {
               <Card
                 title="Рекомендуемые курсы"
                 className="mb-6"
-                variant="borderless"
               >
                 <Space wrap>
                   {data.recommended_courses.map((course) => (

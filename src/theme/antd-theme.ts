@@ -4,24 +4,25 @@ import { theme } from 'antd';
 export const antdTheme = {
   algorithm: theme.defaultAlgorithm,
   token: {
-    // Primary colors - pure black for shadcn/ui style
-    colorPrimary: 'hsl(0, 0%, 9%)', // #171717 - pure black
-    colorPrimaryHover: 'hsl(0, 0%, 0%)', // #000000 - pure black hover
-    colorPrimaryActive: 'hsl(0, 0%, 0%)', // #000000 - pure black active
+    // Primary colors - neutral gray for shadcn/ui style
+    colorPrimary: 'hsl(0, 0%, 15%)', // #262626 - neutral dark gray
+    colorPrimaryHover: 'hsl(0, 0%, 10%)', // #1a1a1a - slightly darker on hover
+    colorPrimaryActive: 'hsl(0, 0%, 5%)', // #0d0d0d - darkest on active
 
-    // Background colors
+    // Background colors - pure white
     colorBgContainer: 'hsl(0, 0%, 100%)', // #ffffff
-    colorBgElevated: 'hsl(0, 0%, 100%)', // #ffffff
-    colorBgLayout: 'hsl(0, 0%, 100%)', // #ffffff - pure white
+    colorBgElevated: 'hsl(0, 0%, 98%)', // #fafafa - very subtle gray
+    colorBgLayout: 'hsl(0, 0%, 100%)', // #ffffff
 
-    // Text colors - black text on white background
-    colorText: 'hsl(0, 0%, 9%)', // #171717 - pure black text
-    colorTextSecondary: 'hsl(0, 0%, 45%)', // #737373 - dark gray secondary
-    colorTextTertiary: 'hsl(0, 0%, 55%)', // #8c8c8c - medium gray tertiary
+    // Text colors - neutral grays
+    colorText: 'hsl(0, 0%, 15%)', // #262626 - neutral dark gray text
+    colorTextSecondary: 'hsl(0, 0%, 45%)', // #737373 - medium gray secondary
+    colorTextTertiary: 'hsl(0, 0%, 65%)', // #a6a6a6 - light gray tertiary
+    colorTextPlaceholder: 'hsl(0, 0%, 75%)', // #bfbfbf - placeholder gray
 
-    // Border colors - thin gray borders
-    colorBorder: 'hsl(0, 0%, 90%)', // #e5e5e5 - light gray border
-    colorBorderSecondary: 'hsl(0, 0%, 85%)', // #d9d9d9 - slightly darker gray
+    // Border colors - subtle neutral borders
+    colorBorder: 'hsl(0, 0%, 90%)', // #e6e6e6 - very light neutral border
+    colorBorderSecondary: 'hsl(0, 0%, 85%)', // #d9d9d9 - light neutral border
 
     // Fill colors
     colorFill: 'hsl(0, 0%, 100%)', // #ffffff - pure white
@@ -51,10 +52,10 @@ export const antdTheme = {
     // Component specific colors
     colorBgSpotlight: 'hsl(222.2, 84%, 4.9%)', // #0f172a
     
-    // Border radius
-    borderRadius: 6,
-    borderRadiusSM: 4,
-    borderRadiusLG: 8,
+    // Border radius - shadcn/ui style
+    borderRadius: 8,
+    borderRadiusSM: 6,
+    borderRadiusLG: 12,
 
     // Font sizes
     fontSize: 14,
@@ -70,57 +71,59 @@ export const antdTheme = {
     padding: 16,
     paddingSM: 12,
     paddingLG: 24,
-
+    
     // Box shadow - minimal shadows for shadcn/ui style
     boxShadow: 'none',
     boxShadowSecondary: 'none',
   },
   components: {
     Button: {
-      // Remove shadows for flat design
-      primaryShadow: 'none',
-      dangerShadow: 'none',
-      // Black primary buttons that become slightly lighter on hover
-      colorPrimary: 'hsl(0, 0%, 9%)',
-      colorPrimaryHover: 'hsl(0, 0%, 15%)', // Slightly lighter on hover
-      colorPrimaryActive: 'hsl(0, 0%, 12%)',
-      // White text on black primary buttons
+      // Minimal shadows for shadcn/ui
+      primaryShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+      dangerShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+      // Neutral primary buttons
+      colorPrimary: 'hsl(0, 0%, 15%)',
+      colorPrimaryHover: 'hsl(0, 0%, 10%)',
+      colorPrimaryActive: 'hsl(0, 0%, 5%)',
       primaryColor: 'hsl(0, 0%, 100%)',
-      // Default buttons: white background, gray border, black border on hover
+      // Default buttons: subtle gray borders, black border on hover
       defaultBg: 'hsl(0, 0%, 100%)',
-      defaultColor: 'hsl(0, 0%, 9%)',
-      defaultBorderColor: 'hsl(0, 0%, 85%)',
+      defaultColor: 'hsl(0, 0%, 15%)',
+      defaultBorderColor: 'hsl(0, 0%, 90%)',
       defaultHoverBg: 'hsl(0, 0%, 100%)',
-      defaultHoverColor: 'hsl(0, 0%, 9%)',
-      defaultHoverBorderColor: 'hsl(0, 0%, 9%)', // Black border on hover
+      defaultHoverColor: 'hsl(0, 0%, 15%)',
+      defaultHoverBorderColor: 'hsl(0, 0%, 15%)',
+      // Border radius for shadcn/ui style
+      borderRadius: 8,
     },
     Card: {
       headerBg: 'hsl(0, 0%, 100%)',
-      bodyPadding: 24,
-      // Remove shadows, add thin gray border
-      boxShadow: 'none',
+      bodyPadding: 20,
+      // Minimal shadow and subtle border for shadcn/ui
+      boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)',
       borderWidth: 1,
       borderStyle: 'solid',
       borderColor: 'hsl(0, 0%, 90%)',
+      borderRadius: 12,
       hoverable: true,
     },
     Input: {
-      // Light gray focus ring for highlighted interactive components
-      activeBorderColor: 'hsl(0, 0%, 70%)',
-      hoverBorderColor: 'hsl(0, 0%, 80%)',
+      // Subtle focus and hover for shadcn/ui
+      activeBorderColor: 'hsl(0, 0%, 15%)',
+      hoverBorderColor: 'hsl(0, 0%, 85%)',
       hoverBg: 'hsl(0, 0%, 100%)',
-      // Black text on white background
-      colorText: 'hsl(0, 0%, 9%)',
+      borderRadius: 8,
+      colorText: 'hsl(0, 0%, 15%)',
     },
     Select: {
-      // Light gray focus ring for highlighted interactive components
-      activeBorderColor: 'hsl(0, 0%, 70%)',
-      hoverBorderColor: 'hsl(0, 0%, 80%)',
-      // Enhanced dropdown hover
+      // Subtle focus and hover for shadcn/ui
+      activeBorderColor: 'hsl(0, 0%, 15%)',
+      hoverBorderColor: 'hsl(0, 0%, 85%)',
+      // Minimal dropdown styling
       optionSelectedBg: 'hsl(0, 0%, 95%)',
       optionActiveBg: 'hsl(0, 0%, 93%)',
-      // Black text
-      colorText: 'hsl(0, 0%, 9%)',
+      borderRadius: 8,
+      colorText: 'hsl(0, 0%, 15%)',
     },
     Modal: {
       headerBg: 'hsl(0, 0%, 100%)',
