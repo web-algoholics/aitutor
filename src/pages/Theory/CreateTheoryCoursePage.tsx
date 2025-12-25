@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Card, Typography, Space, message, Spin } from 'antd';
+import { Form, Input, Button, Card, Typography, Space, message, Spin, Select } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCreateTheoryCourseMutation } from '../../services/theoryApi';
 import { BookOutlined, LoadingOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import PageContainer from '../../components/PageContainer';
-import CustomSelect from '../../components/CustomSelect';
-import type { CustomSelectOption } from '../../components/CustomSelect';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -55,7 +53,7 @@ const CreateTheoryCoursePage: React.FC = () => {
     'Мобильная разработка',
   ];
 
-  const difficultyOptions: CustomSelectOption[] = [
+  const difficultyOptions = [
     { value: 'beginner', label: 'Начальный (для новичков)' },
     { value: 'intermediate', label: 'Средний (базовые знания требуются)' },
     { value: 'advanced', label: 'Продвинутый (опыт требуется)' },
@@ -109,10 +107,11 @@ const CreateTheoryCoursePage: React.FC = () => {
             </Form.Item>
 
             <Form.Item label="Уровень сложности" name="difficulty">
-              <CustomSelect
+              <Select
                 options={difficultyOptions}
                 placeholder="Выберите уровень сложности"
-                allowClear={false}
+                size="large"
+                style={{ fontSize: '16px' }}
               />
             </Form.Item>
 
@@ -122,7 +121,7 @@ const CreateTheoryCoursePage: React.FC = () => {
                 size="large"
                 loading={isLoading}
                 disabled={isLoading}
-                style={{ width: '100%', height: '48px', fontSize: '16px', backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+                className="w-full h-12 text-base bg-primary text-primary-foreground border-primary"
               >
                 {isLoading ? 'Создаю курс...' : 'Создать курс'}
               </Button>
@@ -137,7 +136,8 @@ const CreateTheoryCoursePage: React.FC = () => {
               <Button
                 key={topic}
                 onClick={() => form.setFieldsValue({ topic })}
-                style={{ backgroundColor: 'transparent', borderColor: '#2B5797', color: '#2B5797' }}
+                type="default"
+                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
               >
                 {topic}
               </Button>

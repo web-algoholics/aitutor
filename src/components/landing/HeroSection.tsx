@@ -134,7 +134,7 @@ export default function HeroSection() {
                 size="large" 
                 className="h-12 px-8" 
                 onClick={() => handleNavigate('/register')}
-                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+                className="bg-primary text-primary-foreground border-primary"
               >
                 Начать бесплатно
               </Button>

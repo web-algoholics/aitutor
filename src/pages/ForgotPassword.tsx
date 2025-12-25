@@ -73,7 +73,7 @@ export default function ForgotPasswordPage() {
               { type: 'email', message: 'Некорректный формат email' },
             ]}
           >
-            <Input prefix={<MailOutlined style={{ color: '#2B5797' }} />} placeholder="you@example.com" size="large" />
+            <Input prefix={<MailOutlined style={{ color: 'hsl(var(--primary))' }} />} placeholder="you@example.com" size="large" />
           </Form.Item>
 
           <Form.Item>

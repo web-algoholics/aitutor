@@ -104,7 +104,7 @@ export default function RegisterPage() {
           rules={[{ required: true, message: 'Введите имя пользователя' }]}
         >
           <Input 
-            prefix={<UserOutlined style={{ color: '#2B5797' }} />} 
+            prefix={<UserOutlined style={{ color: 'hsl(var(--primary))' }} />} 
             placeholder="john_doe"
             style={{
               color: '#000'
@@ -122,7 +122,7 @@ export default function RegisterPage() {
           ]}
         >
           <Input 
-            prefix={<MailOutlined style={{ color: '#2B5797' }} />} 
+            prefix={<MailOutlined style={{ color: 'hsl(var(--primary))' }} />} 
             placeholder="you@example.com"
             style={{
               color: '#000'
@@ -140,7 +140,7 @@ export default function RegisterPage() {
           ]}
         >
           <Input.Password 
-            prefix={<LockOutlined style={{ color: '#2B5797' }} />} 
+            prefix={<LockOutlined style={{ color: 'hsl(var(--primary))' }} />} 
             placeholder="Минимум 8 символов"
             style={{
               color: '#000'
@@ -155,7 +155,7 @@ export default function RegisterPage() {
             htmlType="submit" 
             loading={isLoading} 
             block
-            style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
             Зарегистрироваться
           </Button>
@@ -165,7 +165,7 @@ export default function RegisterPage() {
         <div className="text-center text-sm">
           <div>Уже есть аккаунт?</div>
           <div>
-            <CollapseLink to="/login" className="text-sm hover:text-black hover:underline" style={{ color: '#2B5797' }}>Войти</CollapseLink>
+            <CollapseLink to="/login" className="text-sm hover:text-foreground hover:underline text-primary">Войти</CollapseLink>
           </div>
         </div>
       </Form>

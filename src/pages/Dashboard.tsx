@@ -180,6 +180,11 @@ export function Dashboard() {
     course => !enrolledLanguages.some(l => l.id === course.id)
   );
 
+  const courseOptions = availableCourses.map(course => ({
+    value: course.id,
+    label: `${course.name} (${course.hours}h)`
+  }));
+
   return (
     <div className="min-h-screen bg-gray-50">
       {contextHolder}
@@ -312,21 +317,10 @@ export function Dashboard() {
             rules={[{ required: true, message: 'Please select a course' }]}
           >
             <Select
+              options={courseOptions}
               placeholder="Choose a programming language"
               disabled={availableCourses.length === 0}
-              optionLabelProp="label"
-              maxTagTextLength={30}
-            >
-              {availableCourses.map(course => (
-                <Select.Option 
-                  key={course.id} 
-                  value={course.id}
-                  label={`${course.name} (${course.hours}h)`}
-                >
-                  {course.name}
-                </Select.Option>
-              ))}
-            </Select>
+            />
           </Form.Item>
 
           {availableCourses.length === 0 && (

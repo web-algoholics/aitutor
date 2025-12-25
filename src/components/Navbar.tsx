@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Avatar, Button, Drawer } from "antd";
-import { UserOutlined, ArrowRightOutlined, MenuOutlined, CloseOutlined, SunOutlined, MoonOutlined } from "@ant-design/icons";
+import { UserOutlined, ArrowRightOutlined, MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import { useGetCurrentUserQuery, useLogoutMutation, authApi } from "../services/authApi";
 import { useGetAvatarQuery } from "../services/profileApi";
-import { useTheme } from "../contexts/ThemeContext";
 import Logo from "./Logo";
 
 export default function Navbar() {
@@ -16,7 +15,6 @@ export default function Navbar() {
   const [logout] = useLogoutMutation(undefined);
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
   const avatarUrl = avatarData?.image || null;
 
@@ -57,7 +55,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="flex items-center px-8 h-16 sticky top-0 z-50 border-b" style={{ backgroundColor: theme === 'dark' ? '#2a2a2a' : '#ffffff', borderColor: theme === 'dark' ? '#303030' : '#e5e7eb' }}>
+    <header className="flex items-center px-8 h-16 sticky top-0 z-50 bg-background border-b border-border">
       {/* Left: Logo + Mobile Menu Button */}
       <div className="flex items-center gap-4" style={{ flex: '1 1 0' }}>
         <Logo />
@@ -83,7 +81,7 @@ export default function Navbar() {
                 key={link.to} 
                 to={link.to} 
                 className="transition-all duration-300 flex items-center justify-center gap-2 relative"
-                style={{ color: '#2B5797', transition: 'color 0.3s ease', fontSize: '16px' }}
+                style={{ color: 'hsl(var(--primary))', transition: 'color 0.3s ease', fontSize: '16px' }}
               >
                 <span 
                   style={{ 
@@ -110,19 +108,6 @@ export default function Navbar() {
 
       {/* Right: Auth */}
       <div className="flex items-center gap-4 justify-end" style={{ flex: '1 1 0' }}>
-        {/* Theme Toggle */}
-        <Button
-          type="text"
-          icon={theme === 'dark' ? <SunOutlined /> : <MoonOutlined />}
-          onClick={toggleTheme}
-          size="middle"
-          style={{ 
-            color: theme === 'dark' ? '#fafafa' : '#2B5797',
-            fontSize: '18px'
-          }}
-          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-        />
-        
         {user ? (
           <>
             {/* Avatar → Profile */}
@@ -141,7 +126,7 @@ export default function Navbar() {
               onClick={handleLogout} 
               size="middle" 
               className="hidden md:inline-flex"
-              style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+              className="bg-primary text-primary-foreground border-primary"
             >
               Выйти
             </Button>
@@ -182,12 +167,12 @@ export default function Navbar() {
                   className="px-6 py-4 font-medium transition-all duration-300 flex items-center justify-center gap-3"
                   style={{ 
                     transition: 'background-color 0.3s ease, color 0.3s ease', 
-                    color: '#2B5797',
+                    color: 'hsl(var(--primary))',
                     backgroundColor: 'transparent',
                     fontSize: '18px'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = theme === 'dark' ? '#1f1f1f' : '#f3f4f6';
+                    e.currentTarget.style.backgroundColor = 'hsl(var(--accent))';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';

@@ -2,8 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ConfigProvider } from 'antd';
 import { store } from './app/store';
-import { getTheme } from './theme/antd-theme';
-import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { antdTheme } from './theme/antd-theme';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
@@ -40,11 +39,9 @@ import GigaChatAssistantPage from './pages/GigaChatAssistantPage';
 import HelpCenterPage from './pages/HelpCenterPage';
 
 function AppContent() {
-  const { theme } = useTheme();
-  
   return (
-    <ConfigProvider 
-      theme={getTheme(theme)} 
+    <ConfigProvider
+      theme={antdTheme}
       wave={{ disabled: true }}
     >
       <BrowserRouter basename='/aitutor'>
@@ -100,9 +97,7 @@ function AppContent() {
 function App() {
   return (
     <Provider store={store}>
-      <ThemeProvider>
-        <AppContent />
-      </ThemeProvider>
+      <AppContent />
     </Provider>
   );
 }

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 import {
   Card,
   Typography,
@@ -47,7 +46,6 @@ const QuizPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const lessonId = searchParams.get('lessonId');
-  const { theme } = useTheme();
   const [quizState, setQuizState] = useState<QuizState>(() => {
     // Initialize state based on URL param to avoid showing 'create' form briefly
     return quizId ? 'taking' : 'create';
@@ -244,7 +242,7 @@ const QuizPage: React.FC = () => {
                   loading={creatingQuiz}
                   icon={<PlayCircleOutlined />}
                   block
-                  style={{ height: '48px', backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+                  className="bg-primary text-primary-foreground border-primary h-12"
                 >
                   {creatingQuiz ? 'Создание квиза...' : 'Создать квиз'}
                 </Button>
@@ -392,8 +390,8 @@ const QuizPage: React.FC = () => {
                   Результаты квиза
                 </Title>
               </div>
-              <TrophyOutlined style={{ fontSize: 64, color: '#2B5797' }} />
-              <Text className="text-2xl font-bold" style={{ color: '#2B5797' }}>
+              <TrophyOutlined style={{ fontSize: 64, color: 'hsl(var(--primary))' }} />
+              <Text className="text-2xl font-bold" style={{ color: 'hsl(var(--primary))' }}>
                 {score.toFixed(1)}%
               </Text>
               <Text style={{ fontSize: '18px', color: '#ffffff', fontWeight: 500 }}>
@@ -424,9 +422,9 @@ const QuizPage: React.FC = () => {
                           {index + 1}. {question.question_text}
                         </Text>
                         {isCorrect ? (
-                          <CheckCircleOutlined style={{ fontSize: '24px', color: '#2B5797' }} />
+                          <CheckCircleOutlined style={{ fontSize: '24px', color: 'hsl(var(--primary))' }} />
                         ) : (
-                          <CloseCircleOutlined style={{ fontSize: '24px', color: '#2B5797' }} />
+                          <CloseCircleOutlined style={{ fontSize: '24px', color: 'hsl(var(--primary))' }} />
                         )}
                       </div>
 
@@ -458,11 +456,11 @@ const QuizPage: React.FC = () => {
                       )}
 
                       {question.explanation && (
-                        <div className="mt-2 p-3 rounded" style={{ 
-                          backgroundColor: theme === 'dark' ? '#2a2a2a' : '#f3f4f6',
-                          border: theme === 'dark' ? '1px solid #303030' : '1px solid #d9d9d9'
+                        <div className="mt-2 p-3 rounded"                         style={{
+                          backgroundColor: '#f3f4f6',
+                          border: '1px solid #d9d9d9'
                         }}>
-                          <Text style={{ color: theme === 'dark' ? '#a1a1aa' : '#666' }}>{question.explanation}</Text>
+                          <Text style={{ color: '#666' }}>{question.explanation}</Text>
                         </div>
                       )}
                     </Space>

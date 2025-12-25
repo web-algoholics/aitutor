@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 import {
   Card,
   Typography,
@@ -27,7 +26,6 @@ const { Title, Text, Paragraph } = Typography;
 const QuizzesListPage: React.FC = () => {
   const navigate = useNavigate();
   const { data: quizzes, isLoading, error } = useGetQuizzesQuery();
-  const { theme } = useTheme();
 
   const handleCreateQuiz = () => {
     navigate('/quizzes/create');
@@ -111,7 +109,7 @@ const QuizzesListPage: React.FC = () => {
             size="large"
             icon={<PlusOutlined />}
             onClick={handleCreateQuiz}
-            style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+            className="bg-primary text-primary-foreground border-primary"
           >
             Создать квиз
           </Button>
@@ -151,7 +149,7 @@ const QuizzesListPage: React.FC = () => {
               <Button 
                 icon={<PlusOutlined />} 
                 onClick={handleCreateQuiz}
-                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+                className="bg-primary text-primary-foreground border-primary"
               >
                 Создать первый квиз
               </Button>
@@ -166,7 +164,7 @@ const QuizzesListPage: React.FC = () => {
                     width: '100%',
                     border: '2px solid #666666',
                     borderRadius: '12px',
-                    backgroundColor: theme === 'dark' ? '#1f1f1f' : '#fff',
+                    backgroundColor: '#fff',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                     display: 'flex',
                     flexDirection: 'column',
@@ -187,8 +185,8 @@ const QuizzesListPage: React.FC = () => {
                 >
                   {/* Question count in top right corner */}
                   <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <FileTextOutlined style={{ fontSize: '18px', color: '#2B5797' }} />
-                    <Text style={{ fontSize: '16px', color: '#2B5797', fontWeight: 500 }}>
+                    <FileTextOutlined style={{ fontSize: '18px', color: 'hsl(var(--primary))' }} />
+                    <Text style={{ fontSize: '16px', color: 'hsl(var(--primary))', fontWeight: 500 }}>
                       {quiz.questions_count}
                     </Text>
                   </div>
@@ -197,14 +195,14 @@ const QuizzesListPage: React.FC = () => {
                     {/* Large icon */}
                     <div style={{ marginBottom: '16px' }}>
                       {quiz.is_completed ? (
-                        <CheckCircleOutlined style={{ fontSize: '64px', color: '#2B5797' }} />
+                        <CheckCircleOutlined style={{ fontSize: '64px', color: 'hsl(var(--primary))' }} />
                       ) : (
-                        <QuestionCircleOutlined style={{ fontSize: '64px', color: '#2B5797' }} />
+                        <QuestionCircleOutlined style={{ fontSize: '64px', color: 'hsl(var(--primary))' }} />
                       )}
                     </div>
                     
                     <div style={{ minHeight: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', width: '100%' }}>
-                      <Text style={{ margin: 0, textAlign: 'center', color: theme === 'dark' ? '#fafafa' : '#000', fontSize: '20px', fontWeight: 400, display: 'block' }}>
+                      <Text style={{ margin: 0, textAlign: 'center', color: '#000', fontSize: '20px', fontWeight: 400, display: 'block' }}>
                         {quiz.title}
                       </Text>
                     </div>

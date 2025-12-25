@@ -94,7 +94,7 @@ const CreateAnkiDeckPage: React.FC = () => {
                 size="large"
                 loading={isLoading}
                 disabled={isLoading}
-                style={{ width: '100%', height: '48px', fontSize: '16px', backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+                className="w-full h-12 text-base bg-primary text-primary-foreground border-primary"
               >
                 {isLoading ? 'Создаю колоду...' : 'Создать колоду'}
               </Button>

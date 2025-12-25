@@ -106,7 +106,7 @@ export default function LoginPage() {
           ]}
         >
           <Input 
-            prefix={<UserOutlined style={{ color: '#2B5797' }} />} 
+            prefix={<UserOutlined style={{ color: 'hsl(var(--primary))' }} />} 
             placeholder="you@example.com"
             style={{
               color: '#000'
@@ -120,7 +120,7 @@ export default function LoginPage() {
           rules={[{ required: true, message: 'Введите пароль' }]}
         >
           <Input.Password 
-            prefix={<LockOutlined style={{ color: '#2B5797' }} />} 
+            prefix={<LockOutlined style={{ color: 'hsl(var(--primary))' }} />} 
             placeholder="••••••••"
             style={{
               color: '#000'
@@ -145,7 +145,7 @@ export default function LoginPage() {
             htmlType="submit" 
             loading={isLoading} 
             block
-            style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
             Войти
           </Button>
@@ -154,7 +154,7 @@ export default function LoginPage() {
         <div className="text-center text-sm">
           <div>Нет аккаунта?</div>
           <div>
-            <CollapseLink to="/register" className="hover:text-black hover:underline" style={{ color: '#2B5797' }}>Зарегистрироваться</CollapseLink>
+            <CollapseLink to="/register" className="hover:text-foreground hover:underline text-primary">Зарегистрироваться</CollapseLink>
           </div>
         </div>
       </Form>

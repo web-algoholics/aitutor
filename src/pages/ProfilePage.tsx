@@ -5,7 +5,6 @@ import { EditOutlined, MailOutlined, GiftOutlined, CheckCircleOutlined, Exclamat
 import { useGetProfileQuery, useUpdateProfileMutation, useRequestVerifyTokenMutation, useUploadAvatarMutation, useGetAvatarQuery } from '../services/profileApi';
 import AuthLayout from '../components/AuthLayout';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../contexts/ThemeContext';
 import Stats from '../components/Stats';
 import PageContainer from '../components/PageContainer';
 import LoadingDot from '../components/LoadingDot';
@@ -25,7 +24,6 @@ interface PasswordChangeValues {
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { theme } = useTheme();
 
   const { data: profile, isLoading, refetch } = useGetProfileQuery(undefined);
   const { data: avatarData } = useGetAvatarQuery(undefined, { skip: !profile?.profile_icon_filename } as any);
@@ -166,10 +164,10 @@ export default function ProfilePage() {
               />
             </Upload>
             <div>
-              <Title level={4} className="m-0" style={{ color: theme === 'dark' ? '#fafafa' : 'inherit' }}>{profile && 'username' in profile ? profile.username : 'Пользователь'}</Title>
-              <Space size={4} style={{ color: theme === 'dark' ? '#a1a1aa' : '#4b5563' }}>
-                <MailOutlined style={{ color: '#2B5797' }} />
-                <Text style={{ color: theme === 'dark' ? '#a1a1aa' : 'inherit' }}>{profile && 'email' in profile ? profile.email : 'Загрузка...'}</Text>
+              <Title level={4} className="m-0">{profile && 'username' in profile ? profile.username : 'Пользователь'}</Title>
+              <Space size={4} style={{ color: '#4b5563' }}>
+                <MailOutlined style={{ color: 'hsl(var(--primary))' }} />
+                <Text>{profile && 'email' in profile ? profile.email : 'Загрузка...'}</Text>
               </Space>
             </div>
           </div>
@@ -186,7 +184,7 @@ export default function ProfilePage() {
                   prefix={<EditOutlined className="text-gray-400" />} 
                   style={!editMode 
                     ? { color: '#4b5563' } 
-                    : { color: theme === 'dark' ? '#fafafa' : '#000' }
+                    : { color: 'hsl(var(--foreground))' }
                   }
                 />
               </Form.Item>
@@ -197,7 +195,7 @@ export default function ProfilePage() {
                   prefix={<MailOutlined className="text-gray-400" />} 
                   style={!editMode 
                     ? { color: '#4b5563' } 
-                    : { color: theme === 'dark' ? '#fafafa' : '#000' }
+                    : { color: 'hsl(var(--foreground))' }
                   }
                 />
               </Form.Item>
@@ -213,7 +211,7 @@ export default function ProfilePage() {
                 <Button type="primary" onClick={() => form.submit()} loading={isUpdating}>Сохранить</Button>
               </>
             ) : (
-              <Button type="primary" icon={<EditOutlined />} onClick={enterEditMode} style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}>
+              <Button type="primary" icon={<EditOutlined />} onClick={enterEditMode} className="bg-primary text-primary-foreground border-primary hover:bg-primary/90">
                 Редактировать
               </Button>
             )}
@@ -223,14 +221,14 @@ export default function ProfilePage() {
         {/* Email Verification */}
         {profile && 'is_verified' in profile && !profile.is_verified ? (
           <div className="mt-6 p-4 rounded-lg" style={{ 
-            backgroundColor: theme === 'dark' ? '#1a1600' : '#fefce8',
-            border: theme === 'dark' ? '2px solid #2d2500' : '2px solid #eab308',
-            borderColor: theme === 'dark' ? '#2d2500' : '#eab308'
+            backgroundColor: 'hsl(var(--accent))',
+            border: '2px solid hsl(var(--border))',
+            borderColor: '#eab308'
           }}>
             <Space size="middle" style={{ width: '100%', alignItems: 'flex-start' }}>
-              <ExclamationCircleOutlined style={{ fontSize: '18px', marginTop: '2px', color: '#2B5797' }} />
+              <ExclamationCircleOutlined style={{ fontSize: '18px', marginTop: '2px', color: 'hsl(var(--primary))' }} />
               <div style={{ flex: 1 }}>
-                <Text style={{ fontSize: '14px', display: 'block', marginBottom: '8px', color: theme === 'dark' ? '#fafafa' : '#000' }}>
+                <Text style={{ fontSize: '14px', display: 'block', marginBottom: '8px', color: 'hsl(var(--foreground))' }}>
                   Email не подтверждён
                 </Text>
                 <Button 
@@ -239,7 +237,7 @@ export default function ProfilePage() {
                   style={{ 
                     padding: 0, 
                     height: 'auto', 
-                    color: '#2B5797',
+                    color: 'hsl(var(--primary))',
                     fontWeight: 500,
                     fontSize: '14px'
                   }}
