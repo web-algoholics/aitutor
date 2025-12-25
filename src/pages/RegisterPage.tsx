@@ -60,9 +60,12 @@ export default function RegisterPage() {
       });
       form.setFields(fieldErrors);
     } else if (error) {
-      const msg = 'data' in error && error.data && typeof error.data === 'object' && 'detail' in error.data
+      let msg = 'data' in error && error.data && typeof error.data === 'object' && 'detail' in error.data
         ? (error.data as any).detail
         : 'Не удалось зарегистрироваться';
+      if (msg === 'REGISTER_USER_ALREADY_EXISTS') {
+        msg = 'Пользователь с таким email или именем уже существует';
+      }
       messageApi.error(msg);
     }
   }, [error, form, messageApi]);

@@ -983,6 +983,12 @@ input:-ms-input-placeholder {
   -webkit-text-fill-color: #000000 !important;
 }
 
+.starting-point-dot.show-content input::placeholder {
+  color: hsl(0, 0%, 75%) !important;
+  -webkit-text-fill-color: hsl(0, 0%, 75%) !important;
+  opacity: 1 !important;
+}
+
 .starting-point-dot.show-content .ant-input::placeholder,
 .starting-point-dot.show-content .ant-input-password input::placeholder,
 .starting-point-dot.show-content .ant-input-affix-wrapper input::placeholder,

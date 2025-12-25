@@ -96,14 +96,14 @@ export default function ProfilePage() {
 
   const handleVerify = async () => {
     if (!profile || !('email' in profile) || !profile.email) {
-      messageApi.error('Email не найден');
+      messageApi.open({ type: 'error', content: 'Email не найден', key: 'verify_email' });
       return;
     }
     try {
-      messageApi.success('Письмо для подтверждения отправлено!');
       await requestVerifyToken(profile.email as string).unwrap();
+messageApi.open({ type: 'success', content: 'Письмо для подтверждения отправлено!', key: 'verify_email' });
     } catch (err: any) {
-      messageApi.error(err?.data?.detail?.[0]?.msg || 'Не удалось отправить письмо');
+      messageApi.open({ type: 'error', content: err?.data?.detail?.[0]?.msg || 'Не удалось отправить письмо', key: 'verify_email' });
     }
   };
 
@@ -295,10 +295,6 @@ export default function ProfilePage() {
         </Form>
       </CustomModal>
 
-      {/* Stats Section */}
-      <Card bordered={false} title="Статистика обучения" className="shadow-sm mt-6">
-        <Stats />
-      </Card>
     </PageContainer>
   );
 }

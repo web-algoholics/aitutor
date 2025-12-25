@@ -146,13 +146,6 @@ const QuizzesListPage: React.FC = () => {
               description="У вас пока нет квизов"
               image={Empty.PRESENTED_IMAGE_SIMPLE}
             >
-              <Button 
-                icon={<PlusOutlined />} 
-                onClick={handleCreateQuiz}
-type="primary"
-              >
-                Создать первый квиз
-              </Button>
             </Empty>
           </Card>
         ) : (
