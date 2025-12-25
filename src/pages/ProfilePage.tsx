@@ -147,7 +147,7 @@ messageApi.open({ type: 'success', content: 'Письмо для подтвер�
       {contextHolder}
 
       {/* Header */}
-      <Card bordered={false} className="mb-6 shadow-sm">
+      <Card bordered={true} className="mb-6 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Upload
@@ -175,48 +175,42 @@ messageApi.open({ type: 'success', content: 'Письмо для подтвер�
       </Card>
 
       {/* Profile Form */}
-      <Card bordered={false} title="Информация профиля" className="shadow-sm">
+      <Card bordered={true} title="Информация профиля" className="shadow-sm">
         <Form<ProfileFormValues> form={form} layout="vertical" onFinish={onFinish} disabled={!editMode}>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item label="Имя пользователя" name="username">
-                <Input 
-                  prefix={<EditOutlined className="text-gray-400" />} 
-                  style={!editMode 
-                    ? { color: '#4b5563' } 
-                    : { color: 'hsl(var(--foreground))' }
-                  }
+                <Input
+                  prefix={<EditOutlined className={editMode ? "text-gray-700" : "text-gray-400"} />}
+                  placeholder={editMode ? "Введите новое имя пользователя" : ""}
+                  style={{
+                    transition: 'all 0.3s ease',
+                    cursor: editMode ? 'text' : 'default',
+                    borderColor: editMode ? '#666666' : undefined,
+                    backgroundColor: editMode ? '#f8f8f8' : undefined,
+                    color: editMode ? 'hsl(var(--foreground))' : '#4b5563'
+                  }}
                 />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item label="Email" name="email">
-                <Input 
-                  prefix={<MailOutlined className="text-gray-400" />} 
-                  style={!editMode 
-                    ? { color: '#4b5563' } 
-                    : { color: 'hsl(var(--foreground))' }
-                  }
+                <Input
+                  prefix={<MailOutlined className={editMode ? "text-gray-700" : "text-gray-400"} />}
+                  placeholder={editMode ? "Введите новый email адрес" : ""}
+                  style={{
+                    transition: 'all 0.3s ease',
+                    cursor: editMode ? 'text' : 'default',
+                    borderColor: editMode ? '#666666' : undefined,
+                    backgroundColor: editMode ? '#f8f8f8' : undefined,
+                    color: editMode ? 'hsl(var(--foreground))' : '#4b5563'
+                  }}
                 />
               </Form.Item>
             </Col>
           </Row>
         </Form>
 
-        <div className="text-right" style={{ marginTop: '16px' }}>
-          <Space>
-            {editMode ? (
-              <>
-                <Button onClick={cancelEdit}>Отмена</Button>
-                <Button type="primary" onClick={() => form.submit()} loading={isUpdating}>Сохранить</Button>
-              </>
-            ) : (
-              <Button type="primary" icon={<EditOutlined />} onClick={enterEditMode}>
-                Редактировать
-              </Button>
-            )}
-          </Space>
-        </div>
 
         {/* Email Verification */}
         {profile && 'is_verified' in profile && !profile.is_verified ? (
@@ -256,11 +250,24 @@ messageApi.open({ type: 'success', content: 'Письмо для подтвер�
           </div>
         )}
 
-        {/* Change Password */}
-        <div className="mt-8">
+        {/* Change Password (left) and Edit (right) */}
+        <div className="mt-8 flex justify-between items-center">
           <Button type="default" onClick={() => setPwdModal(true)}>
             Сменить пароль
           </Button>
+          <div>
+            {!editMode && (
+              <Button type="primary" icon={<EditOutlined />} onClick={enterEditMode}>
+                Редактировать
+              </Button>
+            )}
+            {editMode && (
+              <Space>
+                <Button onClick={cancelEdit}>Отмена</Button>
+                <Button type="primary" onClick={() => form.submit()} loading={isUpdating}>Сохранить</Button>
+              </Space>
+            )}
+          </div>
         </div>
       </Card>
 

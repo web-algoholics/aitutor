@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Card, Typography, List, Button, Space, Tag,
-  Skeleton, message, Alert
+  Skeleton, message, Alert, Progress
 } from 'antd';
 import LoadingDot from '../../components/LoadingDot';
 import {
@@ -213,7 +213,7 @@ const TheoryCourseTreePage: React.FC = () => {
         </div>
 
         {/* Course Header */}
-        <Card bordered={false}>
+        <Card bordered={true}>
           <div className="flex items-start gap-5">
             <div className="flex-1">
               <Title level={2} className="mb-2" style={{ color: 'hsl(var(--primary))' }}>{course.title}</Title>
@@ -271,6 +271,12 @@ const TheoryCourseTreePage: React.FC = () => {
               <Text strong>Прогресс курса</Text>
               <Text>{completedLessons}/{totalLessons} уроков</Text>
             </div>
+            <Progress
+              percent={progressPercent}
+              strokeColor="hsl(var(--primary))"
+              trailColor="#f0f0f0"
+              size="small"
+            />
           </div>
         </Card>
 
@@ -306,6 +312,7 @@ const TheoryCourseTreePage: React.FC = () => {
             return (
               <Card
                 key={module.id}
+                bordered={true}
                 bordered={false}
                 headStyle={{ backgroundColor: '#f5f5f5', padding: '16px 24px' }}
                 title={
@@ -387,7 +394,7 @@ const TheoryCourseTreePage: React.FC = () => {
 
         {/* Show loading status if no modules yet (fallback for edge cases) */}
         {(!currentCourseTree || modules.length === 0) && (
-          <Card bordered={false}>
+          <Card bordered={true}>
             <div className="text-center p-10">
               <LoadingDot size="large" />
               <Title level={4}>Загрузка структуры курса</Title>

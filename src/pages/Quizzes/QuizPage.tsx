@@ -207,7 +207,7 @@ const QuizPage: React.FC = () => {
             </div>
           </div>
 
-          <Card bordered={false}>
+          <Card bordered={true}>
             <Form
               form={form}
               layout="vertical"
@@ -279,7 +279,7 @@ const QuizPage: React.FC = () => {
             </Text>
           </div>
 
-          <Card bordered={false} className="shadow-md">
+          <Card bordered={true} className="shadow-md">
             <Space direction="vertical" size="large" className="w-full">
               <div>
                 <Title level={2} className="mb-0">{quiz.title}</Title>
@@ -289,7 +289,7 @@ const QuizPage: React.FC = () => {
 
               <Form form={answersForm} layout="vertical" onFinish={handleSubmitQuiz}>
                 {quiz.questions.map((question, index) => (
-                  <Card key={question.id} bordered={false} className="mb-6 shadow-sm">
+                  <Card key={question.id} bordered={true} className="mb-6 shadow-sm">
                     <Form.Item
                       name={`question_${question.id}`}
                       rules={[{ required: true, message: 'Выберите ответ' }]}
@@ -374,7 +374,7 @@ const QuizPage: React.FC = () => {
         <Space direction="vertical" size="large" className="w-full">
           {/* Empty div to match Create page layout - matches Button height */}
           <div style={{ height: '36px' }}></div>
-          <Card bordered={false}>
+          <Card bordered={true}>
             <Space direction="vertical" size="large" className="w-full" align="center">
               <div style={{
                 width: '200px',
@@ -400,7 +400,7 @@ const QuizPage: React.FC = () => {
             </Space>
           </Card>
 
-          <Card bordered={false}>
+          <Card bordered={true}>
             <Title level={3}>Детали ответов</Title>
             <Divider />
             <Space direction="vertical" size="large" className="w-full">
@@ -413,7 +413,7 @@ const QuizPage: React.FC = () => {
                 return (
                   <Card
                     key={question.id}
-                    bordered={false}
+                    bordered={true}
                     className={isCorrect ? 'border-green-500' : 'border-red-500'}
                   >
                     <Space direction="vertical" size="middle" className="w-full">
@@ -470,7 +470,7 @@ const QuizPage: React.FC = () => {
             </Space>
           </Card>
 
-          <Card bordered={false}>
+          <Card bordered={true}>
             <Space direction="vertical" size="middle" className="w-full">
               <Button
                 type="default"

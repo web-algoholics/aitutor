@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Card, Typography, Space, message, Spin, Select } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import { Form, Input, Button, Card, Typography, Space, message, Spin } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCreateTheoryCourseMutation } from '../../services/theoryApi';
 import { BookOutlined, LoadingOutlined, ArrowLeftOutlined } from '@ant-design/icons';
@@ -13,6 +13,11 @@ const CreateTheoryCoursePage: React.FC = () => {
   const [createCourse, { isLoading }] = useCreateTheoryCourseMutation();
   const [form] = Form.useForm();
 
+  // State for custom dropdown
+  const [difficulty, setDifficulty] = useState<string>('intermediate');
+  const [difficultyDropdownOpen, setDifficultyDropdownOpen] = useState(false);
+  const difficultyDropdownRef = useRef<HTMLDivElement>(null);
+
   // Если пришли с MarketAnalysis с заранее выбранной технологией,
   // подтягиваем её в поле "Тема курса"
   useEffect(() => {
@@ -23,11 +28,25 @@ const CreateTheoryCoursePage: React.FC = () => {
     }
   }, [location.search, form]);
 
+  // Закрытие выпадающего списка при клике вне его
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (difficultyDropdownRef.current && !difficultyDropdownRef.current.contains(event.target as Node)) {
+        setDifficultyDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleSubmit = async (values: any) => {
     try {
       const result = await createCourse({
         topic: values.topic,
-        difficulty: values.difficulty || 'intermediate',
+        difficulty: difficulty,
       }).unwrap();
 
       message.success('Курс создан! Структура готова, контент генерируется...');
@@ -87,12 +106,11 @@ const CreateTheoryCoursePage: React.FC = () => {
           </Paragraph>
         </div>
 
-        <Card bordered={false}>
+        <Card bordered={true}>
           <Form
             form={form}
             layout="vertical"
             onFinish={handleSubmit}
-            initialValues={{ difficulty: 'intermediate' }}
           >
             <Form.Item
               label="Тема курса"
@@ -106,14 +124,39 @@ const CreateTheoryCoursePage: React.FC = () => {
               />
             </Form.Item>
 
-            <Form.Item label="Уровень сложности" name="difficulty">
-              <Select
-                options={difficultyOptions}
-                placeholder="Выберите уровень сложности"
-                size="large"
-                style={{ fontSize: '16px' }}
-              />
-            </Form.Item>
+            <div style={{ marginBottom: '24px' }}>
+              <div style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: 'rgba(0, 0, 0, 0.85)' }}>
+                Уровень сложности
+              </div>
+              <div className={`custom-select-container ${difficultyDropdownOpen ? 'open' : ''}`} ref={difficultyDropdownRef}>
+                <div
+                  className="custom-select-trigger"
+                  onClick={() => setDifficultyDropdownOpen(!difficultyDropdownOpen)}
+                  style={{ fontSize: '16px', height: '40px' }}
+                >
+                  <span className={difficulty ? '' : 'custom-select-placeholder'}>
+                    {difficulty ? difficultyOptions.find(d => d.value === difficulty)?.label || difficulty : 'Выберите уровень сложности'}
+                  </span>
+                  <span className="custom-select-arrow">▼</span>
+                </div>
+                {difficultyDropdownOpen && (
+                  <div className="custom-select-dropdown">
+                    {difficultyOptions.map((option) => (
+                      <div
+                        key={option.value}
+                        className={`custom-select-option ${difficulty === option.value ? 'selected' : ''}`}
+                        onClick={() => {
+                          setDifficulty(option.value);
+                          setDifficultyDropdownOpen(false);
+                        }}
+                      >
+                        {option.label}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
 
             <Form.Item>
               <Button
@@ -130,7 +173,7 @@ const CreateTheoryCoursePage: React.FC = () => {
           </Form>
         </Card>
 
-        <Card variant="borderless">
+        <Card bordered={true}>
           <Title level={5} style={{ marginBottom: '12px' }}>Примеры тем</Title>
           <Space wrap>
             {exampleTopics.map((topic) => (

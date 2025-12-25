@@ -1752,8 +1752,8 @@ html:not([data-theme="dark"]) .starting-point-dot.show-content .text-center > di
 }
 
 .custom-select-option.selected {
-  background-color: #e6f4ff;
-  color: #2B5797;
+  background-color: hsl(0, 0%, 93%);
+  color: hsl(0, 0%, 15%);
   font-weight: 500;
 }
 
@@ -1788,8 +1788,8 @@ html:not([data-theme="dark"]) .starting-point-dot.show-content .text-center > di
 }
 
 [data-theme="dark"] .custom-select-option.selected {
-  background-color: rgba(43, 87, 151, 0.2);
-  color: #4d9eff;
+  background-color: hsl(0, 0%, 20%);
+  color: hsl(0, 0%, 85%);
 }
 
 [data-theme="dark"] .custom-select-container.disabled .custom-select-trigger {

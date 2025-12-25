@@ -55,7 +55,7 @@ const CreateAnkiDeckPage: React.FC = () => {
           </Paragraph>
         </div>
 
-        <Card bordered={false}>
+        <Card bordered={true}>
           <Form
             form={form}
             layout="vertical"

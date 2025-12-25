@@ -90,7 +90,6 @@ export default function MarketAnalysis() {
   const [schedule, setSchedule] = useState<string | undefined>(undefined);
   const [dateFrom, setDateFrom] = useState<string | undefined>(undefined);
   const [dateTo, setDateTo] = useState<string | undefined>(undefined);
-  const [techMinPercent, setTechMinPercent] = useState<number>(0);
   const [analyze, { data, isLoading, error }] = useAnalyzeMarketMutation();
 
   // Theory courses / generation
@@ -496,7 +495,7 @@ export default function MarketAnalysis() {
             )}
 
             {/* Technologies */}
-            {renderSkillList(data.technologies, 'Популярные технологии', techMinPercent)}
+            {renderSkillList(data.technologies, 'Популярные технологии')}
 
             {/* Frameworks */}
             {renderSkillList(data.frameworks, 'Фреймворки и библиотеки')}

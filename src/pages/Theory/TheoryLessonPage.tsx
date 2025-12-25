@@ -140,7 +140,7 @@ const TheoryLessonPage: React.FC = () => {
         </div>
 
         {/* Lesson Content */}
-        <Card bordered={false}>
+        <Card bordered={true}>
           <div style={{
             lineHeight: '1.8',
             fontSize: '16px',
@@ -203,7 +203,7 @@ const TheoryLessonPage: React.FC = () => {
         </Card>
 
         {/* Footer */}
-        <Card size="small" bordered={false} style={{ backgroundColor: '#f9fafb' }}>
+        <Card size="small" bordered={true} style={{ backgroundColor: '#f9fafb' }}>
           <div className="text-center">
             <Space direction="vertical" align="center">
               <Space>

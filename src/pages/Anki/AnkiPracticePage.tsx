@@ -29,7 +29,7 @@ export default function AnkiPracticePage() {
   if (isLoading || !deck) {
     return (
       <PageContainer>
-        <Card bordered={false} className="min-h-[300px] flex items-center justify-center">
+        <Card bordered={true} className="min-h-[300px] flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <LoadingDot size="large" />
             <Text style={{ color: 'hsl(var(--primary))' }}>Загружаем карточки...</Text>
@@ -116,7 +116,7 @@ export default function AnkiPracticePage() {
         </div>
 
         {/* Header */}
-        <Card bordered={false}>
+        <Card bordered={true}>
           <div className="flex items-center justify-between mb-4">
             <Title level={3}>{deck.title}</Title>
             <Text style={{ color: '#000', opacity: 0.5 }}>
@@ -144,7 +144,7 @@ export default function AnkiPracticePage() {
 
         {/* Statistics - right under the card */}
         {totalReviewed > 0 && (
-          <Card bordered={false}>
+          <Card bordered={true}>
             <div className="text-center">
               <Space size="large" className="w-full justify-center" style={{ marginBottom: '8px' }}>
                 <Text>
@@ -185,7 +185,7 @@ export default function AnkiPracticePage() {
 
         {/* Navigation buttons - only show when not completed */}
         {!allCardsReviewed && (
-          <Card bordered={false}>
+          <Card bordered={true}>
             <Space className="w-full justify-between">
               <Button
                 type="default"
