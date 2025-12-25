@@ -32,32 +32,32 @@ body {
   scrollbar-gutter: stable;
 }
 
-/* shadcn/ui CSS Variables for Modern Light Theme */
+/* shadcn/ui CSS Variables - Black and White Theme */
 :root {
   --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
+  --foreground: 0 0% 9%;
   --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
+  --card-foreground: 0 0% 9%;
   --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-  --primary: 222.2 47.4% 11.2%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96%;
-  --secondary-foreground: 222.2 84% 4.9%;
-  --muted: 210 40% 96%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96%;
-  --accent-foreground: 222.2 84% 4.9%;
+  --popover-foreground: 0 0% 9%;
+  --primary: 0 0% 9%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 100%;
+  --secondary-foreground: 0 0% 9%;
+  --muted: 0 0% 100%;
+  --muted-foreground: 0 0% 45%;
+  --accent: 0 0% 100%;
+  --accent-foreground: 0 0% 9%;
   --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
   --ring: 222.2 84% 4.9%;
-  --chart-1: 12 76% 61%;
-  --chart-2: 173 58% 39%;
-  --chart-3: 197 37% 24%;
-  --chart-4: 43 74% 66%;
-  --chart-5: 27 87% 67%;
+  --chart-1: 222.2 47.4% 11.2%;
+  --chart-2: 215.4 16.3% 46.9%;
+  --chart-3: 215.4 16.3% 56.9%;
+  --chart-4: 0 0% 100%;
+  --chart-5: 210 20% 96%;
   --radius: 0.5rem;
 }
 
@@ -89,8 +89,52 @@ body {
 .focus-visible\:ring-ring:focus-visible { --tw-ring-color: hsl(var(--ring)); }
 .focus-visible\:ring-offset-background:focus-visible { --tw-ring-offset-color: hsl(var(--background)); }
 
-.hover\:bg-primary:hover { background-color: hsl(var(--primary)); }
+.hover\:bg-primary:hover { background-color: hsl(0, 0%, 0%); }
 .hover\:text-primary-foreground:hover { color: hsl(var(--primary-foreground)); }
+
+/* Enhanced hover effects for shadcn/ui style */
+.hover\:bg-primary-dark:hover {
+  background-color: hsl(0, 0%, 0%);
+  transition: all 0.2s ease;
+}
+.hover\:bg-gray-50-dark:hover {
+  background-color: hsl(0, 0%, 95%);
+  transition: all 0.2s ease;
+}
+.hover\:text-primary-dark:hover {
+  color: hsl(0, 0%, 0%);
+  transition: all 0.2s ease;
+}
+.hover\:border-primary-dark:hover {
+  border-color: hsl(0, 0%, 80%);
+  transition: all 0.2s ease;
+}
+.hover\:shadow-lg-dark:hover {
+  /* No shadow for flat design */
+  transition: all 0.2s ease;
+}
+
+/* General interactive element hover effects */
+.interactive-hover {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.interactive-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px -2px rgb(0 0 0 / 0.1);
+}
+
+/* Link hover effects */
+.link-hover {
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.link-hover:hover {
+  color: hsl(220, 13%, 18%);
+  text-decoration: underline;
+}
 
 /* Scrollbar Styles */
 ::-webkit-scrollbar {
@@ -909,6 +953,13 @@ input:-ms-input-placeholder {
   color: #ffffff !important;
 }
 
+.starting-point-dot.show-content .text-center,
+.starting-point-dot.show-content .text-center div,
+.starting-point-dot.show-content .text-sm,
+.starting-point-dot.show-content .text-sm div {
+  color: #ffffff !important;
+}
+
 .starting-point-dot.show-content .ant-input,
 .starting-point-dot.show-content .ant-input-password input,
 .starting-point-dot.show-content .ant-input-affix-wrapper input {
@@ -991,38 +1042,74 @@ input:-ms-input-placeholder {
   text-decoration: underline;
 }
 
-.starting-point-dot.show-content .ant-btn-primary {
-  background-color: hsl(var(--primary)) !important;
-  border-color: hsl(var(--primary)) !important;
+/* Override link colors for text-white class */
+.starting-point-dot.show-content .text-white,
+.starting-point-dot.show-content a.text-white,
+.starting-point-dot.show-content .text-white a,
+.starting-point-dot.show-content a.text-white:link,
+.starting-point-dot.show-content a.text-white:visited,
+.starting-point-dot.show-content a.text-white:active,
+.starting-point-dot.show-content a.text-white:focus {
   color: #ffffff !important;
+  text-decoration-color: #ffffff !important;
+}
+
+/* Auth links hover effects */
+.auth-link {
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+
+.auth-link:hover {
+  text-decoration: underline !important;
+}
+
+.auth-link:hover span {
+  color: #ffffff !important;
+}
+
+.auth-link span {
+  transition: color 0.2s ease;
+}
+
+.starting-point-dot.show-content .ant-btn-primary {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
+  color: #000000 !important;
 }
 
 .starting-point-dot.show-content .ant-btn-primary:hover,
 .starting-point-dot.show-content .ant-btn-primary:focus {
-  background-color: hsl(var(--primary)) !important;
-  border-color: hsl(var(--primary)) !important;
-  color: #ffffff !important;
+  background-color: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #000000 !important;
 }
 
 .starting-point-dot.show-content .ant-btn-primary:active {
-  background-color: #1a3659 !important;
-  border-color: #1a3659 !important;
-  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  color: #000000 !important;
 }
 
 .starting-point-dot.show-content .ant-btn-default {
-  background-color: transparent !important;
-  border-color: rgba(255, 255, 255, 0.5) !important;
-  color: #ffffff !important;
+  background-color: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #000000 !important;
 }
 
 .starting-point-dot.show-content .ant-btn-default:hover {
+  background-color: rgba(255, 255, 255, 0.9) !important;
   border-color: #ffffff !important;
-  color: #ffffff !important;
+  color: #000000 !important;
 }
 
 .starting-point-dot.show-content .anticon {
   color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Override for back button arrow - keep it black */
+.starting-point-dot.show-content .ant-btn .anticon {
+  color: #000000 !important;
 }
 
 .starting-point-dot.show-content .ant-input-affix-wrapper .anticon,

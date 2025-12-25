@@ -104,11 +104,8 @@ export default function RegisterPage() {
           rules={[{ required: true, message: 'Введите имя пользователя' }]}
         >
           <Input 
-            prefix={<UserOutlined style={{ color: 'hsl(var(--primary))' }} />} 
+            prefix={<UserOutlined />}
             placeholder="john_doe"
-            style={{
-              color: '#000'
-            }}
           />
         </Form.Item>
 
@@ -122,11 +119,8 @@ export default function RegisterPage() {
           ]}
         >
           <Input 
-            prefix={<MailOutlined style={{ color: 'hsl(var(--primary))' }} />} 
+            prefix={<MailOutlined />}
             placeholder="you@example.com"
-            style={{
-              color: '#000'
-            }}
           />
         </Form.Item>
 
@@ -140,22 +134,18 @@ export default function RegisterPage() {
           ]}
         >
           <Input.Password 
-            prefix={<LockOutlined style={{ color: 'hsl(var(--primary))' }} />} 
+            prefix={<LockOutlined />}
             placeholder="Минимум 8 символов"
-            style={{
-              color: '#000'
-            }}
           />
         </Form.Item>
 
         {/* Submit */}
         <Form.Item>
           <Button 
-            type="primary" 
+            type="default"
             htmlType="submit" 
             loading={isLoading} 
             block
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
             Зарегистрироваться
           </Button>
@@ -163,10 +153,9 @@ export default function RegisterPage() {
 
         {/* Login Link */}
         <div className="text-center text-sm">
-          <div>Уже есть аккаунт?</div>
-          <div>
-            <CollapseLink to="/login" className="text-sm hover:text-foreground hover:underline text-primary">Войти</CollapseLink>
-          </div>
+          <Link to="/login" className="auth-link">
+            <span style={{ color: '#d1d5db' }}>Войти</span>
+          </Link>
         </div>
       </Form>
     </AuthLayout>

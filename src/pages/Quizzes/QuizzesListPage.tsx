@@ -106,10 +106,10 @@ const QuizzesListPage: React.FC = () => {
             Созданные и пройденные квизы для проверки знаний
           </Paragraph>
           <Button
+            type="primary"
             size="large"
             icon={<PlusOutlined />}
             onClick={handleCreateQuiz}
-            className="bg-primary text-primary-foreground border-primary"
           >
             Создать квиз
           </Button>
@@ -149,7 +149,7 @@ const QuizzesListPage: React.FC = () => {
               <Button 
                 icon={<PlusOutlined />} 
                 onClick={handleCreateQuiz}
-                className="bg-primary text-primary-foreground border-primary"
+type="primary"
               >
                 Создать первый квиз
               </Button>

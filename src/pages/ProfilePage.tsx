@@ -211,7 +211,7 @@ export default function ProfilePage() {
                 <Button type="primary" onClick={() => form.submit()} loading={isUpdating}>Сохранить</Button>
               </>
             ) : (
-              <Button type="primary" icon={<EditOutlined />} onClick={enterEditMode} className="bg-primary text-primary-foreground border-primary hover:bg-primary/90">
+              <Button type="primary" icon={<EditOutlined />} onClick={enterEditMode}>
                 Редактировать
               </Button>
             )}

@@ -218,10 +218,10 @@ export default function AnkiDecksListPage() {
             Карточки для запоминания и повторения материала
           </Paragraph>
           <Button
+            type="primary"
             icon={<PlusOutlined />}
             size="large"
             onClick={() => navigate('/anki/create')}
-            className="bg-primary text-primary-foreground border-primary"
           >
             Создать колоду
           </Button>

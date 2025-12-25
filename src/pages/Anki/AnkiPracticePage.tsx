@@ -165,9 +165,9 @@ export default function AnkiPracticePage() {
         {allCardsReviewed && (
           <div className="text-center">
             <Button
+              type="primary"
               size="large"
               onClick={handleRestart}
-              className="bg-primary text-primary-foreground border-primary"
             >
               Ещё раз
             </Button>
@@ -188,9 +188,9 @@ export default function AnkiPracticePage() {
           <Card bordered={false}>
             <Space className="w-full justify-between">
               <Button
+                type="default"
                 disabled={currentIndex === 0}
                 onClick={handlePrevious}
-                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff', border: 'none' }}
               >
                 Предыдущая карточка
               </Button>

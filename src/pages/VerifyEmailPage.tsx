@@ -48,7 +48,7 @@ export default function VerifyEmailPage() {
         <div className="text-center">
           <p className="text-green-600 font-semibold">Email Verified!</p>
           <p className="text-gray-600 text-sm">You can now use all features.</p>
-          <Button type="primary" onClick={() => navigate('/profile')} className="mt-4">
+          <Button type="default" onClick={() => navigate('/profile')} className="mt-4">
             Go to Profile
           </Button>
         </div>
@@ -66,7 +66,7 @@ export default function VerifyEmailPage() {
               ? (error.data as any).detail
               : 'Invalid or expired token.'}
           </p>
-          <Button type="primary" onClick={() => navigate('/profile')} className="mt-4">
+          <Button type="default" onClick={() => navigate('/profile')} className="mt-4">
             Back to Profile
           </Button>
         </div>

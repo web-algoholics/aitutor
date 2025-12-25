@@ -126,7 +126,6 @@ export default function Navbar() {
               onClick={handleLogout} 
               size="middle" 
               className="hidden md:inline-flex"
-              className="bg-primary text-primary-foreground border-primary"
             >
               Выйти
             </Button>

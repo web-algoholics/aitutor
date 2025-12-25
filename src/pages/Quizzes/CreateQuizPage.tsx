@@ -118,11 +118,12 @@ const CreateQuizPage: React.FC = () => {
 
             <Form.Item>
               <Button
+                type="primary"
                 htmlType="submit"
                 size="large"
                 loading={isLoading}
                 disabled={isLoading}
-                className="w-full h-12 text-base bg-primary text-primary-foreground border-primary"
+                block
               >
                 {isLoading ? 'Создаю квиз...' : 'Создать квиз'}
               </Button>

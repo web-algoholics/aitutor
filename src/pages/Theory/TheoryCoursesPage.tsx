@@ -74,10 +74,10 @@ const TheoryCoursesPage: React.FC = () => {
             Персонализированные курсы, созданные ИИ специально для вас
           </Paragraph>
           <Button
+            type="primary"
             size="large"
             icon={<PlusOutlined />}
             onClick={handleCreateCourse}
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
             Создать курс
           </Button>

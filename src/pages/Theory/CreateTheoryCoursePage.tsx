@@ -117,11 +117,12 @@ const CreateTheoryCoursePage: React.FC = () => {
 
             <Form.Item>
               <Button
+                type="primary"
                 htmlType="submit"
                 size="large"
                 loading={isLoading}
                 disabled={isLoading}
-                className="w-full h-12 text-base bg-primary text-primary-foreground border-primary"
+                block
               >
                 {isLoading ? 'Создаю курс...' : 'Создать курс'}
               </Button>
@@ -137,7 +138,6 @@ const CreateTheoryCoursePage: React.FC = () => {
                 key={topic}
                 onClick={() => form.setFieldsValue({ topic })}
                 type="default"
-                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
               >
                 {topic}
               </Button>

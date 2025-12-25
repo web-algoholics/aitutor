@@ -79,18 +79,13 @@ export default function AuthLayout({ children, title, animationDelay = 1000 }: A
               }}
             >
               <Button
-                type="text"
-                icon={<ArrowLeftOutlined style={{ fontSize: 'clamp(16px, 2vw, 18px)' }} />}
+                type="default"
+                icon={<ArrowLeftOutlined style={{ fontSize: 'clamp(16px, 2vw, 18px)', color: '#000000 !important' }} />}
                 onClick={() => {
                   collapse();
                   setTimeout(() => navigate(-1), 320);
                 }}
                 className="text-fade-to-white"
-                style={{ 
-                  color: '#ffffff', 
-                  fontSize: 'clamp(12px, 2vw, 14px)',
-                  padding: 'clamp(4px, 1vw, 8px) clamp(8px, 2vw, 16px)'
-                }}
                 size="middle"
               >
                 Назад

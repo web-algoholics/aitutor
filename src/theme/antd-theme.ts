@@ -4,29 +4,29 @@ import { theme } from 'antd';
 export const antdTheme = {
   algorithm: theme.defaultAlgorithm,
   token: {
-    // Primary colors - matching shadcn/ui
-    colorPrimary: 'hsl(222.2, 47.4%, 11.2%)', // #111827
-    colorPrimaryHover: 'hsl(222.2, 84%, 4.9%)', // #0f172a
-    colorPrimaryActive: 'hsl(222.2, 47.4%, 11.2%)', // #111827
+    // Primary colors - pure black for shadcn/ui style
+    colorPrimary: 'hsl(0, 0%, 9%)', // #171717 - pure black
+    colorPrimaryHover: 'hsl(0, 0%, 0%)', // #000000 - pure black hover
+    colorPrimaryActive: 'hsl(0, 0%, 0%)', // #000000 - pure black active
 
     // Background colors
     colorBgContainer: 'hsl(0, 0%, 100%)', // #ffffff
     colorBgElevated: 'hsl(0, 0%, 100%)', // #ffffff
-    colorBgLayout: 'hsl(210, 40%, 96%)', // #f1f5f9
+    colorBgLayout: 'hsl(0, 0%, 100%)', // #ffffff - pure white
 
-    // Text colors
-    colorText: 'hsl(222.2, 84%, 4.9%)', // #0f172a
-    colorTextSecondary: 'hsl(215.4, 16.3%, 46.9%)', // #64748b
-    colorTextTertiary: 'hsl(215.4, 16.3%, 56.9%)', // #94a3b8
+    // Text colors - black text on white background
+    colorText: 'hsl(0, 0%, 9%)', // #171717 - pure black text
+    colorTextSecondary: 'hsl(0, 0%, 45%)', // #737373 - dark gray secondary
+    colorTextTertiary: 'hsl(0, 0%, 55%)', // #8c8c8c - medium gray tertiary
 
-    // Border colors
-    colorBorder: 'hsl(214.3, 31.8%, 91.4%)', // #e2e8f0
-    colorBorderSecondary: 'hsl(214.3, 31.8%, 86.4%)', // #cbd5e1
+    // Border colors - thin gray borders
+    colorBorder: 'hsl(0, 0%, 90%)', // #e5e5e5 - light gray border
+    colorBorderSecondary: 'hsl(0, 0%, 85%)', // #d9d9d9 - slightly darker gray
 
     // Fill colors
-    colorFill: 'hsl(210, 40%, 96%)', // #f1f5f9
-    colorFillSecondary: 'hsl(210, 40%, 98%)', // #f8fafc
-    colorFillTertiary: 'hsl(210, 40%, 97%)', // #f1f5f9
+    colorFill: 'hsl(0, 0%, 100%)', // #ffffff - pure white
+    colorFillSecondary: 'hsl(0, 0%, 100%)', // #ffffff - pure white
+    colorFillTertiary: 'hsl(0, 0%, 100%)', // #ffffff - pure white
 
     // Success colors
     colorSuccess: 'hsl(142.1, 76.2%, 36.3%)', // #22c55e
@@ -50,7 +50,7 @@ export const antdTheme = {
 
     // Component specific colors
     colorBgSpotlight: 'hsl(222.2, 84%, 4.9%)', // #0f172a
-
+    
     // Border radius
     borderRadius: 6,
     borderRadiusSM: 4,
@@ -71,30 +71,99 @@ export const antdTheme = {
     paddingSM: 12,
     paddingLG: 24,
 
-    // Box shadow
-    boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-    boxShadowSecondary: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+    // Box shadow - minimal shadows for shadcn/ui style
+    boxShadow: 'none',
+    boxShadowSecondary: 'none',
   },
   components: {
     Button: {
-      primaryShadow: '0 1px 2px 0 rgb(17 24 39 / 0.05)',
-      dangerShadow: '0 1px 2px 0 rgb(239 68 68 / 0.05)',
+      // Remove shadows for flat design
+      primaryShadow: 'none',
+      dangerShadow: 'none',
+      // Black primary buttons that become slightly lighter on hover
+      colorPrimary: 'hsl(0, 0%, 9%)',
+      colorPrimaryHover: 'hsl(0, 0%, 15%)', // Slightly lighter on hover
+      colorPrimaryActive: 'hsl(0, 0%, 12%)',
+      // White text on black primary buttons
+      primaryColor: 'hsl(0, 0%, 100%)',
+      // Default buttons: white background, gray border, black border on hover
+      defaultBg: 'hsl(0, 0%, 100%)',
+      defaultColor: 'hsl(0, 0%, 9%)',
+      defaultBorderColor: 'hsl(0, 0%, 85%)',
+      defaultHoverBg: 'hsl(0, 0%, 100%)',
+      defaultHoverColor: 'hsl(0, 0%, 9%)',
+      defaultHoverBorderColor: 'hsl(0, 0%, 9%)', // Black border on hover
     },
     Card: {
       headerBg: 'hsl(0, 0%, 100%)',
       bodyPadding: 24,
+      // Remove shadows, add thin gray border
+      boxShadow: 'none',
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor: 'hsl(0, 0%, 90%)',
+      hoverable: true,
     },
     Input: {
-      activeBorderColor: 'hsl(222.2, 47.4%, 11.2%)',
-      hoverBorderColor: 'hsl(222.2, 84%, 4.9%)',
+      // Light gray focus ring for highlighted interactive components
+      activeBorderColor: 'hsl(0, 0%, 70%)',
+      hoverBorderColor: 'hsl(0, 0%, 80%)',
+      hoverBg: 'hsl(0, 0%, 100%)',
+      // Black text on white background
+      colorText: 'hsl(0, 0%, 9%)',
     },
     Select: {
-      activeBorderColor: 'hsl(222.2, 47.4%, 11.2%)',
-      hoverBorderColor: 'hsl(222.2, 84%, 4.9%)',
+      // Light gray focus ring for highlighted interactive components
+      activeBorderColor: 'hsl(0, 0%, 70%)',
+      hoverBorderColor: 'hsl(0, 0%, 80%)',
+      // Enhanced dropdown hover
+      optionSelectedBg: 'hsl(0, 0%, 95%)',
+      optionActiveBg: 'hsl(0, 0%, 93%)',
+      // Black text
+      colorText: 'hsl(0, 0%, 9%)',
     },
     Modal: {
       headerBg: 'hsl(0, 0%, 100%)',
       contentBg: 'hsl(0, 0%, 100%)',
+      // Thin gray border for modal
+      borderColor: 'hsl(0, 0%, 90%)',
+      borderWidth: 1,
+    },
+    // Add hover effects for other interactive components
+    Menu: {
+      itemHoverBg: 'hsl(0, 0%, 95%)',
+      itemHoverColor: 'hsl(0, 0%, 9%)',
+      itemActiveBg: 'hsl(0, 0%, 93%)',
+      // Dashed border for menu separators
+      dividerColor: 'hsl(0, 0%, 85%)',
+      dividerStyle: 'dashed',
+    },
+    Dropdown: {
+      colorBgElevated: 'hsl(0, 0%, 100%)',
+      // Remove shadow for flat design
+      boxShadow: 'none',
+      // Thin gray border
+      borderColor: 'hsl(0, 0%, 90%)',
+      borderWidth: 1,
+    },
+    Tabs: {
+      itemHoverColor: 'hsl(0, 0%, 9%)',
+      itemActiveColor: 'hsl(0, 0%, 9%)',
+      // Thin bottom border for active tab
+      inkBarColor: 'hsl(0, 0%, 9%)',
+      // Light gray border for tab container
+      borderColor: 'hsl(0, 0%, 90%)',
+    },
+    Table: {
+      // Thin gray borders for tables
+      borderColor: 'hsl(0, 0%, 90%)',
+      // Remove table shadows
+      boxShadow: 'none',
+    },
+    Divider: {
+      // Dashed divider style
+      lineType: 'dashed',
+      colorSplit: 'hsl(0, 0%, 85%)',
     },
   },
-};
+  };
