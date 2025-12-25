@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, Typography, List, Input, Button, Space, message } from 'antd';
+
 
 const { Title, Paragraph, Text } = Typography;
 const { TextArea } = Input;
@@ -13,6 +14,8 @@ const GigaChatAssistantPage: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const lastBotRef = useRef<HTMLDivElement | null>(null);
+  const chatScrollRef = useRef<HTMLDivElement | null>(null);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -60,12 +63,31 @@ const GigaChatAssistantPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const container = chatScrollRef.current;
+    const target = lastBotRef.current;
+    if (!container || !target) return;
+  
+    setTimeout(() => {
+
+      const containerTop = container.getBoundingClientRect().top;
+      const targetTop = target.getBoundingClientRect().top;
+  
+      const top = container.scrollTop + (targetTop - containerTop);
+  
+      container.scrollTo({ top, behavior: 'smooth' });
+    }, 0);
+  }, [messages]);
+  
+  
   return (
     <div
       style={{
-        maxWidth: 1100,
+        width: 960,
+        minHeight: 600,
+        maxWidth: '100%',
         margin: '0 auto',
-        padding: '32px 20px 48px',
+        padding: '32px 0 48px',
       }}
     >
       <Card style={{ marginBottom: 24 }}>
@@ -73,70 +95,90 @@ const GigaChatAssistantPage: React.FC = () => {
           Чат с AI‑помощницей Май
         </Title>
         <Paragraph type="secondary" style={{ marginBottom: 16 }}>
-          Это встроенный чат на базе GigaChat: твои сообщения отправляются на наш backend,
-          который общается с GigaChat по API.
+          Чат работает на базе AI-модели GigaChat. Все ваши сообщения обрабатываются безопасно на наших серверах.
         </Paragraph>
-        <Text type="secondary">
-          Токены GigaChat хранятся только на сервере, фронтенд их не видит.
-        </Text>
       </Card>
 
       <Card>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      height: '50vh',
+    }}
+  >
+    <div
+    ref={chatScrollRef}
+      style={{
+        flex: 1,
+        overflowY: 'auto',
+        marginBottom: 16,
+        paddingRight: 8,
+      }}
+    >
+    <List
+      locale={{ emptyText: 'Пока нет сообщений' }}
+      dataSource={messages}
+      renderItem={(item, index) => {
+        const lastAssistantIndex = messages.map(m => m.role).lastIndexOf('assistant');
+        const isLastBot = item.role === 'assistant' && index === lastAssistantIndex;
+
+    return (
+      <List.Item
+        key={index}
+        style={{
+          border: 'none',
+          justifyContent: item.role === 'user' ? 'flex-end' : 'flex-start',
+        }}
+      >
         <div
+          ref={isLastBot ? lastBotRef : null}
           style={{
-            maxHeight: '60vh',
-            overflowY: 'auto',
-            marginBottom: 16,
-            paddingRight: 8,
+            maxWidth: '70%',
+            padding: '8px 12px',
+            borderRadius: 12,
+            backgroundColor: item.role === 'user' ? '#000' : '#f5f5f5',
+            color: item.role === 'user' ? '#fff' : '#000',
+            whiteSpace: 'pre-wrap',
           }}
         >
-          <List
-            dataSource={messages}
-            renderItem={(item, index) => (
-              <List.Item
-                key={index}
-                style={{
-                  border: 'none',
-                  justifyContent: item.role === 'user' ? 'flex-end' : 'flex-start',
-                }}
-              >
-                <div
-                  style={{
-                    maxWidth: '70%',
-                    padding: '8px 12px',
-                    borderRadius: 12,
-                    backgroundColor: item.role === 'user' ? '#1677ff' : '#f5f5f5',
-                    color: item.role === 'user' ? '#fff' : '#000',
-                    whiteSpace: 'pre-wrap',
-                  }}
-                >
-                  {item.content}
-                </div>
-              </List.Item>
-            )}
-          />
+          {item.content}
         </div>
+      </List.Item>
+    );
+  }}
+/>
 
-        <Space.Compact style={{ width: '100%', marginTop: 'auto' }} direction="vertical">
-          <TextArea
-            autoSize={{ minRows: 2, maxRows: 4 }}
-            placeholder="Напиши вопрос Май..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onPressEnter={(e) => {
-              if (!e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
-          />
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-            <Button type="primary" onClick={handleSend} loading={loading}>
-              Задать вопрос
-            </Button>
-          </div>
-        </Space.Compact>
-      </Card>
+    </div>
+
+    <div style={{ flex: '0 0 auto' }}>
+      <Space.Compact style={{ width: '100%' }} direction="vertical">
+        <TextArea
+          autoSize={{ minRows: 2, maxRows: 4 }} 
+          style={{
+            minHeight: 56,  
+            resize: 'none', 
+          }}
+          placeholder="Напиши вопрос Май..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onPressEnter={(e) => {
+            if (!e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
+        />
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
+          <Button type="primary" onClick={handleSend} loading={loading}>
+            Задать вопрос
+          </Button>
+        </div>
+      </Space.Compact>
+    </div>
+  </div>
+</Card>
+
     </div>
   );
 };

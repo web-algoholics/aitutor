@@ -495,31 +495,6 @@ export default function MarketAnalysis() {
               </Card>
             )}
 
-            {/* Technology filter controls */}
-            <Card className="mb-6">
-              <Text strong>Фильтр по технологиям</Text>
-              <Paragraph type="secondary" className="mt-1 mb-3">
-                Показывать только те технологии, которые встречаются не реже указанного процента вакансий.
-              </Paragraph>
-              <Row align="middle" gutter={16}>
-                <Col span={18}>
-                  <Slider
-                    min={0}
-                    max={20}
-                    step={1}
-                    value={techMinPercent}
-                    onChange={(value) => setTechMinPercent(value as number)}
-                  />
-                </Col>
-                <Col span={6}>
-                  <Statistic
-                    title="Минимальный процент"
-                    value={`${techMinPercent} %`}
-                  />
-                </Col>
-              </Row>
-            </Card>
-
             {/* Technologies */}
             {renderSkillList(data.technologies, 'Популярные технологии', techMinPercent)}
 
@@ -608,6 +583,18 @@ export default function MarketAnalysis() {
                   </span>
                 </Button>
               ))}
+            {/* Кнопка создания нового курса */}
+            <Button
+              type="primary"
+              block
+              style={{ backgroundColor: '#000', borderColor: '#000', color: '#fff' }}
+              onClick={() => {
+                setCoursesModalOpen(false);
+                navigate(`/theory/create?topic=${encodeURIComponent(selectedSkill)}`);
+              }}
+            >
+              Создать новый курс по "{selectedSkill}"
+            </Button>
           </Space>
         </div>
       </CustomModal>
