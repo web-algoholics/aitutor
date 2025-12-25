@@ -77,62 +77,90 @@ const GigaChatAssistantPage: React.FC = () => {
         </Paragraph>
       </Card>
 
-      <Card>
-        <div
+      <div style={{ height: '700px', width: '600px', margin: '0 auto' }}>
+        <Card
           style={{
-            maxHeight: '60vh',
-            overflowY: 'auto',
-            marginBottom: 16,
-            paddingRight: 8,
+            height: '100%',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          }}
+          bodyStyle={{
+            height: '100%',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            padding: 16,
+            overflow: 'hidden',
+            boxSizing: 'border-box',
           }}
         >
-          <List
-            dataSource={messages}
-            renderItem={(item, index) => (
-              <List.Item
-                key={index}
-                style={{
-                  border: 'none',
-                  justifyContent: item.role === 'user' ? 'flex-end' : 'flex-start',
-                }}
-              >
-                <div
+          <div
+            style={{
+              flex: '1 1 0',
+              overflowY: 'auto',
+              marginBottom: 16,
+              paddingRight: 8,
+              minHeight: 0,
+              maxHeight: '100%',
+              width: '100%',
+              boxSizing: 'border-box',
+            }}
+          >
+            <List
+              style={{ width: '100%' }}
+              dataSource={messages}
+              renderItem={(item, index) => (
+                <List.Item
+                  key={index}
                   style={{
-                    maxWidth: '70%',
-                    padding: '8px 12px',
-                    borderRadius: 12,
-                    backgroundColor: item.role === 'user' ? '#1677ff' : '#f5f5f5',
-                    color: item.role === 'user' ? '#fff' : '#000',
-                    whiteSpace: 'pre-wrap',
+                    border: 'none',
+                    justifyContent: item.role === 'user' ? 'flex-end' : 'flex-start',
+                    padding: '4px 0',
                   }}
                 >
-                  {item.content}
-                </div>
-              </List.Item>
-            )}
-          />
-        </div>
-
-        <Space.Compact style={{ width: '100%', marginTop: 'auto' }} direction="vertical">
-          <TextArea
-            autoSize={{ minRows: 2, maxRows: 4 }}
-            placeholder="Напиши вопрос Май..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onPressEnter={(e) => {
-              if (!e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
-          />
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-            <Button type="primary" onClick={handleSend} loading={loading}>
-              Задать вопрос
-            </Button>
+                  <div
+                    style={{
+                      maxWidth: '70%',
+                      padding: '8px 12px',
+                      borderRadius: 12,
+                      backgroundColor: item.role === 'user' ? '#1677ff' : '#f5f5f5',
+                      color: item.role === 'user' ? '#fff' : '#000',
+                      whiteSpace: 'pre-wrap',
+                      wordBreak: 'break-word',
+                    }}
+                  >
+                    {item.content}
+                  </div>
+                </List.Item>
+              )}
+            />
           </div>
-        </Space.Compact>
-      </Card>
+
+          <div style={{ flexShrink: 0 }}>
+            <Space.Compact style={{ width: '100%' }} direction="vertical">
+              <TextArea
+                rows={4}
+                placeholder="Напиши вопрос Май..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onPressEnter={(e) => {
+                  if (!e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+              />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
+                <Button type="primary" onClick={handleSend} loading={loading}>
+                  Задать вопрос
+                </Button>
+              </div>
+            </Space.Compact>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };
