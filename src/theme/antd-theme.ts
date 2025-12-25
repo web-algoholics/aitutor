@@ -82,6 +82,7 @@ export const getTheme = (mode: ThemeMode = 'light') => {
       primaryColor: '#2B5797',
       controlHeightLG: 40,            // Reduced from 48
       controlHeightSM: 28,            // Reduced from 32
+      wave: false,
     },
     Input: {
       borderRadius: 6,
@@ -213,6 +214,7 @@ export const getTheme = (mode: ThemeMode = 'light') => {
       lineHeight: 1.5715,
       colorBgElevated: isDark ? '#1f1f1f' : '#ffffff',
       colorBorder: isDark ? '#303030' : '#e4e4e7',
+      zIndexPopup: 1100,
     },
     Menu: {
       borderRadius: 6,
@@ -287,9 +289,24 @@ export const getTheme = (mode: ThemeMode = 'light') => {
       fontSize: 14,
       lineHeight: 1.5715,
     },
+    List: {
+      colorBgContainer: isDark ? '#1f1f1f' : '#ffffff',
+      colorText: isDark ? '#fafafa' : '#09090b',
+      colorTextSecondary: isDark ? '#a1a1aa' : '#71717a',
+      colorBorder: isDark ? '#303030' : '#e4e4e7',
+      borderRadius: 6,
+      fontSize: 14,
+      lineHeight: 1.5715,
+      itemPadding: '12px 0',
+      itemPaddingSM: '8px 0',
+      itemPaddingLG: '16px 0',
+    },
   },
   };
 };
 
 // Export default light theme for backward compatibility
 export const designTheme = getTheme('light');
+
+
+

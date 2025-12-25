@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Card, Typography, Space, message, Spin } from 'antd';
+import { Form, Input, Button, Card, Typography, Space, message, Spin } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCreateTheoryCourseMutation } from '../../services/theoryApi';
 import { BookOutlined, LoadingOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import PageContainer from '../../components/PageContainer';
+import CustomSelect from '../../components/CustomSelect';
+import type { CustomSelectOption } from '../../components/CustomSelect';
 
 const { Title, Text, Paragraph } = Typography;
-const { Option } = Select;
 
 const CreateTheoryCoursePage: React.FC = () => {
   const navigate = useNavigate();
@@ -54,9 +55,15 @@ const CreateTheoryCoursePage: React.FC = () => {
     'Мобильная разработка',
   ];
 
+  const difficultyOptions: CustomSelectOption[] = [
+    { value: 'beginner', label: 'Начальный (для новичков)' },
+    { value: 'intermediate', label: 'Средний (базовые знания требуются)' },
+    { value: 'advanced', label: 'Продвинутый (опыт требуется)' },
+  ];
+
   return (
     <PageContainer>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+      <Space vertical size="large" style={{ width: '100%' }}>
         <div>
           <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/theory')}>
             К списку курсов
@@ -102,11 +109,11 @@ const CreateTheoryCoursePage: React.FC = () => {
             </Form.Item>
 
             <Form.Item label="Уровень сложности" name="difficulty">
-              <Select size="large">
-                <Option value="beginner">Начальный (для новичков)</Option>
-                <Option value="intermediate">Средний (базовые знания требуются)</Option>
-                <Option value="advanced">Продвинутый (опыт требуется)</Option>
-              </Select>
+              <CustomSelect
+                options={difficultyOptions}
+                placeholder="Выберите уровень сложности"
+                allowClear={false}
+              />
             </Form.Item>
 
             <Form.Item>
@@ -123,14 +130,14 @@ const CreateTheoryCoursePage: React.FC = () => {
           </Form>
         </Card>
 
-        <Card bordered={false}>
+        <Card variant="borderless">
           <Title level={5} style={{ marginBottom: '12px' }}>Примеры тем</Title>
           <Space wrap>
             {exampleTopics.map((topic) => (
               <Button
                 key={topic}
                 onClick={() => form.setFieldsValue({ topic })}
-                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+                style={{ backgroundColor: 'transparent', borderColor: '#2B5797', color: '#2B5797' }}
               >
                 {topic}
               </Button>

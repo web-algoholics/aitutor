@@ -1311,6 +1311,59 @@ input:-ms-input-placeholder {
   z-index: 1000 !important;
 }
 
+/* Ant Design List Styles */
+.ant-list {
+  font-size: 14px;
+  line-height: 1.5715;
+}
+
+.ant-list-item {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+}
+
+.ant-list-item:last-child {
+  border-bottom: none;
+}
+
+.ant-list-bordered {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+}
+
+.ant-list-split .ant-list-item {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.ant-list-sm .ant-list-item {
+  padding: 8px 0;
+}
+
+.ant-list-lg .ant-list-item {
+  padding: 16px 0;
+}
+
+/* List with scrolling - use app.css scrollbar styles */
+.ant-list.ant-list-scrollable {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Dark theme List styles */
+[data-theme="dark"] .ant-list-item {
+  border-bottom-color: #303030;
+}
+
+[data-theme="dark"] .ant-list-bordered {
+  border-color: #303030;
+}
+
+[data-theme="dark"] .ant-list-split .ant-list-item {
+  border-bottom-color: #303030;
+}
+
 /* Dark Theme Styles */
 [data-theme="dark"] {
   background-color: #141414;
@@ -1440,4 +1493,156 @@ html:not([data-theme="dark"]) .starting-point-dot.show-content .text-center > di
 .starting-point-dot.show-content .text-center a {
   color: #2B5797 !important;
 }
+
+/* Custom Select Dropdown Styles */
+.custom-select-container {
+  position: relative;
+  width: 100%;
+}
+
+.custom-select-trigger {
+  width: 100%;
+  height: 40px;
+  padding: 8px 32px 8px 12px;
+  background-color: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  line-height: 1.5715;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.custom-select-trigger:hover {
+  border-color: #d4d4d8;
+}
+
+.custom-select-trigger:focus,
+.custom-select-trigger:focus-within {
+  border-color: #2B5797;
+  box-shadow: 0 0 0 2px rgba(43, 87, 151, 0.2);
+  outline: none;
+}
+
+.custom-select-placeholder {
+  color: #999;
+}
+
+.custom-select-arrow {
+  position: absolute;
+  right: 12px;
+  font-size: 12px;
+  color: #666;
+  pointer-events: none;
+  transition: transform 0.3s;
+}
+
+.custom-select-container.open .custom-select-arrow {
+  transform: rotate(180deg);
+}
+
+.custom-select-container.disabled .custom-select-trigger {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-color: #f5f5f5;
+}
+
+.custom-select-clear {
+  position: absolute;
+  right: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #999;
+  font-size: 18px;
+  line-height: 1;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.custom-select-clear:hover {
+  color: #333;
+}
+
+.custom-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background-color: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 6px;
+  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  z-index: 9999;
+  max-height: 256px;
+  overflow-y: auto;
+}
+
+.custom-select-option {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1.5715;
+  transition: background-color 0.2s;
+}
+
+.custom-select-option:hover {
+  background-color: #f5f5f5;
+}
+
+.custom-select-option.selected {
+  background-color: #e6f4ff;
+  color: #2B5797;
+  font-weight: 500;
+}
+
+/* Dark theme support */
+[data-theme="dark"] .custom-select-trigger {
+  background-color: #1f1f1f;
+  border-color: #303030;
+  color: #fafafa;
+}
+
+[data-theme="dark"] .custom-select-trigger:hover {
+  border-color: #404040;
+}
+
+[data-theme="dark"] .custom-select-trigger:focus,
+[data-theme="dark"] .custom-select-trigger:focus-within {
+  border-color: #2B5797;
+  box-shadow: 0 0 0 2px rgba(43, 87, 151, 0.2);
+}
+
+[data-theme="dark"] .custom-select-placeholder {
+  color: #666;
+}
+
+[data-theme="dark"] .custom-select-dropdown {
+  background-color: #1f1f1f;
+  border-color: #303030;
+}
+
+[data-theme="dark"] .custom-select-option:hover {
+  background-color: #2a2a2a;
+}
+
+[data-theme="dark"] .custom-select-option.selected {
+  background-color: rgba(43, 87, 151, 0.2);
+  color: #4d9eff;
+}
+
+[data-theme="dark"] .custom-select-container.disabled .custom-select-trigger {
+  background-color: #141414;
+  opacity: 0.6;
+}
+
+/* Custom Modal styles are in CustomModal.css */
 

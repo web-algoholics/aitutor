@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Avatar, message, Card, Row, Col, Space, Typography, Upload, Modal } from 'antd';
+import { Form, Input, Button, Avatar, message, Card, Row, Col, Space, Typography, Upload } from 'antd';
+import CustomModal from '../components/CustomModal';
 import { EditOutlined, MailOutlined, GiftOutlined, CheckCircleOutlined, ExclamationCircleOutlined, CameraOutlined } from '@ant-design/icons';
 import { useGetProfileQuery, useUpdateProfileMutation, useRequestVerifyTokenMutation, useUploadAvatarMutation, useGetAvatarQuery } from '../services/profileApi';
 import AuthLayout from '../components/AuthLayout';
@@ -183,7 +184,10 @@ export default function ProfilePage() {
               <Form.Item label="Имя пользователя" name="username">
                 <Input 
                   prefix={<EditOutlined className="text-gray-400" />} 
-                  style={{ color: theme === 'dark' ? '#fafafa' : '#000' }}
+                  style={!editMode 
+                    ? { color: '#4b5563' } 
+                    : { color: theme === 'dark' ? '#fafafa' : '#000' }
+                  }
                 />
               </Form.Item>
             </Col>
@@ -191,41 +195,42 @@ export default function ProfilePage() {
               <Form.Item label="Email" name="email">
                 <Input 
                   prefix={<MailOutlined className="text-gray-400" />} 
-                  style={{ color: theme === 'dark' ? '#fafafa' : '#000' }}
+                  style={!editMode 
+                    ? { color: '#4b5563' } 
+                    : { color: theme === 'dark' ? '#fafafa' : '#000' }
+                  }
                 />
               </Form.Item>
             </Col>
           </Row>
-
-          {editMode && (
-            <Form.Item className="text-right mb-0">
-              <Space>
-                <Button onClick={cancelEdit}>Отмена</Button>
-                <Button type="primary" htmlType="submit" loading={isUpdating}>Сохранить</Button>
-              </Space>
-            </Form.Item>
-          )}
         </Form>
 
-        {!editMode && (
-          <div style={{ marginTop: '16px' }}>
-            <Button type="primary" icon={<EditOutlined />} onClick={enterEditMode} style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}>
-              Редактировать
-            </Button>
-          </div>
-        )}
+        <div className="text-right" style={{ marginTop: '16px' }}>
+          <Space>
+            {editMode ? (
+              <>
+                <Button onClick={cancelEdit}>Отмена</Button>
+                <Button type="primary" onClick={() => form.submit()} loading={isUpdating}>Сохранить</Button>
+              </>
+            ) : (
+              <Button type="primary" icon={<EditOutlined />} onClick={enterEditMode} style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}>
+                Редактировать
+              </Button>
+            )}
+          </Space>
+        </div>
 
         {/* Email Verification */}
         {profile && 'is_verified' in profile && !profile.is_verified ? (
           <div className="mt-6 p-4 rounded-lg" style={{ 
-            backgroundColor: '#fefce8',
-            border: theme === 'dark' ? '2px solid #1a1a1a' : '2px solid #eab308',
-            borderColor: theme === 'dark' ? '#1a1a1a' : '#eab308'
+            backgroundColor: theme === 'dark' ? '#1a1600' : '#fefce8',
+            border: theme === 'dark' ? '2px solid #2d2500' : '2px solid #eab308',
+            borderColor: theme === 'dark' ? '#2d2500' : '#eab308'
           }}>
             <Space size="middle" style={{ width: '100%', alignItems: 'flex-start' }}>
               <ExclamationCircleOutlined style={{ fontSize: '18px', marginTop: '2px', color: '#2B5797' }} />
               <div style={{ flex: 1 }}>
-                <Text style={{ fontSize: '14px', display: 'block', marginBottom: '8px', color: '#000' }}>
+                <Text style={{ fontSize: '14px', display: 'block', marginBottom: '8px', color: theme === 'dark' ? '#fafafa' : '#000' }}>
                   Email не подтверждён
                 </Text>
                 <Button 
@@ -262,11 +267,16 @@ export default function ProfilePage() {
       </Card>
 
       {/* Password Modal */}
-      <Modal
+      <CustomModal
         title="Смена пароля"
         open={pwdModal}
-        onCancel={() => { setPwdModal(false); pwdForm.resetFields(); }}
-        footer={null}
+        onClose={() => { setPwdModal(false); pwdForm.resetFields(); }}
+        footer={
+          <Space>
+            <Button onClick={() => { setPwdModal(false); pwdForm.resetFields(); }}>Отмена</Button>
+            <Button type="primary" onClick={() => pwdForm.submit()}>Обновить пароль</Button>
+          </Space>
+        }
       >
         <Form<PasswordChangeValues> form={pwdForm} layout="vertical" onFinish={onPasswordChange}>
           <Form.Item
@@ -284,14 +294,8 @@ export default function ProfilePage() {
           >
             <Input.Password placeholder="Повторите новый пароль" />
           </Form.Item>
-          <Form.Item className="mb-0 text-right">
-            <Space>
-              <Button onClick={() => { setPwdModal(false); pwdForm.resetFields(); }}>Отмена</Button>
-              <Button type="primary" htmlType="submit">Обновить пароль</Button>
-            </Space>
-          </Form.Item>
         </Form>
-      </Modal>
+      </CustomModal>
 
       {/* Stats Section */}
       <Card bordered={false} title="Статистика обучения" className="shadow-sm mt-6">

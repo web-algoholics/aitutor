@@ -185,15 +185,7 @@ const TheoryCoursesPage: React.FC = () => {
             <Empty
               description="У вас пока нет курсов"
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-            >
-              <Button 
-                icon={<PlusOutlined />} 
-                onClick={handleCreateCourse}
-                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
-              >
-                Создать первый курс
-              </Button>
-            </Empty>
+            />
           </Card>
         )}
       </Space>

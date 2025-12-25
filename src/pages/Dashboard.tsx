@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Progress, Dropdown, Modal, Form, Select, message, Empty, Space, Spin } from 'antd';
+import { Card, Button, Progress, Dropdown, Form, Select, message, Empty, Space, Spin, Modal } from 'antd';
+import CustomModal from '../components/CustomModal';
 import { MoreOutlined, PlusOutlined, DeleteOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { Link, useParams } from 'react-router-dom';
 import type { FormInstance } from 'antd';
@@ -277,18 +278,28 @@ export function Dashboard() {
       </div>
 
       {/* Add Course Modal */}
-      <Modal
+      <CustomModal
         title="Add Course"
         open={isModalVisible}
-        onOk={() => form.submit()}
-        onCancel={() => {
+        onClose={() => {
           setIsModalVisible(false);
           form.resetFields();
         }}
-        okText="Enroll"
-        cancelText="Cancel"
         width={600}
         centered
+        footer={
+          <Space>
+            <Button onClick={() => {
+              setIsModalVisible(false);
+              form.resetFields();
+            }}>
+              Cancel
+            </Button>
+            <Button type="primary" onClick={() => form.submit()}>
+              Enroll
+            </Button>
+          </Space>
+        }
       >
         <Form<AddCourseFormValues>
           form={form}
@@ -324,7 +335,7 @@ export function Dashboard() {
             </p>
           )}
         </Form>
-      </Modal>
+      </CustomModal>
     </div>
   );
 }

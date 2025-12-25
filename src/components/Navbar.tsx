@@ -75,7 +75,7 @@ export default function Navbar() {
 
       {/* Desktop Links - Center */}
       {!isError && user && (
-        <nav className="hidden md:flex gap-6 text-sm font-medium justify-center" style={{ flex: '1 1 0' }}>
+        <nav className="hidden md:flex gap-6 font-medium justify-center" style={{ flex: '1 1 0' }}>
           {navLinks.map((link) => {
             const active = isActive(link.to);
             return (
@@ -83,7 +83,7 @@ export default function Navbar() {
                 key={link.to} 
                 to={link.to} 
                 className="transition-all duration-300 flex items-center justify-center gap-2 relative"
-                style={{ color: '#2B5797', transition: 'color 0.3s ease' }}
+                style={{ color: '#2B5797', transition: 'color 0.3s ease', fontSize: '16px' }}
               >
                 <span 
                   style={{ 
@@ -165,9 +165,9 @@ export default function Navbar() {
         placement="left"
         onClose={() => setMobileMenuOpen(false)}
         open={mobileMenuOpen}
-        width={280}
+        size={280}
         closeIcon={<CloseOutlined style={{ fontSize: '18px' }} />}
-        bodyStyle={{ padding: 0 }}
+        styles={{ body: { padding: 0 } }}
       >
         <div className="flex flex-col h-full">
           {/* Mobile Nav Links */}
@@ -179,11 +179,12 @@ export default function Navbar() {
                   key={link.to}
                   to={link.to}
                   onClick={handleNavClick}
-                  className="px-6 py-4 text-base font-medium transition-all duration-300 flex items-center justify-center gap-3"
+                  className="px-6 py-4 font-medium transition-all duration-300 flex items-center justify-center gap-3"
                   style={{ 
                     transition: 'background-color 0.3s ease, color 0.3s ease', 
                     color: '#2B5797',
-                    backgroundColor: 'transparent'
+                    backgroundColor: 'transparent',
+                    fontSize: '18px'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = theme === 'dark' ? '#1f1f1f' : '#f3f4f6';

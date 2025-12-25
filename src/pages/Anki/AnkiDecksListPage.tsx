@@ -81,17 +81,17 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice
           >
             {/* Course indicator in top left corner */}
             {isFromCourse && (
-              <div style={{ position: 'absolute', top: '16px', left: '16px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <BookOutlined style={{ fontSize: '14px', color: '#2B5797' }} />
-                <Text style={{ fontSize: '12px', color: '#2B5797', fontWeight: 500 }}>
+              <div style={{ position: 'absolute', top: '16px', left: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <BookOutlined style={{ fontSize: '16px', color: '#2B5797' }} />
+                <Text style={{ fontSize: '14px', color: '#2B5797', fontWeight: 500 }}>
                   Из курса
                 </Text>
               </div>
             )}
             {/* Card count in top right corner */}
             <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <FileTextOutlined style={{ fontSize: '18px', color: theme === 'dark' ? '#a1a1aa' : '#2B5797' }} />
-              <Text style={{ fontSize: '16px', color: theme === 'dark' ? '#a1a1aa' : '#2B5797', fontWeight: 500 }}>
+              <FileTextOutlined style={{ fontSize: '16px', color: '#2B5797' }} />
+              <Text style={{ fontSize: '14px', color: '#2B5797', fontWeight: 500 }}>
                 {deck.cards_count}
               </Text>
             </div>
@@ -230,30 +230,32 @@ export default function AnkiDecksListPage() {
         </div>
 
         {/* Statistics */}
-        <Row gutter={16}>
-          <Col xs={24} sm={12} md={8}>
-            <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <Title level={3} className="mb-2">{totalDecks}</Title>
-              <Text type="secondary">Всего колод</Text>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <Title level={3} className="mb-2">{totalCards}</Title>
-              <Text type="secondary">Всего карточек</Text>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <Title level={3} className="mb-2">
-                <EyeOutlined style={{ fontSize: '24px' }} />
-              </Title>
-              <Text type="secondary" style={{ display: 'block', marginBottom: '4px' }}>
-                Нажми — посмотри описание
-              </Text>
-            </Card>
-          </Col>
-        </Row>
+        {decks && decks.length > 0 && (
+          <Row gutter={16}>
+            <Col xs={24} sm={12} md={8}>
+              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Title level={3} className="mb-2">{totalDecks}</Title>
+                <Text type="secondary">Всего колод</Text>
+              </Card>
+            </Col>
+            <Col xs={24} sm={12} md={8}>
+              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Title level={3} className="mb-2">{totalCards}</Title>
+                <Text type="secondary">Всего карточек</Text>
+              </Card>
+            </Col>
+            <Col xs={24} sm={12} md={8}>
+              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Title level={3} className="mb-2">
+                  <EyeOutlined style={{ fontSize: '24px' }} />
+                </Title>
+                <Text type="secondary" style={{ display: 'block', marginBottom: '4px' }}>
+                  Нажми — посмотри описание
+                </Text>
+              </Card>
+            </Col>
+          </Row>
+        )}
 
         {/* Decks List */}
         {decks && decks.length > 0 ? (
@@ -277,15 +279,7 @@ export default function AnkiDecksListPage() {
             <Empty
               description="У вас пока нет колод"
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-            >
-              <Button
-                icon={<PlusOutlined />}
-                onClick={() => navigate('/anki/create')}
-                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
-              >
-                Создать первую колоду
-              </Button>
-            </Empty>
+            />
           </Card>
         )}
       </Space>

@@ -43,7 +43,10 @@ function AppContent() {
   const { theme } = useTheme();
   
   return (
-    <ConfigProvider theme={getTheme(theme)}>
+    <ConfigProvider 
+      theme={getTheme(theme)} 
+      wave={{ disabled: true }}
+    >
       <BrowserRouter basename='/aitutor'>
           <Routes>
 

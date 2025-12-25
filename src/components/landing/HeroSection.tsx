@@ -16,6 +16,7 @@ export default function HeroSection() {
 
   const handleNavigate = (path: string) => {
     setCollapsing(true);
+    setLogoVisible(false);
     setTimeout(() => navigate(path), 320); // даём завершиться анимации сужения (0.3s)
   };
 
