@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Typography, Card, Row, Col, Space, Button, Tag, Divider, Modal } from 'antd';
+import { Typography, Card, Row, Col, Space, Button, Tag, Divider } from 'antd';
+import CustomModal from '../components/CustomModal';
 import { QuestionCircleOutlined, CustomerServiceOutlined, SafetyOutlined, PlayCircleOutlined, LockOutlined, SecurityScanOutlined, EyeOutlined, DatabaseOutlined } from '@ant-design/icons';
 import maiHelperGif from '../video_ai/mai-helper.gif';
 import { useNavigate } from 'react-router-dom';
@@ -100,7 +101,7 @@ const HelpCenterPage: React.FC = () => {
         </Col>
       </Row>
 
-      <Modal
+      <CustomModal
         title={
           <Space>
             <SafetyOutlined style={{ color: '#1677ff' }} />
@@ -108,12 +109,12 @@ const HelpCenterPage: React.FC = () => {
           </Space>
         }
         open={isSecurityModalOpen}
-        onCancel={() => setIsSecurityModalOpen(false)}
-        footer={[
-          <Button key="close" type="primary" onClick={() => setIsSecurityModalOpen(false)}>
+        onClose={() => setIsSecurityModalOpen(false)}
+        footer={
+          <Button type="primary" onClick={() => setIsSecurityModalOpen(false)}>
             Понятно
           </Button>
-        ]}
+        }
         width={800}
       >
         <Space direction="vertical" size="large" style={{ width: '100%' }}>
@@ -212,7 +213,7 @@ const HelpCenterPage: React.FC = () => {
             </Text>
           </div>
         </Space>
-      </Modal>
+      </CustomModal>
     </div>
   );
 };

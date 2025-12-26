@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 import { Card, Button, Space, Typography, Empty } from 'antd';
 import LoadingDot from '../../components/LoadingDot';
 import { PlusOutlined, FileTextOutlined, EyeOutlined, PlayCircleOutlined, BookOutlined } from '@ant-design/icons';
@@ -28,7 +27,6 @@ interface DeckCardProps {
 
 const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice }) => {
   const isFromCourse = deck.source_type && deck.source_id;
-  const { theme } = useTheme();
 
   return (
     <div className="deck-card-wrapper" style={{ width: '100%' }}>
@@ -68,9 +66,9 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '32px',
-              border: '2px solid #666666',
+              border: '2px solid hsl(0, 0%, 15%)',
               borderRadius: '12px',
-              backgroundColor: theme === 'dark' ? '#1f1f1f' : '#fff',
+              backgroundColor: '#fff',
               boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
               cursor: 'pointer',
             }}
@@ -81,23 +79,23 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice
           >
             {/* Course indicator in top left corner */}
             {isFromCourse && (
-              <div style={{ position: 'absolute', top: '16px', left: '16px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <BookOutlined style={{ fontSize: '14px', color: '#2B5797' }} />
-                <Text style={{ fontSize: '12px', color: '#2B5797', fontWeight: 500 }}>
+              <div style={{ position: 'absolute', top: '16px', left: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <BookOutlined style={{ fontSize: '16px', color: 'hsl(var(--primary))' }} />
+                <Text style={{ fontSize: '14px', color: 'hsl(var(--primary))', fontWeight: 500 }}>
                   Из курса
                 </Text>
               </div>
             )}
             {/* Card count in top right corner */}
             <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <FileTextOutlined style={{ fontSize: '18px', color: theme === 'dark' ? '#a1a1aa' : '#2B5797' }} />
-              <Text style={{ fontSize: '16px', color: theme === 'dark' ? '#a1a1aa' : '#2B5797', fontWeight: 500 }}>
+              <FileTextOutlined style={{ fontSize: '16px', color: 'hsl(var(--primary))' }} />
+              <Text style={{ fontSize: '14px', color: 'hsl(var(--primary))', fontWeight: 500 }}>
                 {deck.cards_count}
               </Text>
             </div>
             
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
-              <Text style={{ margin: 0, color: theme === 'dark' ? '#fafafa' : '#000', textAlign: 'center', fontSize: '20px', fontWeight: 400, display: 'block' }}>
+              <Text style={{ margin: 0, color: '#000', textAlign: 'center', fontSize: '20px', fontWeight: 400, display: 'block' }}>
                 {deck.title}
               </Text>
             </div>
@@ -130,9 +128,9 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice
               alignItems: 'center',
               justifyContent: 'center',
               padding: '32px',
-              border: '2px solid #666666',
+              border: '2px solid hsl(0, 0%, 15%)',
               borderRadius: '12px',
-              backgroundColor: theme === 'dark' ? '#1f1f1f' : '#fff',
+              backgroundColor: '#fff',
               boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
               transform: 'rotateY(180deg)',
               cursor: 'pointer',
@@ -144,11 +142,11 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, isFlipped, onFlip, onPractice
           >
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', width: '100%', justifyContent: 'center' }}>
               {deck.description ? (
-                <Text style={{ display: 'block', color: theme === 'dark' ? '#fafafa' : '#000', opacity: 0.7, textAlign: 'center' }}>
+                <Text style={{ display: 'block', color: '#000', opacity: 0.7, textAlign: 'center' }}>
                   {deck.description.length > 200 ? `${deck.description.slice(0, 200)}...` : deck.description}
                 </Text>
               ) : (
-                <Text style={{ display: 'block', color: theme === 'dark' ? '#fafafa' : '#000', opacity: 0.5, textAlign: 'center', fontStyle: 'italic' }}>
+                <Text style={{ display: 'block', color: '#000', opacity: 0.5, textAlign: 'center', fontStyle: 'italic' }}>
                   Описание отсутствует
                 </Text>
               )}
@@ -203,8 +201,8 @@ export default function AnkiDecksListPage() {
         {/* Header */}
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{
-            width: '200px',
-            height: '200px',
+            width: '220px',
+            height: '220px',
             borderRadius: '50%',
             backgroundColor: '#000',
             display: 'flex',
@@ -220,40 +218,42 @@ export default function AnkiDecksListPage() {
             Карточки для запоминания и повторения материала
           </Paragraph>
           <Button
+            type="primary"
             icon={<PlusOutlined />}
             size="large"
             onClick={() => navigate('/anki/create')}
-            style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
           >
             Создать колоду
           </Button>
         </div>
 
         {/* Statistics */}
-        <Row gutter={16}>
-          <Col xs={24} sm={12} md={8}>
-            <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <Title level={3} className="mb-2">{totalDecks}</Title>
-              <Text type="secondary">Всего колод</Text>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <Title level={3} className="mb-2">{totalCards}</Title>
-              <Text type="secondary">Всего карточек</Text>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <Title level={3} className="mb-2">
-                <EyeOutlined style={{ fontSize: '24px' }} />
-              </Title>
-              <Text type="secondary" style={{ display: 'block', marginBottom: '4px' }}>
-                Нажми — посмотри описание
-              </Text>
-            </Card>
-          </Col>
-        </Row>
+        {decks && decks.length > 0 && (
+          <Row gutter={16}>
+            <Col xs={24} sm={12} md={8}>
+              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Title level={3} className="mb-2">{totalDecks}</Title>
+                <Text type="secondary">Всего колод</Text>
+              </Card>
+            </Col>
+            <Col xs={24} sm={12} md={8}>
+              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Title level={3} className="mb-2">{totalCards}</Title>
+                <Text type="secondary">Всего карточек</Text>
+              </Card>
+            </Col>
+            <Col xs={24} sm={12} md={8}>
+              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Title level={3} className="mb-2">
+                  <EyeOutlined style={{ fontSize: '24px' }} />
+                </Title>
+                <Text type="secondary" style={{ display: 'block', marginBottom: '4px' }}>
+                  Нажми — посмотри описание
+                </Text>
+              </Card>
+            </Col>
+          </Row>
+        )}
 
         {/* Decks List */}
         {decks && decks.length > 0 ? (
@@ -277,15 +277,7 @@ export default function AnkiDecksListPage() {
             <Empty
               description="У вас пока нет колод"
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-            >
-              <Button
-                icon={<PlusOutlined />}
-                onClick={() => navigate('/anki/create')}
-                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
-              >
-                Создать первую колоду
-              </Button>
-            </Empty>
+            />
           </Card>
         )}
       </Space>

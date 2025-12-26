@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Avatar, message, Card, Row, Col, Space, Typography, Upload, Modal } from 'antd';
+import { Form, Input, Button, Avatar, message, Card, Row, Col, Space, Typography, Upload } from 'antd';
+import CustomModal from '../components/CustomModal';
 import { EditOutlined, MailOutlined, GiftOutlined, CheckCircleOutlined, ExclamationCircleOutlined, CameraOutlined } from '@ant-design/icons';
 import { useGetProfileQuery, useUpdateProfileMutation, useRequestVerifyTokenMutation, useUploadAvatarMutation, useGetAvatarQuery } from '../services/profileApi';
 import AuthLayout from '../components/AuthLayout';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../contexts/ThemeContext';
 import Stats from '../components/Stats';
 import PageContainer from '../components/PageContainer';
 import LoadingDot from '../components/LoadingDot';
@@ -24,7 +24,6 @@ interface PasswordChangeValues {
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { theme } = useTheme();
 
   const { data: profile, isLoading, refetch } = useGetProfileQuery(undefined);
   const { data: avatarData } = useGetAvatarQuery(undefined, { skip: !profile?.profile_icon_filename } as any);
@@ -97,14 +96,14 @@ export default function ProfilePage() {
 
   const handleVerify = async () => {
     if (!profile || !('email' in profile) || !profile.email) {
-      messageApi.error('Email не найден');
+      messageApi.open({ type: 'error', content: 'Email не найден', key: 'verify_email' });
       return;
     }
     try {
-      messageApi.success('Письмо для подтверждения отправлено!');
       await requestVerifyToken(profile.email as string).unwrap();
+messageApi.open({ type: 'success', content: 'Письмо для подтверждения отправлено!', key: 'verify_email' });
     } catch (err: any) {
-      messageApi.error(err?.data?.detail?.[0]?.msg || 'Не удалось отправить письмо');
+      messageApi.open({ type: 'error', content: err?.data?.detail?.[0]?.msg || 'Не удалось отправить письмо', key: 'verify_email' });
     }
   };
 
@@ -148,7 +147,7 @@ export default function ProfilePage() {
       {contextHolder}
 
       {/* Header */}
-      <Card bordered={false} className="mb-6 shadow-sm">
+      <Card bordered={true} className="mb-6 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Upload
@@ -165,10 +164,10 @@ export default function ProfilePage() {
               />
             </Upload>
             <div>
-              <Title level={4} className="m-0" style={{ color: theme === 'dark' ? '#fafafa' : 'inherit' }}>{profile && 'username' in profile ? profile.username : 'Пользователь'}</Title>
-              <Space size={4} style={{ color: theme === 'dark' ? '#a1a1aa' : '#4b5563' }}>
-                <MailOutlined style={{ color: '#2B5797' }} />
-                <Text style={{ color: theme === 'dark' ? '#a1a1aa' : 'inherit' }}>{profile && 'email' in profile ? profile.email : 'Загрузка...'}</Text>
+              <Title level={4} className="m-0">{profile && 'username' in profile ? profile.username : 'Пользователь'}</Title>
+              <Space size={4} style={{ color: '#4b5563' }}>
+                <MailOutlined style={{ color: 'hsl(var(--primary))' }} />
+                <Text>{profile && 'email' in profile ? profile.email : 'Загрузка...'}</Text>
               </Space>
             </div>
           </div>
@@ -176,56 +175,54 @@ export default function ProfilePage() {
       </Card>
 
       {/* Profile Form */}
-      <Card bordered={false} title="Информация профиля" className="shadow-sm">
+      <Card bordered={true} title="Информация профиля" className="shadow-sm">
         <Form<ProfileFormValues> form={form} layout="vertical" onFinish={onFinish} disabled={!editMode}>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item label="Имя пользователя" name="username">
-                <Input 
-                  prefix={<EditOutlined className="text-gray-400" />} 
-                  style={{ color: theme === 'dark' ? '#fafafa' : '#000' }}
+                <Input
+                  prefix={<EditOutlined className={editMode ? "text-gray-700" : "text-gray-400"} />}
+                  placeholder={editMode ? "Введите новое имя пользователя" : ""}
+                  style={{
+                    transition: 'all 0.3s ease',
+                    cursor: editMode ? 'text' : 'default',
+                    borderColor: editMode ? '#666666' : undefined,
+                    backgroundColor: editMode ? '#f8f8f8' : undefined,
+                    color: editMode ? 'hsl(var(--foreground))' : '#4b5563'
+                  }}
                 />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item label="Email" name="email">
-                <Input 
-                  prefix={<MailOutlined className="text-gray-400" />} 
-                  style={{ color: theme === 'dark' ? '#fafafa' : '#000' }}
+                <Input
+                  prefix={<MailOutlined className={editMode ? "text-gray-700" : "text-gray-400"} />}
+                  placeholder={editMode ? "Введите новый email адрес" : ""}
+                  style={{
+                    transition: 'all 0.3s ease',
+                    cursor: editMode ? 'text' : 'default',
+                    borderColor: editMode ? '#666666' : undefined,
+                    backgroundColor: editMode ? '#f8f8f8' : undefined,
+                    color: editMode ? 'hsl(var(--foreground))' : '#4b5563'
+                  }}
                 />
               </Form.Item>
             </Col>
           </Row>
-
-          {editMode && (
-            <Form.Item className="text-right mb-0">
-              <Space>
-                <Button onClick={cancelEdit}>Отмена</Button>
-                <Button type="primary" htmlType="submit" loading={isUpdating}>Сохранить</Button>
-              </Space>
-            </Form.Item>
-          )}
         </Form>
 
-        {!editMode && (
-          <div style={{ marginTop: '16px' }}>
-            <Button type="primary" icon={<EditOutlined />} onClick={enterEditMode} style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}>
-              Редактировать
-            </Button>
-          </div>
-        )}
 
         {/* Email Verification */}
         {profile && 'is_verified' in profile && !profile.is_verified ? (
           <div className="mt-6 p-4 rounded-lg" style={{ 
-            backgroundColor: '#fefce8',
-            border: theme === 'dark' ? '2px solid #1a1a1a' : '2px solid #eab308',
-            borderColor: theme === 'dark' ? '#1a1a1a' : '#eab308'
+            backgroundColor: 'hsl(var(--accent))',
+            border: '2px solid hsl(var(--border))',
+            borderColor: '#eab308'
           }}>
             <Space size="middle" style={{ width: '100%', alignItems: 'flex-start' }}>
-              <ExclamationCircleOutlined style={{ fontSize: '18px', marginTop: '2px', color: '#2B5797' }} />
+              <ExclamationCircleOutlined style={{ fontSize: '18px', marginTop: '2px', color: 'hsl(var(--primary))' }} />
               <div style={{ flex: 1 }}>
-                <Text style={{ fontSize: '14px', display: 'block', marginBottom: '8px', color: '#000' }}>
+                <Text style={{ fontSize: '14px', display: 'block', marginBottom: '8px', color: 'hsl(var(--foreground))' }}>
                   Email не подтверждён
                 </Text>
                 <Button 
@@ -234,7 +231,7 @@ export default function ProfilePage() {
                   style={{ 
                     padding: 0, 
                     height: 'auto', 
-                    color: '#2B5797',
+                    color: 'hsl(var(--primary))',
                     fontWeight: 500,
                     fontSize: '14px'
                   }}
@@ -253,20 +250,38 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* Change Password */}
-        <div className="mt-8">
+        {/* Change Password (left) and Edit (right) */}
+        <div className="mt-8 flex justify-between items-center">
           <Button type="default" onClick={() => setPwdModal(true)}>
             Сменить пароль
           </Button>
+          <div>
+            {!editMode && (
+              <Button type="primary" icon={<EditOutlined />} onClick={enterEditMode}>
+                Редактировать
+              </Button>
+            )}
+            {editMode && (
+              <Space>
+                <Button onClick={cancelEdit}>Отмена</Button>
+                <Button type="primary" onClick={() => form.submit()} loading={isUpdating}>Сохранить</Button>
+              </Space>
+            )}
+          </div>
         </div>
       </Card>
 
       {/* Password Modal */}
-      <Modal
+      <CustomModal
         title="Смена пароля"
         open={pwdModal}
-        onCancel={() => { setPwdModal(false); pwdForm.resetFields(); }}
-        footer={null}
+        onClose={() => { setPwdModal(false); pwdForm.resetFields(); }}
+        footer={
+          <Space>
+            <Button onClick={() => { setPwdModal(false); pwdForm.resetFields(); }}>Отмена</Button>
+            <Button type="primary" onClick={() => pwdForm.submit()}>Обновить пароль</Button>
+          </Space>
+        }
       >
         <Form<PasswordChangeValues> form={pwdForm} layout="vertical" onFinish={onPasswordChange}>
           <Form.Item
@@ -284,19 +299,9 @@ export default function ProfilePage() {
           >
             <Input.Password placeholder="Повторите новый пароль" />
           </Form.Item>
-          <Form.Item className="mb-0 text-right">
-            <Space>
-              <Button onClick={() => { setPwdModal(false); pwdForm.resetFields(); }}>Отмена</Button>
-              <Button type="primary" htmlType="submit">Обновить пароль</Button>
-            </Space>
-          </Form.Item>
         </Form>
-      </Modal>
+      </CustomModal>
 
-      {/* Stats Section */}
-      <Card bordered={false} title="Статистика обучения" className="shadow-sm mt-6">
-        <Stats />
-      </Card>
     </PageContainer>
   );
 }

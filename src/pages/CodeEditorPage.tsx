@@ -216,7 +216,7 @@ export default function CodeEditorPage() {
         placement="right"
         onClose={() => setShowHintDrawer(false)}
         open={showHintDrawer}
-        width={400}
+        size={400}
       >
         {hint && (
           <div className="space-y-4">

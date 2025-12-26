@@ -37,8 +37,8 @@ const CreateAnkiDeckPage: React.FC = () => {
         </div>
         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{
-            width: '200px',
-            height: '200px',
+            width: '220px',
+            height: '220px',
             borderRadius: '50%',
             backgroundColor: '#000',
             display: 'flex',
@@ -55,7 +55,7 @@ const CreateAnkiDeckPage: React.FC = () => {
           </Paragraph>
         </div>
 
-        <Card bordered={false}>
+        <Card bordered={true}>
           <Form
             form={form}
             layout="vertical"
@@ -90,11 +90,12 @@ const CreateAnkiDeckPage: React.FC = () => {
 
             <Form.Item>
               <Button
+                type="primary"
                 htmlType="submit"
                 size="large"
                 loading={isLoading}
                 disabled={isLoading}
-                style={{ width: '100%', height: '48px', fontSize: '16px', backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+                block
               >
                 {isLoading ? 'Создаю колоду...' : 'Создать колоду'}
               </Button>

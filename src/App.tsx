@@ -2,8 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ConfigProvider } from 'antd';
 import { store } from './app/store';
-import { getTheme } from './theme/antd-theme';
-import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { antdTheme } from './theme/antd-theme';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
@@ -12,8 +11,6 @@ import ForgotPasswordPage from './pages/ForgotPassword';
 import ResetPasswordPage from './pages/ResetPassword';
 import Roadmap from './pages/Roadmap';
 import LandingPage from './pages/LandingPage';
-import TermsPage from './pages/TermsPage';
-import PrivacyPage from './pages/PrivacyPage';
 import React from 'react';
 import ProtectedLayout from './components/ProtectedLayout';
 import PublicLayout from './components/PublicLayout';
@@ -40,10 +37,11 @@ import GigaChatAssistantPage from './pages/GigaChatAssistantPage';
 import HelpCenterPage from './pages/HelpCenterPage';
 
 function AppContent() {
-  const { theme } = useTheme();
-  
   return (
-    <ConfigProvider theme={getTheme(theme)}>
+    <ConfigProvider
+      theme={antdTheme}
+      wave={{ disabled: true }}
+    >
       <BrowserRouter basename='/aitutor'>
           <Routes>
 
@@ -55,8 +53,6 @@ function AppContent() {
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/verify-email" element={<VerifyEmailPage />} />
-              <Route path="/terms" element={<TermsPage />} />
-              <Route path="/privacy" element={<PrivacyPage />} />
             </Route>
 
             {/* Protected Routes (with navbar) */}
@@ -97,9 +93,7 @@ function AppContent() {
 function App() {
   return (
     <Provider store={store}>
-      <ThemeProvider>
         <AppContent />
-      </ThemeProvider>
     </Provider>
   );
 }

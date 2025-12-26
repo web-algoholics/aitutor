@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 import {
   Card, Typography, Button, Space, Tag, Progress,
   Skeleton, message, Empty, Alert, Row, Col,
@@ -18,7 +17,6 @@ const { Title, Text, Paragraph } = Typography;
 const TheoryCoursesPage: React.FC = () => {
   const navigate = useNavigate();
   const { data: courses, isLoading, error, refetch } = useGetTheoryCoursesQuery();
-  const { theme } = useTheme();
 
   const handleCreateCourse = () => {
     navigate('/theory/create');
@@ -59,8 +57,8 @@ const TheoryCoursesPage: React.FC = () => {
         {/* Header */}
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{
-            width: '200px',
-            height: '200px',
+            width: '220px',
+            height: '220px',
             borderRadius: '50%',
             backgroundColor: '#000',
             display: 'flex',
@@ -68,7 +66,7 @@ const TheoryCoursesPage: React.FC = () => {
             justifyContent: 'center',
             marginBottom: '16px'
           }}>
-            <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
+            <Title level={2} style={{ margin: 0, color: 'hsl(var(--primary-foreground))', textAlign: 'center' }}>
               AI Курсы
             </Title>
           </div>
@@ -76,10 +74,10 @@ const TheoryCoursesPage: React.FC = () => {
             Персонализированные курсы, созданные ИИ специально для вас
           </Paragraph>
           <Button
+            type="primary"
             size="large"
             icon={<PlusOutlined />}
             onClick={handleCreateCourse}
-            style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
           >
             Создать курс
           </Button>
@@ -89,19 +87,19 @@ const TheoryCoursesPage: React.FC = () => {
         {courses && courses.length > 0 && (
           <Row gutter={16}>
             <Col xs={24} sm={12} md={8}>
-              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <Title level={3} className="mb-2">{courses.length}</Title>
                 <Text type="secondary">Курсов</Text>
               </Card>
             </Col>
             <Col xs={24} sm={12} md={8}>
-              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <Title level={3} className="mb-2">{courses.filter(c => c.is_completed).length}</Title>
                 <Text type="secondary">Завершено</Text>
               </Card>
             </Col>
             <Col xs={24} sm={12} md={8}>
-              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <Title level={3} className="mb-2">{courses.reduce((sum, c) => sum + c.estimated_duration, 0)}</Title>
                 <Text type="secondary">Часов обучения</Text>
               </Card>
@@ -117,9 +115,9 @@ const TheoryCoursesPage: React.FC = () => {
                 <div
                   style={{
                     width: '100%',
-                    border: '2px solid #666666',
+                    border: '2px solid hsl(0, 0%, 15%)',
                     borderRadius: '12px',
-                    backgroundColor: theme === 'dark' ? '#1f1f1f' : '#fff',
+                    backgroundColor: 'hsl(var(--card))',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                     display: 'flex',
                     flexDirection: 'column',
@@ -140,8 +138,8 @@ const TheoryCoursesPage: React.FC = () => {
                 >
                   {/* Module count in top right corner */}
                   <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <AppstoreOutlined style={{ fontSize: '18px', color: '#2B5797' }} />
-                    <Text style={{ fontSize: '16px', color: '#2B5797', fontWeight: 500 }}>
+                        <AppstoreOutlined style={{ fontSize: '18px', color: 'hsl(var(--primary))' }} />
+                    <Text style={{ fontSize: '16px', color: 'hsl(var(--primary))', fontWeight: 500 }}>
                       {course.modules_count}
                     </Text>
                   </div>
@@ -150,14 +148,14 @@ const TheoryCoursesPage: React.FC = () => {
                     {/* Large icon */}
                     <div style={{ marginBottom: '16px' }}>
                       {course.is_completed ? (
-                        <CheckCircleOutlined style={{ fontSize: '64px', color: '#2B5797' }} />
+                        <CheckCircleOutlined style={{ fontSize: '64px', color: 'hsl(var(--primary))' }} />
                       ) : (
-                        <BookOutlined style={{ fontSize: '64px', color: '#2B5797' }} />
+                        <BookOutlined style={{ fontSize: '64px', color: 'hsl(var(--primary))' }} />
                       )}
                     </div>
                     
                     <div style={{ minHeight: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', width: '100%' }}>
-                      <Text style={{ margin: 0, textAlign: 'center', color: theme === 'dark' ? '#fafafa' : '#000', fontSize: '20px', fontWeight: 400, display: 'block' }}>
+                      <Text style={{ margin: 0, textAlign: 'center', color: 'hsl(var(--card-foreground))', fontSize: '20px', fontWeight: 400, display: 'block' }}>
                         {course.title}
                       </Text>
                     </div>
@@ -185,15 +183,7 @@ const TheoryCoursesPage: React.FC = () => {
             <Empty
               description="У вас пока нет курсов"
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-            >
-              <Button 
-                icon={<PlusOutlined />} 
-                onClick={handleCreateCourse}
-                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
-              >
-                Создать первый курс
-              </Button>
-            </Empty>
+            />
           </Card>
         )}
       </Space>

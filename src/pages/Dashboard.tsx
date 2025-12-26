@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Progress, Dropdown, Modal, Form, Select, message, Empty, Space, Spin } from 'antd';
+import { Card, Button, Progress, Dropdown, Form, Select, message, Empty, Space, Spin, Modal } from 'antd';
+import CustomModal from '../components/CustomModal';
 import { MoreOutlined, PlusOutlined, DeleteOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { Link, useParams } from 'react-router-dom';
 import type { FormInstance } from 'antd';
@@ -179,6 +180,11 @@ export function Dashboard() {
     course => !enrolledLanguages.some(l => l.id === course.id)
   );
 
+  const courseOptions = availableCourses.map(course => ({
+    value: course.id,
+    label: `${course.name} (${course.hours}h)`
+  }));
+
   return (
     <div className="min-h-screen bg-gray-50">
       {contextHolder}
@@ -277,18 +283,28 @@ export function Dashboard() {
       </div>
 
       {/* Add Course Modal */}
-      <Modal
+      <CustomModal
         title="Add Course"
         open={isModalVisible}
-        onOk={() => form.submit()}
-        onCancel={() => {
+        onClose={() => {
           setIsModalVisible(false);
           form.resetFields();
         }}
-        okText="Enroll"
-        cancelText="Cancel"
         width={600}
         centered
+        footer={
+          <Space>
+            <Button onClick={() => {
+              setIsModalVisible(false);
+              form.resetFields();
+            }}>
+              Cancel
+            </Button>
+            <Button type="primary" onClick={() => form.submit()}>
+              Enroll
+            </Button>
+          </Space>
+        }
       >
         <Form<AddCourseFormValues>
           form={form}
@@ -301,21 +317,10 @@ export function Dashboard() {
             rules={[{ required: true, message: 'Please select a course' }]}
           >
             <Select
+              options={courseOptions}
               placeholder="Choose a programming language"
               disabled={availableCourses.length === 0}
-              optionLabelProp="label"
-              maxTagTextLength={30}
-            >
-              {availableCourses.map(course => (
-                <Select.Option 
-                  key={course.id} 
-                  value={course.id}
-                  label={`${course.name} (${course.hours}h)`}
-                >
-                  {course.name}
-                </Select.Option>
-              ))}
-            </Select>
+            />
           </Form.Item>
 
           {availableCourses.length === 0 && (
@@ -324,7 +329,7 @@ export function Dashboard() {
             </p>
           )}
         </Form>
-      </Modal>
+      </CustomModal>
     </div>
   );
 }

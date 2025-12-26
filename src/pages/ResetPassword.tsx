@@ -64,7 +64,7 @@ export default function ResetPasswordPage() {
         <div className="text-center">
           <p className="text-green-600 font-semibold">Password Reset!</p>
           <p className="text-gray-600 text-sm">Your password has been changed successfully.</p>
-          <Button type="primary" onClick={() => navigate('/login')} className="mt-4">
+          <Button type="default" onClick={() => navigate('/login')} className="mt-4">
             Go to Sign In
           </Button>
         </div>
@@ -82,7 +82,7 @@ export default function ResetPasswordPage() {
               ? (error.data as any).detail
               : 'Token may be expired or invalid.'}
           </p>
-          <Button type="primary" onClick={() => navigate('/forgot-password')} className="mt-4">
+          <Button type="default" onClick={() => navigate('/forgot-password')} className="mt-4">
             Try Again
           </Button>
         </div>
@@ -113,7 +113,7 @@ export default function ResetPasswordPage() {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={isLoading} block size="large">
+            <Button type="default" htmlType="submit" loading={isLoading} block size="large">
               Reset Password
             </Button>
           </Form.Item>
