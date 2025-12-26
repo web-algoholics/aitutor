@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, Typography, List, Input, Button, Space, message } from 'antd';
+import ReactMarkdown from 'react-markdown';
 
 
 const { Title, Paragraph, Text } = Typography;
@@ -29,7 +30,10 @@ const GigaChatAssistantPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const resp = await fetch('http://localhost:8000/api/chat', {
+      // Используем динамический API URL из конфига
+      // Для этого импортируем getApiUrl
+      const { getApiUrl } = await import('../utils/config');
+      const resp = await fetch(`${getApiUrl()}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -142,7 +146,7 @@ const GigaChatAssistantPage: React.FC = () => {
             whiteSpace: 'pre-wrap',
           }}
         >
-          {item.content}
+          {item.role === 'assistant' ? <ReactMarkdown>{item.content}</ReactMarkdown> : item.content}
         </div>
       </List.Item>
     );

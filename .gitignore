@@ -135,7 +135,10 @@ dist
 
 
 **/__pycache__/
-backend/src/__pycache__
+**/__pycache__/
+__pycache__/
+*.py[cod]
+*$py.class
 backend/src/uploads/profile_icons/*
 .gitignore
 dist
