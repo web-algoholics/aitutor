@@ -477,29 +477,27 @@ const QuizPage: React.FC = () => {
                   </Card>
                 );
               })}
-            </Space>
-          </Card>
 
-          <Card bordered={true}>
-            <Space direction="vertical" size="middle" className="w-full">
-              <Button
-                type="default"
-                icon={<ArrowLeftOutlined />}
-                onClick={handleBack}
-                block
-                size="large"
-              >
-                Назад
-              </Button>
-              <Button
-                type="primary"
-                icon={<PlayCircleOutlined />}
-                onClick={handleRetakeQuiz}
-                block
-                size="large"
-              >
-                Пройти квиз заново
-              </Button>
+              <Space direction="vertical" size="middle" className="w-full">
+                <Button
+                  type="default"
+                  icon={<ArrowLeftOutlined />}
+                  onClick={handleBack}
+                  block
+                  size="large"
+                >
+                  Назад
+                </Button>
+                <Button
+                  type="primary"
+                  icon={<PlayCircleOutlined />}
+                  onClick={handleRetakeQuiz}
+                  block
+                  size="large"
+                >
+                  Пройти квиз заново
+                </Button>
+              </Space>
             </Space>
           </Card>
         </Space>
