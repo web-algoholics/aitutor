@@ -486,6 +486,42 @@ input:-ms-input-placeholder {
   padding-bottom: 8rem;
 }
 
+.pl-1 {
+  padding-left: 0.25rem;
+}
+
+.pl-2 {
+  padding-left: 0.5rem;
+}
+
+.pl-3 {
+  padding-left: 0.75rem;
+}
+
+.pl-4 {
+  padding-left: 1rem;
+}
+
+.pl-5 {
+  padding-left: 1.25rem;
+}
+
+.pl-6 {
+  padding-left: 1.5rem;
+}
+
+.pl-8 {
+  padding-left: 2rem;
+}
+
+.pl-10 {
+  padding-left: 2.5rem;
+}
+
+.pl-12 {
+  padding-left: 3rem;
+}
+
 /* Display & Visibility */
 .block {
   display: block;
@@ -1831,6 +1867,11 @@ html:not([data-theme="dark"]) .starting-point-dot.show-content .text-center > di
 }
 
 /* Custom Modal styles are in CustomModal.css */
+
+/* Logout Button Styles */
+.logout-button {
+  font-weight: 600 !important;
+}
 
 /* Vertical Checkbox Group */
 .vertical-checkbox-group .ant-checkbox-group-item {

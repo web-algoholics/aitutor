@@ -122,11 +122,11 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Logout Button */}
-            <Button 
-              type="default" 
-              onClick={handleLogout} 
-              size="middle" 
-              className="hidden md:inline-flex"
+            <Button
+              type="default"
+              onClick={handleLogout}
+              size="middle"
+              className="hidden md:inline-flex logout-button"
             >
               Выйти
             </Button>

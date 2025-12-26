@@ -93,7 +93,7 @@ export default function FAQSection() {
                 className="border-b border-gray-100 last:border-b-0"
                 style={{ animationDelay: `${(index + 1) * 0.1}s` }}
               >
-                <div className="pl-5 pb-4 pt-4">
+                <div className="pl-8 pb-4 pt-4">
                   <Text className="text-base leading-relaxed">{item.answer}</Text>
                 </div>
               </Panel>
