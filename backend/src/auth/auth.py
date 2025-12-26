@@ -14,11 +14,14 @@ SECRET = settings.SECRET_KEY
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 
 # Use Cookie transport for session-like behavior
+# For development with cross-site requests (localhost -> remote server)
+# we need to allow cross-site cookies
 cookie_transport = CookieTransport(
     cookie_max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     cookie_name="auth_token",
-    cookie_secure=False,  # Set to True in production with HTTPS
+    cookie_secure=False,  # Keep False for development (HTTPS required for cross-site)
     cookie_httponly=True,
+    cookie_samesite="none" if settings.FRONTEND_URL.startswith("https://") else "lax",
 )
 
 def get_jwt_strategy() -> JWTStrategy:
