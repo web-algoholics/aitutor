@@ -179,7 +179,16 @@ messageApi.open({ type: 'success', content: 'Письмо для подтвер�
         <Form<ProfileFormValues> form={form} layout="vertical" onFinish={onFinish} disabled={!editMode}>
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label="Имя пользователя" name="username">
+              <Form.Item
+                label="Имя пользователя"
+                name="username"
+                rules={[
+                  { required: true, message: 'Введите имя пользователя' },
+                  { min: 3, message: 'Имя пользователя должно быть не короче 3 символов' },
+                  { max: 30, message: 'Имя пользователя должно быть не длиннее 30 символов' },
+                  { pattern: /^[a-zA-Z0-9_]+$/, message: 'Имя пользователя может содержать только буквы, цифры и подчеркивания' }
+                ]}
+              >
                 <Input
                   prefix={<EditOutlined className={editMode ? "text-gray-700" : "text-gray-400"} />}
                   placeholder={editMode ? "Введите новое имя пользователя" : ""}
@@ -194,7 +203,15 @@ messageApi.open({ type: 'success', content: 'Письмо для подтвер�
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Email" name="email">
+              <Form.Item
+                label="Email"
+                name="email"
+                rules={[
+                  { required: true, message: 'Введите email' },
+                  { type: 'email', message: 'Некорректный формат email' },
+                  { max: 254, message: 'Email должен быть не длиннее 254 символов' },
+                ]}
+              >
                 <Input
                   prefix={<MailOutlined className={editMode ? "text-gray-700" : "text-gray-400"} />}
                   placeholder={editMode ? "Введите новый email адрес" : ""}
@@ -288,7 +305,8 @@ messageApi.open({ type: 'success', content: 'Письмо для подтвер�
             name="new_password"
             rules={[
               { required: true, message: 'Введите новый пароль' },
-              { min: 8, message: 'Минимум 8 символов' },
+              { min: 8, message: 'Пароль должен быть не короче 8 символов' },
+              { max: 128, message: 'Пароль должен быть не длиннее 128 символов' },
             ]}
           >
             <Input.Password placeholder="Новый пароль" />

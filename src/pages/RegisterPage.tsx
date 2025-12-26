@@ -104,9 +104,14 @@ export default function RegisterPage() {
         <Form.Item
           label="Имя пользователя"
           name="username"
-          rules={[{ required: true, message: 'Введите имя пользователя' }]}
+          rules={[
+            { required: true, message: 'Введите имя пользователя' },
+            { min: 3, message: 'Имя пользователя должно быть не короче 3 символов' },
+            { max: 30, message: 'Имя пользователя должно быть не длиннее 30 символов' },
+            { pattern: /^[a-zA-Z0-9_]+$/, message: 'Имя пользователя может содержать только буквы, цифры и подчеркивания' }
+          ]}
         >
-          <Input 
+          <Input
             prefix={<UserOutlined />}
             placeholder="john_doe"
           />
@@ -119,9 +124,10 @@ export default function RegisterPage() {
           rules={[
             { required: true, message: 'Введите email' },
             { type: 'email', message: 'Некорректный формат email' },
+            { max: 254, message: 'Email должен быть не длиннее 254 символов' },
           ]}
         >
-          <Input 
+          <Input
             prefix={<MailOutlined />}
             placeholder="you@example.com"
           />
@@ -134,9 +140,10 @@ export default function RegisterPage() {
           rules={[
             { required: true, message: 'Введите пароль' },
             { min: 8, message: 'Пароль должен быть не короче 8 символов' },
+            { max: 128, message: 'Пароль должен быть не длиннее 128 символов' },
           ]}
         >
-          <Input.Password 
+          <Input.Password
             prefix={<LockOutlined />}
             placeholder="Минимум 8 символов"
           />

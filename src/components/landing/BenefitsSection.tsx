@@ -42,7 +42,7 @@ export default function BenefitsSection() {
 
   return (
     <section ref={sectionRef} className="py-32 px-6 bg-white">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="text-center mb-20">
           <Title level={2} className="text-4xl font-bold mb-4">
             Всё необходимое для IT-обучения
