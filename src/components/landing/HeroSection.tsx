@@ -132,7 +132,7 @@ export default function HeroSection() {
               <Button
                 type="default"
                 size="large"
-                className="h-12 px-8 min-w-[160px]"
+                className="h-12 px-8 min-w-[160px] hero-button-bold"
                 onClick={() => handleNavigate('/register')}
               >
                 Начать бесплатно
@@ -140,7 +140,7 @@ export default function HeroSection() {
               <Button
                 type="default"
                 size="large"
-                className="h-12 px-8 min-w-[160px]"
+                className="h-12 px-8 min-w-[160px] hero-button-bold hero-login-button"
                 onClick={() => handleNavigate('/login')}
               >
                 Войти

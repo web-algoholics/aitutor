@@ -1104,9 +1104,30 @@ input:-ms-input-placeholder {
 }
 
 .starting-point-dot.show-content .ant-btn-default:hover {
-  background-color: #ffffff !important;
-  border-color: #000000 !important;
+  background-color: #f8f9fa !important;
+  border-color: #ffffff !important;
   color: #000000 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Hero section button styles */
+.hero-button-bold {
+  font-weight: 600 !important;
+}
+
+.starting-point-dot.show-content .hero-login-button {
+  background-color: #000000 !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+.starting-point-dot.show-content .hero-login-button:hover {
+  background-color: #000000 !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .starting-point-dot.show-content .anticon {
