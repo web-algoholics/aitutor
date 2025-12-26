@@ -64,6 +64,8 @@ app.add_middleware(
         "http://127.0.0.1:8099",
         "https://localhost:8099",
         "https://127.0.0.1:8099",
+        "https://ift-1.brojs.ru",  # Deployed frontend domain
+        "https://admin.brojs.ru/",
         settings.FRONTEND_URL
     ],
     allow_credentials=True,
