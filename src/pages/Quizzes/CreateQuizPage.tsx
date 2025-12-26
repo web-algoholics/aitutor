@@ -40,7 +40,25 @@ const CreateQuizPage: React.FC = () => {
       message.success('Квиз успешно создан!');
       navigate(`/quizzes/${result.id}`);
     } catch (error: any) {
-      message.error(error?.data?.detail || 'Ошибка при создании квиза');
+
+      const detail = error?.data?.detail;
+      const isTechnical =
+        !detail ||
+        typeof detail !== 'string' ||
+        /internal server error|failed to fetch|network|500|failed to load|json parsing|validation error|must have|invalid|error/i.test(detail);
+      if (isTechnical) {
+        // Для разработчика выводим сырой текст в консоль
+        if (detail) {
+          // eslint-disable-next-line no-console
+          console.error('Quiz creation error (developer debug):', detail);
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('Quiz creation technical error:', error);
+        }
+        message.error('Ошибка при создании квиза. Проверьте заполнение и повторите, или попробуйте позже.');
+      } else {
+        message.error(detail);
+      }
     }
   };
 

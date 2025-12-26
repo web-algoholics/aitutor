@@ -36,6 +36,8 @@ import CreateAnkiDeckPage from './pages/Anki/CreateAnkiDeckPage';
 import GigaChatAssistantPage from './pages/GigaChatAssistantPage';
 import HelpCenterPage from './pages/HelpCenterPage';
 
+import NotFoundPage from './pages/NotFoundPage';
+
 function AppContent() {
   return (
     <ConfigProvider
@@ -84,6 +86,8 @@ function AppContent() {
               <Route path="/help/chat" element={<GigaChatAssistantPage />} />
             </Route>
 
+            {/* Not found route - must be last! */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
       </BrowserRouter>
     </ConfigProvider>
