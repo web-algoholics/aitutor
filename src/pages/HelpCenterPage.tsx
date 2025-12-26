@@ -48,7 +48,6 @@ const HelpCenterPage: React.FC = () => {
               <Space wrap>
                 <Tag color="blue">Как начать курс</Tag>
                 <Tag color="green">Оплата и подписка</Tag>
-                <Tag color="gold">Стрик и мотивация</Tag>
                 <Tag color="magenta">Генерация уроков</Tag>
               </Space>
             </Space>
@@ -71,9 +70,6 @@ const HelpCenterPage: React.FC = () => {
             <Space direction="vertical" size="small">
               <Text strong>Как задать вопрос?</Text>
               <Paragraph style={{ marginBottom: 12 }}>Нажми «Задать вопрос», напиши свою проблему — Май ответит и предложит шаги.</Paragraph>
-
-              <Text strong>Как работает стрик?</Text>
-              <Paragraph style={{ marginBottom: 12 }}>Стрик растёт, когда ты завершил урок в день X и повторил на следующий. Пропуск дня сбрасывает стрик.</Paragraph>
 
               <Text strong>Где посмотреть прогресс по курсам?</Text>
               <Paragraph style={{ marginBottom: 0 }}>Открой AI Курсы → выбери курс → смотри дерево модулей и уроков.</Paragraph>
