@@ -1797,5 +1797,17 @@ html:not([data-theme="dark"]) .starting-point-dot.show-content .text-center > di
   opacity: 0.6;
 }
 
+/* Loading bars animation */
+@keyframes pulse {
+  0%, 80%, 100% {
+    transform: scaleY(1);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scaleY(1.5);
+    opacity: 1;
+  }
+}
+
 /* Custom Modal styles are in CustomModal.css */
 

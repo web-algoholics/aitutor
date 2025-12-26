@@ -18,6 +18,9 @@ const CreateTheoryCoursePage: React.FC = () => {
   const [difficultyDropdownOpen, setDifficultyDropdownOpen] = useState(false);
   const difficultyDropdownRef = useRef<HTMLDivElement>(null);
 
+  // State for navigation loading after course creation
+  const [isNavigating, setIsNavigating] = useState(false);
+
   // Если пришли с MarketAnalysis с заранее выбранной технологией,
   // подтягиваем её в поле "Тема курса"
   useEffect(() => {
@@ -51,10 +54,15 @@ const CreateTheoryCoursePage: React.FC = () => {
 
       message.success('Курс создан! Структура готова, контент генерируется...');
 
+      // Show navigation loading before redirect
+      setIsNavigating(true);
+
       // Navigate immediately with course data - structure is already created
-      navigate(`/theory/courses/${result.course.id}`, {
-        state: { courseTree: result }
-      });
+      setTimeout(() => {
+        navigate(`/theory/courses/${result.course.id}`, {
+          state: { courseTree: result }
+        });
+      }, 1000); // Small delay to show navigation loading
     } catch (error) {
       message.error('Ошибка при создании курса');
       console.error('Create course error:', error);
@@ -187,6 +195,76 @@ const CreateTheoryCoursePage: React.FC = () => {
             ))}
           </Space>
         </Card>
+
+        {/* Navigation Loading Overlay */}
+        {isNavigating && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999
+          }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '4px',
+                marginBottom: '16px'
+              }}>
+                <div style={{
+                  width: '4px',
+                  height: '20px',
+                  backgroundColor: '#666',
+                  borderRadius: '2px',
+                  animation: 'pulse 1.5s ease-in-out infinite',
+                  animationDelay: '0s'
+                }}></div>
+                <div style={{
+                  width: '4px',
+                  height: '20px',
+                  backgroundColor: '#666',
+                  borderRadius: '2px',
+                  animation: 'pulse 1.5s ease-in-out infinite',
+                  animationDelay: '0.2s'
+                }}></div>
+                <div style={{
+                  width: '4px',
+                  height: '20px',
+                  backgroundColor: '#666',
+                  borderRadius: '2px',
+                  animation: 'pulse 1.5s ease-in-out infinite',
+                  animationDelay: '0.4s'
+                }}></div>
+                <div style={{
+                  width: '4px',
+                  height: '20px',
+                  backgroundColor: '#666',
+                  borderRadius: '2px',
+                  animation: 'pulse 1.5s ease-in-out infinite',
+                  animationDelay: '0.6s'
+                }}></div>
+                <div style={{
+                  width: '4px',
+                  height: '20px',
+                  backgroundColor: '#666',
+                  borderRadius: '2px',
+                  animation: 'pulse 1.5s ease-in-out infinite',
+                  animationDelay: '0.8s'
+                }}></div>
+              </div>
+              <div style={{ fontSize: '16px', color: '#666' }}>
+                Переходим к созданному курсу...
+              </div>
+            </div>
+          </div>
+        )}
       </Space>
     </PageContainer>
   );
