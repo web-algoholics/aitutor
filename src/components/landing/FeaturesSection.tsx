@@ -14,34 +14,29 @@ const { Title, Paragraph } = Typography;
 const features = [
   {
     icon: <ThunderboltOutlined className="text-4xl text-blue-500" />,
-    title: 'Генерация курса с ИИ',
-    description: 'Создавайте персонализированные курсы по любой теме за минуты с помощью искусственного интеллекта'
+    title: 'ИИ-генерация курсов',
+    description: 'Создавайте персонализированные теоретические курсы по программированию и IT за секунды'
   },
   {
     icon: <BookOutlined className="text-4xl text-green-500" />,
-    title: 'Структурированное обучение',
-    description: 'Получайте продуманную программу обучения с уроками, заданиями и проектами'
+    title: 'Интерактивные квизы',
+    description: 'Проходите автоматически генерируемые тесты с мгновенной проверкой и объяснениями'
   },
   {
     icon: <CodeOutlined className="text-4xl text-purple-500" />,
-    title: 'Практика',
-    description: 'Закрепляйте знания на практических заданиях и проектах из реального мира'
+    title: 'Anki-карточки',
+    description: 'Закрепляйте знания с помощью системы интервального повторения'
   },
   {
     icon: <UserOutlined className="text-4xl text-orange-500" />,
-    title: 'Персональный тьютор',
-    description: 'Общайтесь с ИИ‑тьютором: он поможет учиться и ответит на ваши вопросы'
+    title: 'ИИ-помощник 24/7',
+    description: 'Общайтесь с персональным ИИ-помощником, задавайте вопросы и получайте мгновенные ответы'
   },
   {
     icon: <GlobalOutlined className="text-4xl text-red-500" />,
-    title: 'Любая тема',
-    description: 'Изучайте программирование, языки, науки и любые другие темы по вашему выбору'
+    title: 'Анализ IT-рынка',
+    description: 'Изучайте актуальные вакансии, зарплаты и требования работодателей в IT-сфере'
   },
-  {
-    icon: <CheckCircleOutlined className="text-4xl text-teal-500" />,
-    title: 'Прогресс',
-    description: 'Отслеживайте прогресс обучения и достигайте своих целей'
-  }
 ];
 
 export default function FeaturesSection() {
@@ -76,25 +71,27 @@ export default function FeaturesSection() {
       <div className="max-w-6xl mx-auto">
         <div className={`text-center mb-20 fade-in-up ${isVisible ? 'visible' : ''}`} style={{ animationDelay: '0s' }}>
           <Title level={2} className="text-4xl font-bold mb-4">
-            Почему выбирают EdGen?
+            Полный набор инструментов для IT-обучения
           </Title>
           <Paragraph className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Мощные инструменты для создания и прохождения учебных курсов
+            От генерации курсов до практики - все необходимое для эффективного изучения программирования
           </Paragraph>
         </div>
         
         <Row gutter={[24, 24]}>
           {features.map((feature, index) => (
             <Col xs={24} sm={12} lg={8} key={index}>
-              <Card 
+              <Card
                 hoverable
-                className={`h-full text-center shadow-sm hover:shadow-lg transition-shadow fade-in-up ${isVisible ? 'visible' : ''}`}
+                className={`text-center shadow-sm hover:shadow-lg transition-shadow fade-in-up ${isVisible ? 'visible' : ''} h-[280px] flex flex-col`}
                 bordered={false}
                 style={{ animationDelay: `${(index + 1) * 0.1}s`, cursor: 'default' }}
               >
-                <div className="mb-4">{feature.icon}</div>
-                <Title level={4} className="mb-3">{feature.title}</Title>
-                <Paragraph className="text-gray-600">{feature.description}</Paragraph>
+                <div className="mb-4 flex justify-center flex-shrink-0">{feature.icon}</div>
+                <div className="flex flex-col justify-between flex-1">
+                  <Title level={4} className="mb-3">{feature.title}</Title>
+                  <Paragraph className="text-gray-600">{feature.description}</Paragraph>
+                </div>
               </Card>
             </Col>
           ))}

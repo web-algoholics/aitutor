@@ -8,35 +8,37 @@ const steps = [
   {
     number: 1,
     color: 'bg-blue-500',
-    title: 'Регистрация',
-    description: 'Создайте бесплатный аккаунт за пару секунд'
+    title: 'Создайте аккаунт',
+    description: 'Зарегистрируйтесь и получите доступ ко всем инструментам платформы'
   },
   {
     number: 2,
     color: 'bg-green-500',
-    title: 'Выберите тему',
-    description: 'Укажите тему, по которой хотите курс (например: «Python для начинающих»)'
+    title: 'Генерируйте курс',
+    description: 'Введите тему (например: «React для начинающих») и получите готовый теоретический курс'
   },
   {
     number: 3,
     color: 'bg-purple-500',
-    title: 'Получите курс',
-    description: 'ИИ сформирует структурированный курс с уроками и заданиями'
+    title: 'Проходите уроки и тесты',
+    description: 'Изучайте теорию, проходите интерактивные квизы с мгновенной проверкой'
   },
   {
     number: 4,
     color: 'bg-orange-500',
-    title: 'Начните обучение',
-    description: 'Проходите уроки, выполняйте задания и следите за прогрессом'
+    title: 'Практикуйте и повторяйте',
+    description: 'Создавайте Anki-карточки, практикуйтесь в редакторе кода и общайтесь с ИИ-тьютором'
   }
 ];
 
 const courseExamples = [
   'Python для начинающих',
-  'Веб‑разработка на JavaScript',
-  'Машинное обучение',
-  'Английский для IT',
-  'Алгоритмы и структуры данных'
+  'React и современная веб-разработка',
+  'Алгоритмы и структуры данных',
+  'SQL и работа с базами данных',
+  'TypeScript для JavaScript разработчиков',
+  'Docker и контейнеризация',
+  'Git и системы контроля версий'
 ];
 
 export default function HowItWorksSection() {
@@ -75,9 +77,9 @@ export default function HowItWorksSection() {
           </Title>
         </div>
         
-        <Row gutter={[32, 32]} className="items-center">
+        <Row gutter={[32, 32]} className="items-stretch">
           <Col xs={24} md={12}>
-            <div className="space-y-6">
+            <div className="space-y-6 h-full flex flex-col justify-center">
               {steps.map((step) => (
                 <div 
                   key={step.number} 
@@ -99,12 +101,12 @@ export default function HowItWorksSection() {
           </Col>
           
           <Col xs={24} md={12}>
-          <div className={`shadow-lg fade-in-up ${isVisible ? 'visible' : ''}`}
+          <div className={`shadow-lg fade-in-up ${isVisible ? 'visible' : ''} h-full flex flex-col`}
               style={{ animationDelay: '0.5s' }}>
             <Title level={3} className="mb-6 text-center">Примеры тем курса</Title>
-            <Card>
-              <div className="text-center p-8">
-                <div className="space-y-3 text-left">
+            <Card className="flex-1">
+              <div className="text-center p-8 h-full flex flex-col">
+                <div className="space-y-3 text-left flex-1 flex flex-col justify-center">
                   {courseExamples.map((topic, idx) => (
                     <div 
                       key={idx} 

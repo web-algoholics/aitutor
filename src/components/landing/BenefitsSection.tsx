@@ -5,12 +5,12 @@ import { CheckCircleOutlined } from '@ant-design/icons';
 const { Title, Text } = Typography;
 
 const benefits = [
-  'Создание курсов за секунды',
-  'Персональная программа обучения',
-  'Интерактивные уроки и задания',
-  'ИИ‑тьютор 24/7',
-  'Адаптация под ваш уровень',
-  'Отслеживание прогресса'
+  'ИИ-генерация курсов за секунды',
+  'Интерактивные квизы с проверкой',
+  'Система Anki-карточек для запоминания',
+  'Персональный ИИ-помощник 24/7',
+  'Анализ IT-рынка и вакансий',
+  'Отслеживание прогресса обучения'
 ];
 
 export default function BenefitsSection() {
@@ -45,15 +45,15 @@ export default function BenefitsSection() {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-20">
           <Title level={2} className="text-4xl font-bold mb-4">
-            Преимущества платформы
+            Всё необходимое для IT-обучения
           </Title>
         </div>
         
         <Row gutter={[24, 16]}>
           {benefits.map((benefit, index) => (
             <Col xs={24} sm={12} key={index}>
-              <div 
-                className={`flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors fade-in-up ${isVisible ? 'visible' : ''}`}
+              <div
+                className={`flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all fade-in-up ${isVisible ? 'visible' : ''} h-[80px]`}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <CheckCircleOutlined className="text-green-500 text-xl" />
