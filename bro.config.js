@@ -3,7 +3,7 @@ const webpack = require('webpack')
 
 // Конфигурация приложения - единственное место для изменения API URL
 const appConfig = {
-  'aitutor.api': 'http://localhost:8000'
+  'aitutor.api': 'https://bakamol.ru'
 }
 
 module.exports = {
