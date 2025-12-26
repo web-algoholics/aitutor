@@ -18,11 +18,11 @@ export default function Logo({ to = "/theory", className = "", style, genColor, 
     <div className="font-bold font-source-sans" style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
       {to ? (
         <Link to={to} className={textClassName} style={{ ...style, display: 'inline-block', whiteSpace: 'nowrap' }}>
-          <span style={{ color: '#2B5797' }}>Ed</span><span style={{ color: genColorValue, transition: 'color 1.2s ease' }}>Gen</span><span style={{ color: dotColorValue, transition: 'color 1.2s ease' }}>.</span>
+          <span style={{ color: genColorValue, transition: 'color 1.2s ease' }}>Ed</span><span style={{ color: genColorValue, transition: 'color 1.2s ease' }}>Gen</span><span style={{ color: dotColorValue, transition: 'color 1.2s ease' }}>.</span>
         </Link>
       ) : (
         <span className={textClassName} style={{ ...style, display: 'inline-block', whiteSpace: 'nowrap' }}>
-          <span style={{ color: '#2B5797' }}>Ed</span><span style={{ color: genColorValue, transition: 'color 1.2s ease' }}>Gen</span><span style={{ color: dotColorValue, transition: 'color 1.2s ease' }}>.</span>
+          <span style={{ color: genColorValue, transition: 'color 1.2s ease' }}>Ed</span><span style={{ color: genColorValue, transition: 'color 1.2s ease' }}>Gen</span><span style={{ color: dotColorValue, transition: 'color 1.2s ease' }}>.</span>
         </span>
       )}
     </div>

@@ -3,7 +3,7 @@ import { Form, Input, Button, Checkbox, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLoginMutation, useGetCurrentUserQuery } from '../services/authApi';
-import AuthLayout, { useCircleAnimation } from '../components/AuthLayout';
+import AuthLayout from '../components/AuthLayout';
 
 interface LoginValues {
   email: string;
@@ -18,35 +18,6 @@ export default function LoginPage() {
   const [form] = Form.useForm<LoginValues>();
   const [messageApi, contextHolder] = message.useMessage();
 
-  const CollapseLink = ({
-    to,
-    className,
-    children,
-    style,
-  }: {
-    to: string;
-    className?: string;
-    children: React.ReactNode;
-    style?: React.CSSProperties;
-  }) => {
-    const { collapse } = useCircleAnimation();
-    const innerNavigate = useNavigate();
-
-    return (
-      <Link
-        to={to}
-        className={className}
-        style={style}
-        onClick={(e) => {
-          e.preventDefault();
-          collapse();
-          setTimeout(() => innerNavigate(to), 320);
-        }}
-      >
-        {children}
-      </Link>
-    );
-  };
 
   // HANDLE 422 + FIELD ERRORS
   useEffect(() => {
@@ -106,11 +77,8 @@ export default function LoginPage() {
           ]}
         >
           <Input 
-            prefix={<UserOutlined style={{ color: '#2B5797' }} />} 
+            prefix={<UserOutlined />}
             placeholder="you@example.com"
-            style={{
-              color: '#000'
-            }}
           />
         </Form.Item>
 
@@ -120,11 +88,8 @@ export default function LoginPage() {
           rules={[{ required: true, message: 'Введите пароль' }]}
         >
           <Input.Password 
-            prefix={<LockOutlined style={{ color: '#2B5797' }} />} 
+            prefix={<LockOutlined />}
             placeholder="••••••••"
-            style={{
-              color: '#000'
-            }}
           />
         </Form.Item>
 
@@ -133,29 +98,27 @@ export default function LoginPage() {
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox>Запомнить меня</Checkbox>
             </Form.Item>
-            <CollapseLink to="/forgot-password" className="text-sm hover:text-black hover:underline">
-              Забыли пароль?
-            </CollapseLink>
+            <Link to="/forgot-password" className="text-sm auth-link">
+              <span style={{ color: '#d1d5db' }}>Забыли пароль?</span>
+            </Link>
           </div>
         </Form.Item>
 
         <Form.Item>
           <Button 
-            type="primary" 
+            type="default"
             htmlType="submit" 
             loading={isLoading} 
             block
-            style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
           >
             Войти
           </Button>
         </Form.Item>
 
         <div className="text-center text-sm">
-          <div>Нет аккаунта?</div>
-          <div>
-            <CollapseLink to="/register" className="hover:text-black hover:underline" style={{ color: '#2B5797' }}>Зарегистрироваться</CollapseLink>
-          </div>
+          <Link to="/register" className="auth-link">
+            <span style={{ color: '#d1d5db' }}>Зарегистрироваться</span>
+          </Link>
         </div>
       </Form>
     </AuthLayout>

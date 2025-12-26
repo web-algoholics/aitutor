@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, Typography, List, Input, Button, Space, message } from 'antd';
+
 
 const { Title, Paragraph, Text } = Typography;
 const { TextArea } = Input;
@@ -13,6 +14,8 @@ const GigaChatAssistantPage: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const lastBotRef = useRef<HTMLDivElement | null>(null);
+  const chatScrollRef = useRef<HTMLDivElement | null>(null);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -60,104 +63,122 @@ const GigaChatAssistantPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const container = chatScrollRef.current;
+    const target = lastBotRef.current;
+    if (!container || !target) return;
+  
+    setTimeout(() => {
+
+      const containerTop = container.getBoundingClientRect().top;
+      const targetTop = target.getBoundingClientRect().top;
+  
+      const top = container.scrollTop + (targetTop - containerTop);
+  
+      container.scrollTo({ top, behavior: 'smooth' });
+    }, 0);
+  }, [messages]);
+  
+  
   return (
     <div
       style={{
-        maxWidth: 1100,
+        width: 960,
+        minHeight: 600,
+        maxWidth: '100%',
         margin: '0 auto',
-        padding: '32px 20px 48px',
+        padding: '32px 0 48px',
       }}
     >
       <Card style={{ marginBottom: 24 }}>
         <Title level={2} style={{ marginBottom: 12 }}>
           Чат с AI‑помощницей Май
         </Title>
+        <Paragraph type="secondary" style={{ marginBottom: 16 }}>
+          Чат работает на базе AI-модели GigaChat. Все ваши сообщения обрабатываются безопасно на наших серверах.
+        </Paragraph>
       </Card>
 
-      <div style={{ height: '700px', width: '600px', margin: '0 auto' }}>
-        <Card
+      <Card>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      height: '50vh',
+    }}
+  >
+    <div
+    ref={chatScrollRef}
+      style={{
+        flex: 1,
+        overflowY: 'auto',
+        marginBottom: 16,
+        paddingRight: 8,
+      }}
+    >
+    <List
+      locale={{ emptyText: 'Пока нет сообщений' }}
+      dataSource={messages}
+      renderItem={(item, index) => {
+        const lastAssistantIndex = messages.map(m => m.role).lastIndexOf('assistant');
+        const isLastBot = item.role === 'assistant' && index === lastAssistantIndex;
+
+    return (
+      <List.Item
+        key={index}
+        style={{
+          border: 'none',
+          justifyContent: item.role === 'user' ? 'flex-end' : 'flex-start',
+        }}
+      >
+        <div
+          ref={isLastBot ? lastBotRef : null}
           style={{
-            height: '100%',
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-          }}
-          bodyStyle={{
-            height: '100%',
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            padding: 16,
-            overflow: 'hidden',
-            boxSizing: 'border-box',
+            maxWidth: '70%',
+            padding: '8px 12px',
+            borderRadius: 12,
+            backgroundColor: item.role === 'user' ? '#000' : '#f5f5f5',
+            color: item.role === 'user' ? '#fff' : '#000',
+            whiteSpace: 'pre-wrap',
           }}
         >
-          <div
-            style={{
-              flex: '1 1 0',
-              overflowY: 'auto',
-              marginBottom: 16,
-              paddingRight: 8,
-              minHeight: 0,
-              maxHeight: '100%',
-              width: '100%',
-              boxSizing: 'border-box',
-            }}
-          >
-            <List
-              style={{ width: '100%' }}
-              dataSource={messages}
-              renderItem={(item, index) => (
-                <List.Item
-                  key={index}
-                  style={{
-                    border: 'none',
-                    justifyContent: item.role === 'user' ? 'flex-end' : 'flex-start',
-                    padding: '4px 0',
-                  }}
-                >
-                  <div
-                    style={{
-                      maxWidth: '70%',
-                      padding: '8px 12px',
-                      borderRadius: 12,
-                      backgroundColor: item.role === 'user' ? '#1677ff' : '#f5f5f5',
-                      color: item.role === 'user' ? '#fff' : '#000',
-                      whiteSpace: 'pre-wrap',
-                      wordBreak: 'break-word',
-                    }}
-                  >
-                    {item.content}
-                  </div>
-                </List.Item>
-              )}
-            />
-          </div>
+          {item.content}
+        </div>
+      </List.Item>
+    );
+  }}
+/>
 
-          <div style={{ flexShrink: 0 }}>
-            <Space.Compact style={{ width: '100%' }} direction="vertical">
-              <TextArea
-                rows={4}
-                placeholder="Напиши вопрос Май..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onPressEnter={(e) => {
-                  if (!e.shiftKey) {
-                    e.preventDefault();
-                    handleSend();
-                  }
-                }}
-              />
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-                <Button type="primary" onClick={handleSend} loading={loading}>
-                  Задать вопрос
-                </Button>
-              </div>
-            </Space.Compact>
-          </div>
-        </Card>
-      </div>
+    </div>
+
+    <div style={{ flex: '0 0 auto' }}>
+      <Space.Compact style={{ width: '100%' }} direction="vertical">
+        <TextArea
+          autoSize={{ minRows: 2, maxRows: 4 }} 
+          style={{
+            minHeight: 56,  
+            resize: 'none', 
+          }}
+          placeholder="Напиши вопрос Май..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onPressEnter={(e) => {
+            if (!e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
+        />
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
+          <Button type="primary" onClick={handleSend} loading={loading}>
+            Задать вопрос
+          </Button>
+        </div>
+      </Space.Compact>
+    </div>
+  </div>
+</Card>
+
     </div>
   );
 };

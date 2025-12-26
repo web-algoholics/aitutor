@@ -16,6 +16,7 @@ export default function HeroSection() {
 
   const handleNavigate = (path: string) => {
     setCollapsing(true);
+    setLogoVisible(false);
     setTimeout(() => navigate(path), 320); // даём завершиться анимации сужения (0.3s)
   };
 
@@ -128,16 +129,20 @@ export default function HeroSection() {
               с уроками, заданиями и проектами.
             </Paragraph>
             <Space size="large" className="flex-wrap justify-center text-fade-to-white">
-              <Button 
-                type="primary" 
-                size="large" 
-                className="h-12 px-8" 
+              <Button
+                type="default"
+                size="large"
+                className="h-12 px-8 min-w-[160px]"
                 onClick={() => handleNavigate('/register')}
-                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
               >
                 Начать бесплатно
               </Button>
-              <Button size="large" className="h-12 px-8" onClick={() => handleNavigate('/login')}>
+              <Button
+                type="default"
+                size="large"
+                className="h-12 px-8 min-w-[160px]"
+                onClick={() => handleNavigate('/login')}
+              >
                 Войти
               </Button>
             </Space>

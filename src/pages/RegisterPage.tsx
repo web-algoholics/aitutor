@@ -60,9 +60,12 @@ export default function RegisterPage() {
       });
       form.setFields(fieldErrors);
     } else if (error) {
-      const msg = 'data' in error && error.data && typeof error.data === 'object' && 'detail' in error.data
+      let msg = 'data' in error && error.data && typeof error.data === 'object' && 'detail' in error.data
         ? (error.data as any).detail
         : 'Не удалось зарегистрироваться';
+      if (msg === 'REGISTER_USER_ALREADY_EXISTS') {
+        msg = 'Пользователь с таким email или именем уже существует';
+      }
       messageApi.error(msg);
     }
   }, [error, form, messageApi]);
@@ -104,11 +107,8 @@ export default function RegisterPage() {
           rules={[{ required: true, message: 'Введите имя пользователя' }]}
         >
           <Input 
-            prefix={<UserOutlined style={{ color: '#2B5797' }} />} 
+            prefix={<UserOutlined />}
             placeholder="john_doe"
-            style={{
-              color: '#000'
-            }}
           />
         </Form.Item>
 
@@ -122,11 +122,8 @@ export default function RegisterPage() {
           ]}
         >
           <Input 
-            prefix={<MailOutlined style={{ color: '#2B5797' }} />} 
+            prefix={<MailOutlined />}
             placeholder="you@example.com"
-            style={{
-              color: '#000'
-            }}
           />
         </Form.Item>
 
@@ -140,22 +137,18 @@ export default function RegisterPage() {
           ]}
         >
           <Input.Password 
-            prefix={<LockOutlined style={{ color: '#2B5797' }} />} 
+            prefix={<LockOutlined />}
             placeholder="Минимум 8 символов"
-            style={{
-              color: '#000'
-            }}
           />
         </Form.Item>
 
         {/* Submit */}
         <Form.Item>
           <Button 
-            type="primary" 
+            type="default"
             htmlType="submit" 
             loading={isLoading} 
             block
-            style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
           >
             Зарегистрироваться
           </Button>
@@ -163,10 +156,9 @@ export default function RegisterPage() {
 
         {/* Login Link */}
         <div className="text-center text-sm">
-          <div>Уже есть аккаунт?</div>
-          <div>
-            <CollapseLink to="/login" className="text-sm hover:text-black hover:underline" style={{ color: '#2B5797' }}>Войти</CollapseLink>
-          </div>
+          <Link to="/login" className="auth-link">
+            <span style={{ color: '#d1d5db' }}>Войти</span>
+          </Link>
         </div>
       </Form>
     </AuthLayout>

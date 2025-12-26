@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 import {
   Card,
   Typography,
@@ -27,7 +26,6 @@ const { Title, Text, Paragraph } = Typography;
 const QuizzesListPage: React.FC = () => {
   const navigate = useNavigate();
   const { data: quizzes, isLoading, error } = useGetQuizzesQuery();
-  const { theme } = useTheme();
 
   const handleCreateQuiz = () => {
     navigate('/quizzes/create');
@@ -91,8 +89,8 @@ const QuizzesListPage: React.FC = () => {
         {/* Header */}
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{
-            width: '200px',
-            height: '200px',
+            width: '220px',
+            height: '220px',
             borderRadius: '50%',
             backgroundColor: '#000',
             display: 'flex',
@@ -108,10 +106,10 @@ const QuizzesListPage: React.FC = () => {
             Созданные и пройденные квизы для проверки знаний
           </Paragraph>
           <Button
+            type="primary"
             size="large"
             icon={<PlusOutlined />}
             onClick={handleCreateQuiz}
-            style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
           >
             Создать квиз
           </Button>
@@ -121,19 +119,19 @@ const QuizzesListPage: React.FC = () => {
         {totalQuizzes > 0 && (
           <Row gutter={16}>
             <Col xs={24} sm={12} md={8}>
-              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <Title level={3} className="mb-2">{totalQuizzes}</Title>
                 <Text type="secondary">Всего квизов</Text>
               </Card>
             </Col>
             <Col xs={24} sm={12} md={8}>
-              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <Title level={3} className="mb-2">{completedQuizzes.length}</Title>
                 <Text type="secondary">Пройдено</Text>
               </Card>
             </Col>
             <Col xs={24} sm={12} md={8}>
-              <Card bordered={false} className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <Title level={3} className="mb-2">{totalQuizzes - completedQuizzes.length}</Title>
                 <Text type="secondary">Не начато</Text>
               </Card>
@@ -148,13 +146,6 @@ const QuizzesListPage: React.FC = () => {
               description="У вас пока нет квизов"
               image={Empty.PRESENTED_IMAGE_SIMPLE}
             >
-              <Button 
-                icon={<PlusOutlined />} 
-                onClick={handleCreateQuiz}
-                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
-              >
-                Создать первый квиз
-              </Button>
             </Empty>
           </Card>
         ) : (
@@ -164,9 +155,9 @@ const QuizzesListPage: React.FC = () => {
                 <div
                   style={{
                     width: '100%',
-                    border: '2px solid #666666',
+                    border: '2px solid hsl(0, 0%, 15%)',
                     borderRadius: '12px',
-                    backgroundColor: theme === 'dark' ? '#1f1f1f' : '#fff',
+                    backgroundColor: '#fff',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                     display: 'flex',
                     flexDirection: 'column',
@@ -187,8 +178,8 @@ const QuizzesListPage: React.FC = () => {
                 >
                   {/* Question count in top right corner */}
                   <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <FileTextOutlined style={{ fontSize: '18px', color: '#2B5797' }} />
-                    <Text style={{ fontSize: '16px', color: '#2B5797', fontWeight: 500 }}>
+                    <FileTextOutlined style={{ fontSize: '18px', color: 'hsl(var(--primary))' }} />
+                    <Text style={{ fontSize: '16px', color: 'hsl(var(--primary))', fontWeight: 500 }}>
                       {quiz.questions_count}
                     </Text>
                   </div>
@@ -197,14 +188,14 @@ const QuizzesListPage: React.FC = () => {
                     {/* Large icon */}
                     <div style={{ marginBottom: '16px' }}>
                       {quiz.is_completed ? (
-                        <CheckCircleOutlined style={{ fontSize: '64px', color: '#2B5797' }} />
+                        <CheckCircleOutlined style={{ fontSize: '64px', color: 'hsl(var(--primary))' }} />
                       ) : (
-                        <QuestionCircleOutlined style={{ fontSize: '64px', color: '#2B5797' }} />
+                        <QuestionCircleOutlined style={{ fontSize: '64px', color: 'hsl(var(--primary))' }} />
                       )}
                     </div>
                     
                     <div style={{ minHeight: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', width: '100%' }}>
-                      <Text style={{ margin: 0, textAlign: 'center', color: theme === 'dark' ? '#fafafa' : '#000', fontSize: '20px', fontWeight: 400, display: 'block' }}>
+                      <Text style={{ margin: 0, textAlign: 'center', color: '#000', fontSize: '20px', fontWeight: 400, display: 'block' }}>
                         {quiz.title}
                       </Text>
                     </div>

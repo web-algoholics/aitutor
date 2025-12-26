@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 import {
   Card, Typography, List, Button, Space, Tag,
-  Skeleton, message, Alert
+  Skeleton, message, Alert, Progress
 } from 'antd';
 import LoadingDot from '../../components/LoadingDot';
 import {
@@ -26,7 +25,6 @@ const TheoryCourseTreePage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const courseIdNum = parseInt(courseId!);
-  const { theme } = useTheme();
 
   // Check if we have course data from navigation state (just created)
   const initialCourseTree = location.state?.courseTree;
@@ -215,10 +213,10 @@ const TheoryCourseTreePage: React.FC = () => {
         </div>
 
         {/* Course Header */}
-        <Card bordered={false}>
+        <Card bordered={true}>
           <div className="flex items-start gap-5">
             <div className="flex-1">
-              <Title level={2} className="mb-2" style={{ color: '#2B5797' }}>{course.title}</Title>
+              <Title level={2} className="mb-2" style={{ color: 'hsl(var(--primary))' }}>{course.title}</Title>
               <Paragraph className="text-base mb-3">
                 {course.description}
               </Paragraph>
@@ -227,7 +225,7 @@ const TheoryCourseTreePage: React.FC = () => {
               {isGenerationInProgress && (
                 <div className="mb-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <LoadingOutlined style={{ color: theme === 'dark' ? '#a1a1aa' : '#666' }} />
+                    <LoadingOutlined style={{ color: '#666' }} />
                     <Text strong>Генерация контента уроков</Text>
                     <Button size="small" onClick={() => refetch()}>
                       Обновить
@@ -252,9 +250,9 @@ const TheoryCourseTreePage: React.FC = () => {
                   onClick={handleCreateAnkiDeck}
                   disabled={lessonsWithContentCount === 0}
                   style={{ 
-                    backgroundColor: '#2B5797', 
-                    borderColor: '#2B5797', 
-                    color: '#fff', 
+                    backgroundColor: 'hsl(var(--primary))',
+                    borderColor: 'hsl(var(--primary))',
+                    color: 'hsl(var(--primary-foreground))',
                     padding: '4px 16px',
                     marginTop: '16px',
                     marginBottom: '16px'
@@ -273,6 +271,12 @@ const TheoryCourseTreePage: React.FC = () => {
               <Text strong>Прогресс курса</Text>
               <Text>{completedLessons}/{totalLessons} уроков</Text>
             </div>
+            <Progress
+              percent={progressPercent}
+              strokeColor="hsl(var(--primary))"
+              trailColor="#f0f0f0"
+              size="small"
+            />
           </div>
         </Card>
 
@@ -282,12 +286,12 @@ const TheoryCourseTreePage: React.FC = () => {
             message="Все текущие модули пройдены!"
             description="Хотите сгенерировать следующий модуль курса?"
             showIcon={false}
-            style={{ backgroundColor: theme === 'dark' ? '#2a2a2a' : '#f5f5f5', border: theme === 'dark' ? '1px solid #303030' : '1px solid #d9d9d9' }}
+            style={{ backgroundColor: '#f5f5f5', border: '1px solid #d9d9d9' }}
             action={
               <Button
                 loading={isGenerating}
                 onClick={handleGenerateNextModule}
-                style={{ backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' }}
+                className="bg-primary text-primary-foreground border-primary"
               >
                 {isGenerating ? 'Генерирую...' : 'Сгенерировать следующий модуль'}
               </Button>
@@ -308,12 +312,13 @@ const TheoryCourseTreePage: React.FC = () => {
             return (
               <Card
                 key={module.id}
+                bordered={true}
                 bordered={false}
-                headStyle={{ backgroundColor: theme === 'dark' ? '#2a2a2a' : '#f5f5f5', padding: '16px 24px' }}
+                headStyle={{ backgroundColor: '#f5f5f5', padding: '16px 24px' }}
                 title={
                   <Space>
-                    <span style={{ color: '#2B5797', fontWeight: 500 }}>{module.order}. {module.title}</span>
-                    {module.is_completed && <CheckCircleOutlined style={{ color: '#2B5797' }} />}
+                    <span style={{ color: 'hsl(var(--primary))', fontWeight: 500 }}>{module.order}. {module.title}</span>
+                    {module.is_completed && <CheckCircleOutlined style={{ color: 'hsl(var(--primary))' }} />}
                     {isModuleGenerating && !module.is_completed && <LoadingOutlined style={{ color: '#666' }} />}
                   </Space>
                 }
@@ -326,23 +331,6 @@ const TheoryCourseTreePage: React.FC = () => {
                 <Paragraph className="mb-4">
                   {module.description}
                 </Paragraph>
-
-                {/* Auto-generation status */}
-                {(() => {
-                  const lessonsWithoutContent = moduleLessons.filter(lesson => !lesson.has_content).length;
-                  if (lessonsWithoutContent > 0) {
-                    return (
-                      <Alert
-                        message={`Автоматическая генерация контента`}
-                        description="Уроки генерируются"
-                        showIcon={false}
-                        className="mb-4"
-                        style={{ backgroundColor: theme === 'dark' ? '#2a2a2a' : '#f5f5f5', border: theme === 'dark' ? '1px solid #303030' : '1px solid #d9d9d9' }}
-                      />
-                    );
-                  }
-                  return null;
-                })()}
 
                 {/* Learning Objectives */}
                 <div className="mb-4">
@@ -373,7 +361,7 @@ const TheoryCourseTreePage: React.FC = () => {
                         <Button
                           key="start"
                           type={lesson.has_content && !lesson.is_completed ? "primary" : "default"}
-                          style={lesson.has_content && !lesson.is_completed ? { backgroundColor: '#2B5797', borderColor: '#2B5797', color: '#fff' } : {}}
+                          className={lesson.has_content && !lesson.is_completed ? 'bg-primary text-primary-foreground border-primary' : ''}
                           icon={lesson.has_content ? <PlayCircleOutlined /> : <LoadingOutlined />}
                           onClick={() => handleLessonClick(lesson.id, lesson.has_content)}
                           disabled={!lesson.has_content}
@@ -388,7 +376,7 @@ const TheoryCourseTreePage: React.FC = () => {
                       <List.Item.Meta
                         avatar={
                           lesson.is_completed ?
-                            <CheckCircleOutlined style={{ color: '#2B5797', fontSize: '18px' }} /> :
+                            <CheckCircleOutlined style={{ color: 'hsl(var(--primary))', fontSize: '18px' }} /> :
                             lesson.has_content ?
                               <PlayCircleOutlined style={{ color: '#666', fontSize: '18px' }} /> :
                               <LoadingDot size="small" />
@@ -406,7 +394,7 @@ const TheoryCourseTreePage: React.FC = () => {
 
         {/* Show loading status if no modules yet (fallback for edge cases) */}
         {(!currentCourseTree || modules.length === 0) && (
-          <Card bordered={false}>
+          <Card bordered={true}>
             <div className="text-center p-10">
               <LoadingDot size="large" />
               <Title level={4}>Загрузка структуры курса</Title>
