@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, Typography, List, Input, Button, Space, message } from 'antd';
+import { Card, List, Input, Button, Space, message } from 'antd';
 import ReactMarkdown from 'react-markdown';
-
-
-const { Title, Paragraph, Text } = Typography;
+import SectionHeader from '../../components/SectionHeader';
+import PageContainer from '../../components/PageContainer';
 const { TextArea } = Input;
 
 type ChatMessage = {
@@ -32,7 +31,7 @@ const GigaChatAssistantPage: React.FC = () => {
     try {
       // Используем динамический API URL из конфига
       // Для этого импортируем getApiUrl
-      const { getApiUrl } = await import('../utils/config');
+      const { getApiUrl } = await import('../../utils/config');
       const resp = await fetch(`${getApiUrl()}/api/chat`, {
         method: 'POST',
         headers: {
@@ -71,44 +70,35 @@ const GigaChatAssistantPage: React.FC = () => {
     const container = chatScrollRef.current;
     const target = lastBotRef.current;
     if (!container || !target) return;
-  
+
     setTimeout(() => {
 
       const containerTop = container.getBoundingClientRect().top;
       const targetTop = target.getBoundingClientRect().top;
-  
+
       const top = container.scrollTop + (targetTop - containerTop);
-  
+
       container.scrollTo({ top, behavior: 'smooth' });
     }, 0);
   }, [messages]);
-  
-  
+
+
   return (
-    <div
-      style={{
-        width: 960,
-        minHeight: 600,
-        maxWidth: '100%',
-        margin: '0 auto',
-        padding: '32px 0 48px',
-      }}
-    >
-      <Card style={{ marginBottom: 24 }}>
-        <Title level={2} style={{ marginBottom: 12 }}>
-          Чат с AI‑помощницей Май
-        </Title>
-        <Paragraph type="secondary" style={{ marginBottom: 16 }}>
-          Чат работает на базе AI-модели GigaChat. Все ваши сообщения обрабатываются безопасно на наших серверах.
-        </Paragraph>
-      </Card>
+    <PageContainer>
+      <div style={{ marginBottom: 24 }}>
+        <SectionHeader
+          title="Чат с Май"
+          description="Задавай вопросы про платформу, курсы и прогресс. Май ответит и подскажет следующий шаг."
+        />
+      </div>
 
       <Card>
   <div
     style={{
       display: 'flex',
       flexDirection: 'column',
-      height: '50vh',
+      minHeight: '300px',
+      maxHeight: '50vh',
     }}
   >
     <div
@@ -158,10 +148,10 @@ const GigaChatAssistantPage: React.FC = () => {
     <div style={{ flex: '0 0 auto' }}>
       <Space.Compact style={{ width: '100%' }} direction="vertical">
         <TextArea
-          autoSize={{ minRows: 2, maxRows: 4 }} 
+          autoSize={{ minRows: 2, maxRows: 4 }}
           style={{
-            minHeight: 56,  
-            resize: 'none', 
+            minHeight: 56,
+            resize: 'none',
           }}
           placeholder="Напиши вопрос Май..."
           value={input}
@@ -182,8 +172,7 @@ const GigaChatAssistantPage: React.FC = () => {
     </div>
   </div>
 </Card>
-
-    </div>
+</PageContainer>
   );
 };
 

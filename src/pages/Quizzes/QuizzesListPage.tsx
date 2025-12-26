@@ -11,6 +11,7 @@ import {
   Col,
 } from 'antd';
 import LoadingDot from '../../components/LoadingDot';
+import StatsCard from '../../components/StatsCard';
 import {
   PlusOutlined,
   PlayCircleOutlined,
@@ -21,6 +22,7 @@ import {
 } from '@ant-design/icons';
 import { useGetQuizzesQuery, type QuizSummaryResponse } from '../../services/quizzesApi';
 import PageContainer from '../../components/PageContainer';
+import SectionHeader from '../../components/SectionHeader';
 const { Title, Text, Paragraph } = Typography;
 
 const QuizzesListPage: React.FC = () => {
@@ -84,57 +86,35 @@ const QuizzesListPage: React.FC = () => {
   return (
     <PageContainer>
       <Space direction="vertical" size="large" className="w-full">
-        {/* Empty div to match Create page layout - matches Button height */}
-        <div style={{ height: '36px' }}></div>
         {/* Header */}
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{
-            width: '220px',
-            height: '220px',
-            borderRadius: '50%',
-            backgroundColor: '#000',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '16px'
-          }}>
-            <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
-              Мои квизы
-            </Title>
-          </div>
-          <Paragraph className="text-base text-gray-600 mb-4" style={{ textAlign: 'center' }}>
-            Созданные и пройденные квизы для проверки знаний
-          </Paragraph>
-          <Button
-            type="primary"
-            size="large"
-            icon={<PlusOutlined />}
-            onClick={handleCreateQuiz}
-          >
-            Создать квиз
-          </Button>
-        </div>
+        <SectionHeader
+          title="Мои квизы"
+          description="Созданные и пройденные квизы для проверки знаний"
+          buttonText="Создать квиз"
+          buttonIcon={<PlusOutlined />}
+          onButtonClick={handleCreateQuiz}
+        />
 
         {/* Stats */}
         {totalQuizzes > 0 && (
           <Row gutter={16}>
             <Col xs={24} sm={12} md={8}>
-              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <Title level={3} className="mb-2">{totalQuizzes}</Title>
-                <Text type="secondary">Всего квизов</Text>
-              </Card>
+              <StatsCard
+                title={totalQuizzes}
+                subtitle="Всего квизов"
+              />
             </Col>
             <Col xs={24} sm={12} md={8}>
-              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <Title level={3} className="mb-2">{completedQuizzes.length}</Title>
-                <Text type="secondary">Пройдено</Text>
-              </Card>
+              <StatsCard
+                title={completedQuizzes.length}
+                subtitle="Пройдено"
+              />
             </Col>
             <Col xs={24} sm={12} md={8}>
-              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <Title level={3} className="mb-2">{totalQuizzes - completedQuizzes.length}</Title>
-                <Text type="secondary">Не начато</Text>
-              </Card>
+              <StatsCard
+                title={totalQuizzes - completedQuizzes.length}
+                subtitle="Не начато"
+              />
             </Col>
           </Row>
         )}

@@ -27,6 +27,7 @@ import {
 import { useAnalyzeMarketMutation } from '../../services/jobsApi';
 import type { AnalysisRequest, MarketAnalysisResponse } from '../../services/jobsApi';
 import PageContainer from '../../components/PageContainer';
+import SectionHeader from '../../components/SectionHeader';
 import { useGetTheoryCoursesQuery } from '../../services/theoryApi';
 import { useNavigate } from 'react-router-dom';
 
@@ -230,27 +231,10 @@ export default function MarketAnalysis() {
   return (
     <PageContainer>
       <Space vertical size="large" style={{ width: '100%' }}>
-        {/* Empty div to match Create page layout - matches Button height */}
-        <div style={{ height: '36px' }}></div>
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px' }}>
-          <div style={{
-            width: '220px',
-            height: '220px',
-            borderRadius: '50%',
-            backgroundColor: '#000',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '16px'
-          }}>
-            <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
-              Анализ вакансий
-            </Title>
-          </div>
-        <Paragraph className="text-base text-gray-600 mb-4" style={{ textAlign: 'center' }}>
-          Узнайте, какие навыки востребованы на рынке труда, и получите рекомендации по обучению
-        </Paragraph>
-      </div>
+        <SectionHeader
+          title="Анализ вакансий"
+          description="Узнайте, какие навыки востребованы на рынке труда, и получите рекомендации по обучению"
+        />
 
       {/* Search Form */}
       <Card className="mb-6">
