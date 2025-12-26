@@ -30,7 +30,7 @@ const features = [
   {
     icon: <UserOutlined className="text-4xl text-orange-500" />,
     title: 'ИИ-помощник 24/7',
-    description: 'Общайтесь с ИИ-помощником, задавайте вопросы и получайте мгновенные ответы'
+    description: 'Общайтесь с персональным ИИ-помощником, задавайте вопросы и получайте ответы'
   },
   {
     icon: <GlobalOutlined className="text-4xl text-red-500" />,
