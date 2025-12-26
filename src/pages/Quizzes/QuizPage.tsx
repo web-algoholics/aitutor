@@ -123,10 +123,20 @@ const QuizPage: React.FC = () => {
       // Convert form values to API format
       const answers = quiz.questions.map((question) => {
         const answerValue = values[`question_${question.id}`];
-        const answerIds = Array.isArray(answerValue) ? answerValue : [answerValue];
+        let answerIds: number[] = [];
+
+        if (question.question_type === 'single_choice') {
+          answerIds = answerValue !== undefined ? [answerValue] : [];
+        } else if (question.question_type === 'multiple_choice') {
+          // Multiple checkboxes with same name return an array
+          answerIds = Array.isArray(answerValue) ? answerValue : (answerValue !== undefined ? [answerValue] : []);
+        } else {
+          answerIds = Array.isArray(answerValue) ? answerValue : [answerValue].filter(id => id !== undefined);
+        }
+
         return {
           question_id: question.id,
-          answer_ids: answerIds.filter((id: any) => id !== undefined),
+          answer_ids: answerIds,
         };
       });
 
@@ -300,25 +310,23 @@ const QuizPage: React.FC = () => {
                           {index + 1}. {question.question_text}
                         </Text>
                         {question.question_type === 'single_choice' ? (
-                          <Radio.Group className="w-full">
-                            <Space direction="vertical" className="w-full" size="middle">
-                              {question.answers.map((answer) => (
-                                <Radio key={answer.id} value={answer.id} className="w-full py-2 text-base">
-                                  {answer.answer_text}
-                                </Radio>
-                              ))}
-                            </Space>
-                          </Radio.Group>
+                          <Radio.Group
+                            options={question.answers.map(answer => ({
+                              label: answer.answer_text,
+                              value: answer.id,
+                            }))}
+                          />
+                        ) : question.question_type === 'multiple_choice' ? (
+                          <Space direction="vertical" size="middle">
+                            {question.answers.map((answer) => (
+                              <Checkbox key={answer.id} value={answer.id}>
+                                {answer.answer_text}
+                              </Checkbox>
+                            ))}
+                          </Space>
                         ) : (
-                          <Checkbox.Group className="w-full">
-                            <Space direction="vertical" className="w-full" size="middle">
-                              {question.answers.map((answer) => (
-                                <Checkbox key={answer.id} value={answer.id} className="w-full py-2 text-base">
-                                  {answer.answer_text}
-                                </Checkbox>
-                              ))}
-                            </Space>
-                          </Checkbox.Group>
+                          // Fallback for unknown question types
+                          <div className="text-red-500">Unknown question type: {question.question_type}</div>
                         )}
                       </Space>
                     </Form.Item>
@@ -409,6 +417,8 @@ const QuizPage: React.FC = () => {
                 const isCorrect = result?.is_correct ?? false;
                 const selectedAnswerIds = result?.selected_answer_ids ?? [];
                 const correctAnswerIds = result?.correct_answer_ids ?? [];
+
+
 
                 return (
                   <Card
