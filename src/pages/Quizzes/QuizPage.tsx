@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Card,
@@ -53,6 +53,7 @@ const QuizPage: React.FC = () => {
   const [createdQuizId, setCreatedQuizId] = useState<number | null>(null);
   const [form] = Form.useForm();
   const [answersForm] = Form.useForm();
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number[]>>({});
 
   // Load lesson content if lessonId is provided
   const { data: lessonContent, isLoading: lessonLoading } = useGetLessonContentQuery(
@@ -122,11 +123,24 @@ const QuizPage: React.FC = () => {
     try {
       // Convert form values to API format
       const answers = quiz.questions.map((question) => {
-        const answerValue = values[`question_${question.id}`];
-        const answerIds = Array.isArray(answerValue) ? answerValue : [answerValue];
+        let answerIds: number[] = [];
+
+        if (question.question_type === 'single_choice') {
+          // For single choice, get value from form
+          const answerValue = values[`question_${question.id}`];
+          answerIds = answerValue !== undefined ? [answerValue] : [];
+        } else if (question.question_type === 'multiple_choice') {
+          // For multiple choice, get value from our state
+          answerIds = selectedAnswers[question.id] || [];
+        } else {
+          // Fallback
+          const answerValue = values[`question_${question.id}`];
+          answerIds = Array.isArray(answerValue) ? answerValue : [answerValue].filter(id => id !== undefined);
+        }
+
         return {
           question_id: question.id,
-          answer_ids: answerIds.filter((id: any) => id !== undefined),
+          answer_ids: answerIds,
         };
       });
 
@@ -151,6 +165,7 @@ const QuizPage: React.FC = () => {
       setQuizState('taking');
       setQuizResult(null);
       answersForm.resetFields();
+      setSelectedAnswers({});
     }
   };
 
@@ -158,6 +173,24 @@ const QuizPage: React.FC = () => {
     setQuizState('taking');
     setQuizResult(null);
     answersForm.resetFields();
+    setSelectedAnswers({});
+  };
+
+  const handleCheckboxChange = (questionId: number, answerId: number, checked: boolean) => {
+    setSelectedAnswers(prev => {
+      const currentAnswers = prev[questionId] || [];
+      if (checked) {
+        return {
+          ...prev,
+          [questionId]: [...currentAnswers, answerId]
+        };
+      } else {
+        return {
+          ...prev,
+          [questionId]: currentAnswers.filter(id => id !== answerId)
+        };
+      }
+    });
   };
 
   const handleBack = () => {
@@ -300,25 +333,33 @@ const QuizPage: React.FC = () => {
                           {index + 1}. {question.question_text}
                         </Text>
                         {question.question_type === 'single_choice' ? (
-                          <Radio.Group className="w-full">
-                            <Space direction="vertical" className="w-full" size="middle">
+                          <Radio.Group>
+                            <Space direction="vertical" size="middle">
                               {question.answers.map((answer) => (
-                                <Radio key={answer.id} value={answer.id} className="w-full py-2 text-base">
+                                <Radio key={answer.id} value={answer.id}>
                                   {answer.answer_text}
                                 </Radio>
                               ))}
                             </Space>
                           </Radio.Group>
-                        ) : (
-                          <Checkbox.Group className="w-full">
-                            <Space direction="vertical" className="w-full" size="middle">
-                              {question.answers.map((answer) => (
-                                <Checkbox key={answer.id} value={answer.id} className="w-full py-2 text-base">
+                        ) : question.question_type === 'multiple_choice' ? (
+                          <Space direction="vertical" size="middle">
+                            {question.answers.map((answer) => {
+                              const isChecked = selectedAnswers[question.id]?.includes(answer.id) || false;
+                              return (
+                                <Checkbox
+                                  key={answer.id}
+                                  checked={isChecked}
+                                  onChange={(e) => handleCheckboxChange(question.id, answer.id, e.target.checked)}
+                                >
                                   {answer.answer_text}
                                 </Checkbox>
-                              ))}
-                            </Space>
-                          </Checkbox.Group>
+                              );
+                            })}
+                          </Space>
+                        ) : (
+                          // Fallback for unknown question types
+                          <div className="text-red-500">Unknown question type: {question.question_type}</div>
                         )}
                       </Space>
                     </Form.Item>

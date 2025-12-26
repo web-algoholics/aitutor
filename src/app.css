@@ -1811,3 +1811,13 @@ html:not([data-theme="dark"]) .starting-point-dot.show-content .text-center > di
 
 /* Custom Modal styles are in CustomModal.css */
 
+/* Vertical Checkbox Group */
+.vertical-checkbox-group .ant-checkbox-group-item {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.vertical-checkbox-group .ant-checkbox-group-item:last-child {
+  margin-bottom: 0;
+}
+
