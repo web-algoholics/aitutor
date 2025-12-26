@@ -23,7 +23,24 @@ const CreateAnkiDeckPage: React.FC = () => {
       message.success('Колода успешно создана!');
       navigate(`/anki/decks/${result.id}/practice`);
     } catch (error: any) {
-      message.error(error?.data?.detail || 'Ошибка при создании колоды');
+      // Фильтруем англоязычные и технические ошибки
+      const detail = error?.data?.detail;
+      const isTechnical =
+        !detail ||
+        typeof detail !== 'string' ||
+        /internal server error|failed to fetch|network|500|failed to load|json parsing|validation error|must have|invalid|error/i.test(detail);
+      if (isTechnical) {
+        if (detail) {
+          // eslint-disable-next-line no-console
+          console.error('Anki deck creation error (developer debug):', detail);
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('Anki deck creation technical error:', error);
+        }
+        message.error('Ошибка при создании колоды. Проверьте заполнение и повторите, или попробуйте позже.');
+      } else {
+        message.error(detail);
+      }
     }
   };
 
