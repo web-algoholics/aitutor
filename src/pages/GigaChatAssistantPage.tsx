@@ -29,7 +29,10 @@ const GigaChatAssistantPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const resp = await fetch('http://localhost:8000/api/chat', {
+      // Используем динамический API URL из конфига
+      // Для этого импортируем getApiUrl
+      const { getApiUrl } = await import('../utils/config');
+      const resp = await fetch(`${getApiUrl()}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
