@@ -101,7 +101,7 @@ export default function HowItWorksSection() {
           </Col>
           
           <Col xs={24} md={12}>
-          <div className={`shadow-lg fade-in-up ${isVisible ? 'visible' : ''} h-full flex flex-col`}
+          <div className={`fade-in-up ${isVisible ? 'visible' : ''} h-full flex flex-col`}
               style={{ animationDelay: '0.5s' }}>
             <Title level={3} className="mb-6 text-center">Примеры тем курса</Title>
             <Card className="flex-1">
