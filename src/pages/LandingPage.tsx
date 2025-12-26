@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import HeroSection from '../components/landing/HeroSection';
 import FeaturesSection from '../components/landing/FeaturesSection';
 import HowItWorksSection from '../components/landing/HowItWorksSection';
-import BenefitsSection from '../components/landing/BenefitsSection';
+import FAQSection from '../components/landing/FAQSection';
 import Footer from '../components/Footer';
 import { useGetCurrentUserQuery } from '../services/authApi';
 import { useNavigate } from 'react-router-dom';
@@ -24,7 +24,7 @@ export default function LandingPage() {
       <HeroSection />
       <FeaturesSection />
       <HowItWorksSection />
-      <BenefitsSection />
+      <FAQSection />
       <Footer />
     </div>
   );
