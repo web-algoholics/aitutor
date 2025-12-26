@@ -70,10 +70,10 @@ export default function LoginPage() {
         style={{ width: 'min(320px, 100%)', margin: '0 auto' }}
       >
         <Form.Item
-          label="Email или имя пользователя"
+          label="Email"
           name="email"
           rules={[
-            { required: true, message: 'Введите email или имя пользователя' },
+            { required: true, message: 'Введите email' },
           ]}
         >
           <Input 
