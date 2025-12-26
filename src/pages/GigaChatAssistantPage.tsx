@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, Typography, List, Input, Button, Space, message } from 'antd';
+import ReactMarkdown from 'react-markdown';
 
 
 const { Title, Paragraph, Text } = Typography;
@@ -145,7 +146,7 @@ const GigaChatAssistantPage: React.FC = () => {
             whiteSpace: 'pre-wrap',
           }}
         >
-          {item.content}
+          {item.role === 'assistant' ? <ReactMarkdown>{item.content}</ReactMarkdown> : item.content}
         </div>
       </List.Item>
     );
