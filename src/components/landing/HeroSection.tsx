@@ -96,7 +96,7 @@ export default function HeroSection() {
       {!animationStarted && (
         <Title 
           level={1} 
-          className="text-6xl md:text-7xl font-bold text-gray-900 z-10 absolute title-fade-in"
+          className="text-xl md:text-xl font-bold text-gray-900 z-10 absolute title-fade-in"
           style={{ 
             top: '50%', 
             left: '50%', 
@@ -116,17 +116,17 @@ export default function HeroSection() {
       >
         {animationStarted && !collapsing && (
           <div className="max-w-6xl mx-auto text-center z-10 px-6" style={{ position: 'relative', zIndex: 10 }}>
-            <Title level={1} className="text-4xl md:text-5xl font-bold mb-6 text-fade-to-white">
-              <span className="text-fade-to-white text-3xl">
-              Полное обучение с ИИ
+            <Title level={1} className="text-xl md:text-xl font-bold mb-6 text-fade-to-white">
+              <span className="text-fade-to-white">
+              Создавайте курсы по любой теме
               </span>
               <br />
-              <span className="text-fade-to-white text-3xl">от теории до практики</span>
+              <span className="text-fade-to-white">с помощью ИИ</span>
             </Title>
             <Paragraph className="text-xl text-fade-to-white mb-8 max-w-2xl mx-auto">
-              AI Tutor - комплексная платформа для обучения программированию и IT.
-              Создавайте персонализированные курсы с помощью ИИ, проходите интерактивные тесты,
-              практикуйтесь с Anki-карточками и общайтесь с персональным ИИ-тьютором.
+              EdGen - платформа для генерации персонализированных учебных курсов.
+              Просто задайте тему, и наш ИИ соберёт для вас полноценную программу
+              с уроками, заданиями и проектами.
             </Paragraph>
             <Space size="large" className="flex-wrap justify-center text-fade-to-white">
               <Button
@@ -152,4 +152,3 @@ export default function HeroSection() {
     </section>
   );
 }
-
