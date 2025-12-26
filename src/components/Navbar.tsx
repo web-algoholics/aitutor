@@ -48,7 +48,6 @@ export default function Navbar() {
     { to: "/quizzes", label: "Квизы" },
     { to: "/anki", label: "Anki" },
     { to: "/market-analysis", label: "Анализ вакансий" },
-    { to: "/help/chat", label: "AI-помощник"}
   ];
 
   const handleNavClick = () => {
