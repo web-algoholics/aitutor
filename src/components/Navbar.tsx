@@ -98,7 +98,7 @@ export default function Navbar() {
                     minWidth: '6px'
                   }} 
                 />
-                <span style={{ transition: 'transform 0.3s ease', textAlign: 'center' }}>
+                <span style={{ transition: 'transform 0.3s ease', textAlign: 'center', whiteSpace: 'nowrap' }}>
                   {link.label}
                 </span>
               </Link>
@@ -192,7 +192,7 @@ export default function Navbar() {
                       minWidth: '8px'
                     }} 
                   />
-                  <span style={{ transition: 'transform 0.3s ease', textAlign: 'center', flex: 1 }}>
+                  <span style={{ transition: 'transform 0.3s ease', textAlign: 'center', flex: 1, whiteSpace: 'nowrap' }}>
                     {link.label}
                   </span>
                 </Link>

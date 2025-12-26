@@ -103,6 +103,7 @@ const GigaChatAssistantPage: React.FC = () => {
   >
     <div
     ref={chatScrollRef}
+      className="chat-background"
       style={{
         flex: 1,
         overflowY: 'auto',
@@ -131,9 +132,10 @@ const GigaChatAssistantPage: React.FC = () => {
             maxWidth: '70%',
             padding: '8px 12px',
             borderRadius: 12,
-            backgroundColor: item.role === 'user' ? '#000' : '#f5f5f5',
-            color: item.role === 'user' ? '#fff' : '#000',
+            backgroundColor: item.role === 'user' ? '#000000' : '#ffffff',
+            color: item.role === 'user' ? '#ffffff' : '#000000',
             whiteSpace: 'pre-wrap',
+            border: item.role === 'user' ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid rgba(0, 0, 0, 0.1)',
           }}
         >
           {item.role === 'assistant' ? <ReactMarkdown>{item.content}</ReactMarkdown> : item.content}

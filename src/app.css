@@ -1842,3 +1842,13 @@ html:not([data-theme="dark"]) .starting-point-dot.show-content .text-center > di
   margin-bottom: 0;
 }
 
+/* Chat Background with Mai SVG */
+.chat-background {
+  background-image: url('./images/mai.svg');
+  background-size: 250px auto;
+  background-repeat: no-repeat;
+  background-position: bottom left;
+  background-attachment: local;
+  padding-bottom: 200px; /* Space for the image */
+}
+
