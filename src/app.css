@@ -486,6 +486,42 @@ input:-ms-input-placeholder {
   padding-bottom: 8rem;
 }
 
+.pl-1 {
+  padding-left: 0.25rem;
+}
+
+.pl-2 {
+  padding-left: 0.5rem;
+}
+
+.pl-3 {
+  padding-left: 0.75rem;
+}
+
+.pl-4 {
+  padding-left: 1rem;
+}
+
+.pl-5 {
+  padding-left: 1.25rem;
+}
+
+.pl-6 {
+  padding-left: 1.5rem;
+}
+
+.pl-8 {
+  padding-left: 2rem;
+}
+
+.pl-10 {
+  padding-left: 2.5rem;
+}
+
+.pl-12 {
+  padding-left: 3rem;
+}
+
 /* Display & Visibility */
 .block {
   display: block;
@@ -1104,9 +1140,30 @@ input:-ms-input-placeholder {
 }
 
 .starting-point-dot.show-content .ant-btn-default:hover {
-  background-color: #ffffff !important;
-  border-color: #000000 !important;
+  background-color: #f8f9fa !important;
+  border-color: #ffffff !important;
   color: #000000 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Hero section button styles */
+.hero-button-bold {
+  font-weight: 600 !important;
+}
+
+.starting-point-dot.show-content .hero-login-button {
+  background-color: #000000 !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+.starting-point-dot.show-content .hero-login-button:hover {
+  background-color: #000000 !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .starting-point-dot.show-content .anticon {
@@ -1811,6 +1868,11 @@ html:not([data-theme="dark"]) .starting-point-dot.show-content .text-center > di
 
 /* Custom Modal styles are in CustomModal.css */
 
+/* Logout Button Styles */
+.logout-button {
+  font-weight: 600 !important;
+}
+
 /* Vertical Checkbox Group */
 .vertical-checkbox-group .ant-checkbox-group-item {
   display: block;
@@ -1819,5 +1881,47 @@ html:not([data-theme="dark"]) .starting-point-dot.show-content .text-center > di
 
 .vertical-checkbox-group .ant-checkbox-group-item:last-child {
   margin-bottom: 0;
+}
+
+/* Chat Background with Mai SVG */
+.chat-background {
+  background-image: url('./images/mai.svg');
+  background-size: 250px auto;
+  background-repeat: no-repeat;
+  background-position: bottom left;
+  background-attachment: local;
+  padding-bottom: 200px; /* Space for the image */
+}
+
+/* GIF Loading Background */
+.gif-loading-container {
+  position: relative;
+  min-height: 320px;
+  background: #ffffff; /* White background initially */
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
+
+.gif-loading-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gif-loading-container img.loaded {
+  opacity: 1;
+}
+
+.gif-loading-container.loaded {
+  background: #0d0d15; /* Dark background when loaded */
+}
+
+/* Hide GIF on mobile devices */
+@media (max-width: 768px) {
+  .gif-loading-container {
+    display: none;
+  }
 }
 

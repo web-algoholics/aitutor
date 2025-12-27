@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Typography, Card, Row, Col, Space, Button, Tag, Divider } from 'antd';
 import CustomModal from '../components/CustomModal';
 import { QuestionCircleOutlined, CustomerServiceOutlined, SafetyOutlined, PlayCircleOutlined, LockOutlined, SecurityScanOutlined, EyeOutlined, DatabaseOutlined } from '@ant-design/icons';
@@ -10,6 +10,7 @@ const { Title, Paragraph, Text } = Typography;
 const HelpCenterPage: React.FC = () => {
   const navigate = useNavigate();
   const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
+  const gifContainerRef = useRef<HTMLDivElement>(null);
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 20px' }}>
       <Card
@@ -53,13 +54,18 @@ const HelpCenterPage: React.FC = () => {
             </Space>
           </div>
 
-          <div style={{ position: 'relative', minHeight: 320, background: '#0d0d15', overflow: 'hidden' }}>
+          <div className="gif-loading-container" ref={gifContainerRef}>
             <img
               src={maiHelperGif}
               alt="AI helper Mai"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              onLoad={() => {
+                gifContainerRef.current?.classList.add('loaded');
+                // Also add loaded class to the img element
+                const img = gifContainerRef.current?.querySelector('img');
+                img?.classList.add('loaded');
+              }}
             />
-            
+
           </div>
         </div>
       </Card>
@@ -84,18 +90,29 @@ const HelpCenterPage: React.FC = () => {
                 <Text strong>Email поддержки</Text>
                 <Text type="secondary">support@aitutor.local</Text>
               </Space>
-              <Space direction="vertical" size={2}>
-                <Text strong>Чат с Май</Text>
-                <Text type="secondary">Доступен 24/7 внутри приложения</Text>
+            </Card>
+          </Col>
+
+          <Col xs={24} md={12}>
+            <Card title={<Space><CustomerServiceOutlined />Связаться</Space>} style={{ border: 'none', boxShadow: 'none' }}>
+              <Space direction="vertical">
+                <Space direction="vertical" size={2}>
+                  <Text strong>Email поддержки</Text>
+                  <Text type="secondary">support@aitutor.local</Text>
+                </Space>
+                <Space direction="vertical" size={2}>
+                  <Text strong>Чат с Май</Text>
+                  <Text type="secondary">Доступен 24/7 внутри приложения</Text>
+                </Space>
+                <Space direction="vertical" size={2}>
+                  <Text strong>Баг-репорты</Text>
+                  <Text type="secondary">Описывай шаги, скрин и время — мы поправим быстрее</Text>
+                </Space>
               </Space>
-              <Space direction="vertical" size={2}>
-                <Text strong>Баг-репорты</Text>
-                <Text type="secondary">Описывай шаги, скрин и время — мы поправим быстрее</Text>
-              </Space>
-            </Space>
-          </Card>
-        </Col>
-      </Row>
+            </Card>
+          </Col>
+        </Row>
+      </Card>
 
       <CustomModal
         title={

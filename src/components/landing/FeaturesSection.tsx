@@ -78,7 +78,7 @@ export default function FeaturesSection() {
           </Paragraph>
         </div>
         
-        <Row gutter={[24, 24]}>
+        <Row gutter={[24, 24]} className="justify-center">
           {features.map((feature, index) => (
             <Col xs={24} sm={12} lg={8} key={index}>
               <Card

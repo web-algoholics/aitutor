@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Space, Typography, Empty } from 'antd';
 import LoadingDot from '../../components/LoadingDot';
+import StatsCard from '../../components/StatsCard';
 import { PlusOutlined, FileTextOutlined, EyeOutlined, PlayCircleOutlined, BookOutlined } from '@ant-design/icons';
 import { Row, Col } from 'antd';
 import { useGetDecksQuery } from '../../services/ankiApi';
 import PageContainer from '../../components/PageContainer';
+import SectionHeader from '../../components/SectionHeader';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -196,61 +198,35 @@ export default function AnkiDecksListPage() {
   return (
     <PageContainer>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        {/* Empty div to match Create page layout - matches Button height */}
-        <div style={{ height: '36px' }}></div>
         {/* Header */}
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{
-            width: '220px',
-            height: '220px',
-            borderRadius: '50%',
-            backgroundColor: '#000',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '16px'
-          }}>
-            <Title level={2} style={{ margin: 0, color: '#fff', textAlign: 'center' }}>
-              Колоды Anki
-            </Title>
-          </div>
-          <Paragraph className="text-base text-gray-600 mb-4" style={{ textAlign: 'center' }}>
-            Карточки для запоминания и повторения материала
-          </Paragraph>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            size="large"
-            onClick={() => navigate('/anki/create')}
-          >
-            Создать колоду
-          </Button>
-        </div>
+        <SectionHeader
+          title="Колоды Anki"
+          description="Карточки для запоминания и повторения материала"
+          buttonText="Создать колоду"
+          buttonIcon={<PlusOutlined />}
+          onButtonClick={() => navigate('/anki/create')}
+        />
 
         {/* Statistics */}
         {decks && decks.length > 0 && (
           <Row gutter={16}>
             <Col xs={24} sm={12} md={8}>
-              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <Title level={3} className="mb-2">{totalDecks}</Title>
-                <Text type="secondary">Всего колод</Text>
-              </Card>
+              <StatsCard
+                title={totalDecks}
+                subtitle="Всего колод"
+              />
             </Col>
             <Col xs={24} sm={12} md={8}>
-              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <Title level={3} className="mb-2">{totalCards}</Title>
-                <Text type="secondary">Всего карточек</Text>
-              </Card>
+              <StatsCard
+                title={totalCards}
+                subtitle="Всего карточек"
+              />
             </Col>
             <Col xs={24} sm={12} md={8}>
-              <Card className="text-center" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <Title level={3} className="mb-2">
-                  <EyeOutlined style={{ fontSize: '24px' }} />
-                </Title>
-                <Text type="secondary" style={{ display: 'block', marginBottom: '4px' }}>
-                  Нажми — посмотри описание
-                </Text>
-              </Card>
+              <StatsCard
+                title={<EyeOutlined style={{ fontSize: '24px' }} />}
+                subtitle="Нажми — посмотри описание"
+              />
             </Col>
           </Row>
         )}

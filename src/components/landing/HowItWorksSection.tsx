@@ -69,7 +69,7 @@ export default function HowItWorksSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-32 px-6 bg-gray-50">
+    <section ref={sectionRef} className="py-32 px-6 bg-white">
       <div className="max-w-6xl mx-auto">
         <div className={`text-center mb-20 fade-in-up ${isVisible ? 'visible' : ''}`} style={{ animationDelay: '0s' }}>
           <Title level={2} className="text-4xl font-bold mb-4">
@@ -101,7 +101,7 @@ export default function HowItWorksSection() {
           </Col>
           
           <Col xs={24} md={12}>
-          <div className={`shadow-lg fade-in-up ${isVisible ? 'visible' : ''} h-full flex flex-col`}
+          <div className={`fade-in-up ${isVisible ? 'visible' : ''} h-full flex flex-col`}
               style={{ animationDelay: '0.5s' }}>
             <Title level={3} className="mb-6 text-center">Примеры тем курса</Title>
             <Card className="flex-1">

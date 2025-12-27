@@ -33,7 +33,7 @@ import CreateQuizPage from './pages/Quizzes/CreateQuizPage';
 import AnkiDecksListPage from './pages/Anki/AnkiDecksListPage';
 import AnkiPracticePage from './pages/Anki/AnkiPracticePage';
 import CreateAnkiDeckPage from './pages/Anki/CreateAnkiDeckPage';
-import GigaChatAssistantPage from './pages/GigaChatAssistantPage';
+import GigaChatAssistantPage from './pages/Help/GigaChatAssistantPage';
 import HelpCenterPage from './pages/HelpCenterPage';
 
 import NotFoundPage from './pages/NotFoundPage';
