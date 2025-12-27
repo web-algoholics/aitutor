@@ -90,29 +90,18 @@ const HelpCenterPage: React.FC = () => {
                 <Text strong>Email поддержки</Text>
                 <Text type="secondary">support@aitutor.local</Text>
               </Space>
-            </Card>
-          </Col>
-
-          <Col xs={24} md={12}>
-            <Card title={<Space><CustomerServiceOutlined />Связаться</Space>} style={{ border: 'none', boxShadow: 'none' }}>
-              <Space direction="vertical">
-                <Space direction="vertical" size={2}>
-                  <Text strong>Email поддержки</Text>
-                  <Text type="secondary">support@aitutor.local</Text>
-                </Space>
-                <Space direction="vertical" size={2}>
-                  <Text strong>Чат с Май</Text>
-                  <Text type="secondary">Доступен 24/7 внутри приложения</Text>
-                </Space>
-                <Space direction="vertical" size={2}>
-                  <Text strong>Баг-репорты</Text>
-                  <Text type="secondary">Описывай шаги, скрин и время — мы поправим быстрее</Text>
-                </Space>
+              <Space direction="vertical" size={2}>
+                <Text strong>Чат с Май</Text>
+                <Text type="secondary">Доступен 24/7 внутри приложения</Text>
               </Space>
-            </Card>
-          </Col>
-        </Row>
-      </Card>
+              <Space direction="vertical" size={2}>
+                <Text strong>Баг-репорты</Text>
+                <Text type="secondary">Описывай шаги, скрин и время — мы поправим быстрее</Text>
+              </Space>
+            </Space>
+          </Card>
+        </Col>
+      </Row>
 
       <CustomModal
         title={
