@@ -310,20 +310,25 @@ const QuizPage: React.FC = () => {
                           {index + 1}. {question.question_text}
                         </Text>
                         {question.question_type === 'single_choice' ? (
-                          <Radio.Group
-                            options={question.answers.map(answer => ({
-                              label: answer.answer_text,
-                              value: answer.id,
-                            }))}
-                          />
+                          <Radio.Group>
+                            <Space direction="vertical" size="middle">
+                              {question.answers.map((answer) => (
+                                <Radio key={answer.id} value={answer.id}>
+                                  {answer.answer_text}
+                                </Radio>
+                              ))}
+                            </Space>
+                          </Radio.Group>
                         ) : question.question_type === 'multiple_choice' ? (
-                          <Space direction="vertical" size="middle">
-                            {question.answers.map((answer) => (
-                              <Checkbox key={answer.id} value={answer.id}>
-                                {answer.answer_text}
-                              </Checkbox>
-                            ))}
-                          </Space>
+                          <Checkbox.Group>
+                            <Space direction="vertical" size="middle">
+                              {question.answers.map((answer) => (
+                                <Checkbox key={answer.id} value={answer.id}>
+                                  {answer.answer_text}
+                                </Checkbox>
+                              ))}
+                            </Space>
+                          </Checkbox.Group>
                         ) : (
                           // Fallback for unknown question types
                           <div className="text-red-500">Unknown question type: {question.question_type}</div>
