@@ -1,6 +1,6 @@
 {
     "name": "aitutor",
-    "version": "2.6.5",
+    "version": "2.6.9",
     "main": "./src/index.tsx",
     "scripts": {
         "test": "exit 0",
