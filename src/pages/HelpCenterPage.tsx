@@ -70,15 +70,25 @@ const HelpCenterPage: React.FC = () => {
         </div>
       </Card>
 
-      <Card>
-        <Row gutter={[16, 16]}>
-          <Col xs={24} md={12}>
-            <Card title={<Space><QuestionCircleOutlined />FAQ</Space>} style={{ border: 'none', boxShadow: 'none' }}>
-              <Space direction="vertical" size="small">
-                <Text strong>Как задать вопрос?</Text>
-                <Paragraph style={{ marginBottom: 12 }}>Нажми «Задать вопрос», напиши свою проблему — Май ответит и предложит шаги.</Paragraph>
-                <Text strong>Где посмотреть прогресс по курсам?</Text>
-                <Paragraph style={{ marginBottom: 0 }}>Открой AI Курсы → выбери курс → смотри список модулей и уроков.</Paragraph>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} md={12}>
+          <Card title={<Space><QuestionCircleOutlined />FAQ</Space>}>
+            <Space direction="vertical" size="small">
+              <Text strong>Как задать вопрос?</Text>
+              <Paragraph style={{ marginBottom: 12 }}>Нажми «Задать вопрос», напиши свою проблему — Май ответит и предложит шаги.</Paragraph>
+
+              <Text strong>Где посмотреть прогресс по курсам?</Text>
+              <Paragraph style={{ marginBottom: 0 }}>Открой AI Курсы → выбери курс → смотри дерево модулей и уроков.</Paragraph>
+            </Space>
+          </Card>
+        </Col>
+
+        <Col xs={24} md={12}>
+          <Card title={<Space><CustomerServiceOutlined />Связаться</Space>}>
+            <Space direction="vertical">
+              <Space direction="vertical" size={2}>
+                <Text strong>Email поддержки</Text>
+                <Text type="secondary">support@aitutor.local</Text>
               </Space>
             </Card>
           </Col>
